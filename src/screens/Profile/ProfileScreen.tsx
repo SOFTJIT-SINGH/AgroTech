@@ -2,8 +2,9 @@ import { View, Text, ScrollView, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
+import DynamicButton from "../../components/DynamicButton";
 
-export default function ProfileScreen({ navigation }) {
+export default function ProfileScreen({ navigation }: { navigation: any }) {
   const user = {
     name: "Surinder Singh",
     phone: "+91 9876543210",
@@ -136,17 +137,16 @@ export default function ProfileScreen({ navigation }) {
 
         {/* LOGOUT BUTTON */}
         <View className="px-6 mt-10 mb-12">
-          <Pressable
-            className="bg-red-500/10 py-4 rounded-2xl items-center border border-red-500/20 active:bg-red-500/20 active:scale-[0.98] transition-all"
+          <DynamicButton
+            title="LOGOUT"
             onPress={() => {
               console.log("Logout");
               navigation.replace("Auth");
             }}
-          >
-            <Text className="text-red-400 font-bold text-base tracking-wide uppercase">
-              Logout
-            </Text>
-          </Pressable>
+            variant="outline"
+            className="border-red-500/50 bg-red-500/10"
+            textClassName="text-red-400"
+          />
         </View>
 
       </ScrollView>

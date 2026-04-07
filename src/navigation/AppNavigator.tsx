@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import BottomTabs from "./BottomTabs";
+import DrawerNavigator from "./DrawerNavigator";
 
 import AuthNavigator from "../screens/Auth/AuthNavigator";
 
@@ -15,9 +15,8 @@ const Stack = createNativeStackNavigator();
 export default function AppNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="MainTabs" component={BottomTabs} />
-
       <Stack.Screen name="Auth" component={AuthNavigator} />
+      <Stack.Screen name="MainDrawer" component={DrawerNavigator} />
 
       <Stack.Screen name="DetectCrop" component={DetectScreen} />
       <Stack.Screen name="WeatherAdvice" component={WeatherAdviceScreen} />

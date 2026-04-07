@@ -1,4 +1,5 @@
 import "./global.css"; // This MUST be the first line
+import "react-native-gesture-handler"; // Required for Drawer Navigator
 import { NavigationContainer } from "@react-navigation/native";
 import AppNavigator from "./src/navigation/AppNavigator";
 import {  SafeAreaProvider } from "react-native-safe-area-context";

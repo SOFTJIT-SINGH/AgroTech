@@ -2,7 +2,7 @@ import { View, Text, ScrollView, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen({ navigation }: { navigation: any }) {
   const features = [
     {
       title: "Crop Disease",
@@ -48,13 +48,21 @@ export default function HomeScreen({ navigation }) {
 
         {/* 1. HEADER */}
         <View className="px-6 pt-5 pb-4 flex-row justify-between items-center">
-          <View>
-            <Text className="text-slate-400 font-semibold text-sm uppercase tracking-widest mb-1">
-              Welcome Back
-            </Text>
-            <Text className="text-3xl font-extrabold text-white tracking-tight">
-              Agro<Text className="text-emerald-400">Tech</Text>
-            </Text>
+          <View className="flex-row items-center">
+            <Pressable 
+              onPress={() => navigation.openDrawer()}
+              className="mr-4 p-2 bg-slate-900 rounded-full border border-slate-700/80 active:scale-90 transition-all"
+            >
+              <Text className="text-white text-xl">☰</Text>
+            </Pressable>
+            <View>
+              <Text className="text-slate-400 font-semibold text-sm uppercase tracking-widest mb-1">
+                Welcome Back
+              </Text>
+              <Text className="text-3xl font-extrabold text-white tracking-tight">
+                Agro<Text className="text-emerald-400">Tech</Text>
+              </Text>
+            </View>
           </View>
 
           <Pressable 
