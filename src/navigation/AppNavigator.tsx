@@ -15,7 +15,7 @@ const Stack = createNativeStackNavigator();
 export default function AppNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Auth" component={AuthNavigator} />
+      {/* <Stack.Screen name="Auth" component={AuthNavigator} /> */}
       <Stack.Screen name="MainDrawer" component={DrawerNavigator} />
 
       <Stack.Screen name="DetectCrop" component={DetectScreen} />
