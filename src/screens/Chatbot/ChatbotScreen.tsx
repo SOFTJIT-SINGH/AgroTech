@@ -21,7 +21,7 @@ export default function ChatbotScreen() {
 
   const flatListRef = useRef(null);
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (!message.trim()) return;
 
     const userMessage = {
@@ -33,19 +33,49 @@ export default function ChatbotScreen() {
     setChat(prev => [...prev, userMessage]);
     setMessage("");
 
-    // Simulated AI response
-    setTimeout(() => {
-      const botMessage = {
-        id: Date.now().toString() + "bot",
-        text: "AgroTech AI is analyzing your farming question 🌱",
-        sender: "bot"
-      };
+    const apiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
+    
+    if (!apiKey) {
+      setTimeout(() => {
+        setChat(prev => [...prev, {
+          id: Date.now().toString() + "bot",
+          text: "⚠️ Gemini API key is missing. Please add EXPO_PUBLIC_GEMINI_API_KEY in your .env file to enable real AI responses.",
+          sender: "bot"
+        }]);
+      }, 500);
+      return;
+    }
 
-      setChat(prev => [...prev, botMessage]);
-    }, 800);
+    try {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+           contents: [{
+             parts: [{ text: "You are AgroTech AI, an expert farming assistant. Answer this user concisely: " + message }]
+           }]
+        })
+      });
+
+      const data = await response.json();
+      
+      const botText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't understand that.";
+
+      setChat(prev => [...prev, {
+        id: Date.now().toString() + "bot",
+        text: botText,
+        sender: "bot"
+      }]);
+    } catch(err) {
+      setChat(prev => [...prev, {
+        id: Date.now().toString() + "err",
+        text: "Error connecting to AI. Please try again.",
+        sender: "bot"
+      }]);
+    }
   };
 
-  const renderItem = ({ item }) => {
+  const renderItem = ({ item }: { item: any }) => {
     const isUser = item.sender === "user";
 
     return (

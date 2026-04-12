@@ -3,15 +3,30 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import DynamicButton from "../../components/DynamicButton";
+import { useEffect } from "react";
+import { supabase } from "../../services/supabase";
+
+import { useUserStore } from "../../store/userStore";
+import { Alert } from "react-native";
 
 export default function ProfileScreen({ navigation }: { navigation: any }) {
-  const user = {
-    name: "Surinder Singh",
-    phone: "+91 9876543210",
-    location: "Punjab, India",
-    farmSize: "5 Acres",
-    mainCrop: "Wheat"
-  };
+  const user = useUserStore();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user?.user_metadata) {
+        user.updateProfile({
+          name: session.user.user_metadata.fullName || session.user.email,
+          phone: session.user.user_metadata.phone || user.phone,
+          location: session.user.user_metadata.location || user.location,
+          farmSize: session.user.user_metadata.farmSize || user.farmSize,
+          mainCrop: session.user.user_metadata.primaryCrop || user.mainCrop,
+        });
+      }
+    };
+    fetchUser();
+  }, []);
 
   return (
     <SafeAreaView className="flex-1 bg-slate-950">
@@ -79,7 +94,7 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
           </Text>
 
           <View className="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden">
-            <Pressable className="flex-row justify-between items-center p-5 border-b border-slate-800/80 active:bg-slate-800/60 transition-colors">
+            <Pressable onPress={() => navigation.navigate("EditProfile")} className="flex-row justify-between items-center p-5 border-b border-slate-800/80 active:bg-slate-800/60 transition-colors">
               <Text className="text-slate-200 font-semibold text-base">
                 Edit Profile
               </Text>
@@ -88,7 +103,16 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
               </Text>
             </Pressable>
 
-            <Pressable className="flex-row justify-between items-center p-5 border-b border-slate-800/80 active:bg-slate-800/60 transition-colors">
+            <Pressable onPress={() => navigation.navigate("History")} className="flex-row justify-between items-center p-5 border-b border-slate-800/80 active:bg-slate-800/60 transition-colors">
+              <Text className="text-slate-200 font-semibold text-base">
+                My Crops & Scans
+              </Text>
+              <Text className="text-slate-500 font-bold text-xl leading-5">
+                ›
+              </Text>
+            </Pressable>
+
+            <Pressable onPress={() => Alert.alert("Coming Soon", "Change Password will be available soon.")} className="flex-row justify-between items-center p-5 border-b border-slate-800/80 active:bg-slate-800/60 transition-colors">
               <Text className="text-slate-200 font-semibold text-base">
                 Change Password
               </Text>
@@ -97,7 +121,7 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
               </Text>
             </Pressable>
 
-            <Pressable className="flex-row justify-between items-center p-5 active:bg-slate-800/60 transition-colors">
+            <Pressable onPress={() => Alert.alert("Help & Support", "Contact us at support@agrotech.com")} className="flex-row justify-between items-center p-5 active:bg-slate-800/60 transition-colors">
               <Text className="text-slate-200 font-semibold text-base">
                 Help & Support
               </Text>
@@ -115,7 +139,7 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
           </Text>
 
           <View className="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden">
-            <Pressable className="flex-row justify-between items-center p-5 border-b border-slate-800/80 active:bg-slate-800/60 transition-colors">
+            <Pressable onPress={() => Alert.alert("Notifications", "Notification settings are up to date.")} className="flex-row justify-between items-center p-5 border-b border-slate-800/80 active:bg-slate-800/60 transition-colors">
               <Text className="text-slate-200 font-semibold text-base">
                 Notifications
               </Text>
@@ -124,7 +148,7 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
               </Text>
             </Pressable>
 
-            <Pressable className="flex-row justify-between items-center p-5 active:bg-slate-800/60 transition-colors">
+            <Pressable onPress={() => Alert.alert("Privacy Policy", "Review our terms at agrotech.com/privacy")} className="flex-row justify-between items-center p-5 active:bg-slate-800/60 transition-colors">
               <Text className="text-slate-200 font-semibold text-base">
                 Privacy Policy
               </Text>

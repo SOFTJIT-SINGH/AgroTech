@@ -3,11 +3,13 @@ import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform, Scrol
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DynamicButton from '../../components/DynamicButton';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { supabase } from '../../services/supabase';
+import { Alert } from 'react-native';
 
 type AuthStackParamList = {
   Login: undefined;
   Signup: undefined;
-  Otp: undefined;
+  Otp: { email: string };
 };
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Signup'>;
@@ -16,6 +18,7 @@ export default function SignupScreen({ navigation }: Props) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
+    email: '',
     phone: '',
     farmLocation: '',
     farmSize: '',
@@ -30,12 +33,42 @@ export default function SignupScreen({ navigation }: Props) {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
+    if (!formData.email || !formData.password) {
+      Alert.alert("Error", "Email and Password are required.");
+      return;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      Alert.alert("Error", "Passwords do not match.");
+      return;
+    }
+
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      navigation.navigate('Otp');
-    }, 1000);
+    
+    // Attempt standard email/password signup via Supabase
+    // It will send an OTP email if configured in Supabase settings
+    const { data, error } = await supabase.auth.signUp({
+      email: formData.email.trim(),
+      password: formData.password,
+      options: {
+        data: {
+          fullName: formData.fullName,
+          phone: formData.phone,
+          farmSize: formData.farmSize,
+          primaryCrop: formData.primaryCrop,
+          location: formData.farmLocation
+        }
+      }
+    });
+
+    setLoading(false);
+
+    if (error) {
+      Alert.alert("Signup Failed", error.message);
+    } else {
+      // Proceed to OTP screen
+      navigation.navigate('Otp', { email: formData.email.trim() });
+    }
   };
 
   return (
@@ -72,6 +105,19 @@ export default function SignupScreen({ navigation }: Props) {
                     placeholder="John Doe"
                     value={formData.fullName}
                     onChangeText={(val) => updateField('fullName', val)}
+                    placeholderTextColor="#64748b"
+                    className="bg-slate-950 border border-slate-800 text-white p-4 rounded-2xl text-base focus:border-emerald-500 transition-colors"
+                  />
+                </View>
+
+                <View>
+                  <Text className="text-xs font-bold text-slate-400 mb-2 ml-1 uppercase tracking-wider">Email Address</Text>
+                  <TextInput
+                    placeholder="e.g. farmer@agrotech.com"
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    value={formData.email}
+                    onChangeText={(val) => updateField('email', val)}
                     placeholderTextColor="#64748b"
                     className="bg-slate-950 border border-slate-800 text-white p-4 rounded-2xl text-base focus:border-emerald-500 transition-colors"
                   />

@@ -38,20 +38,20 @@ export default function DynamicButton({
     }).start();
   };
 
-  let bgClass = 'bg-[#2E7D32]'; // Earthy dark green
+  let bgClass = 'bg-emerald-600'; // Theme primary emerald
   let textClass = 'text-white';
   
   if (variant === 'secondary') {
-    bgClass = 'bg-[#8D6E63]'; // Earthy brown
-    textClass = 'text-white';
+    bgClass = 'bg-slate-800 border border-slate-700'; // Premium dark secondary
+    textClass = 'text-slate-200';
   } else if (variant === 'outline') {
-    bgClass = 'bg-transparent border-2 border-[#2E7D32]';
-    textClass = 'text-[#2E7D32]';
+    bgClass = 'bg-transparent border border-emerald-500';
+    textClass = 'text-emerald-400';
   }
 
   if (disabled) {
-    bgClass = 'bg-gray-400 border-gray-400';
-    textClass = 'text-white';
+    bgClass = 'bg-slate-800 border-slate-800 opacity-50';
+    textClass = 'text-slate-500';
   }
 
   // Use a wrapper to prevent tailwind from clobbering the transform
@@ -62,13 +62,12 @@ export default function DynamicButton({
         onPressOut={handlePressOut}
         onPress={onPress}
         disabled={disabled || loading}
-        className={`p-4 rounded-2xl items-center flex-row justify-center shadow-lg ${bgClass} ${className}`}
-        style={{ elevation: disabled ? 0 : 5 }}
+        className={`p-4 rounded-2xl items-center flex-row justify-center ${bgClass} ${className}`}
       >
         {loading ? (
-          <ActivityIndicator color={variant === 'outline' ? '#2E7D32' : '#fff'} className="mr-2" />
+          <ActivityIndicator color={variant === 'outline' ? '#34d399' : '#fff'} className="mr-2" />
         ) : null}
-        <Text className={`font-bold text-lg tracking-wide ${textClass} ${textClassName}`}>
+        <Text className={`font-extrabold text-base tracking-wider ${textClass} ${textClassName}`}>
           {title}
         </Text>
       </Pressable>

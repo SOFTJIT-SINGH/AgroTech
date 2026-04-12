@@ -56,6 +56,9 @@ export default function WeatherAdviceScreen() {
 
     if (status !== "granted") {
       console.log("Permission denied");
+      setLoading(false);
+      setWeather({ temperature: "--", wind: "--", code: 0 });
+      setAdvice(["Location permission was denied. We cannot fetch local weather for your farm. Please enable it in Settings."]);
       return;
     }
 

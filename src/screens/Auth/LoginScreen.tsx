@@ -4,26 +4,45 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import DynamicButton from '../../components/DynamicButton';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { supabase } from '../../services/supabase';
+import { Alert } from 'react-native';
 
 type AuthStackParamList = {
   Login: undefined;
   Signup: undefined;
-  Otp: undefined;
+  Otp: { email: string };
 };
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
 
 export default function LoginScreen({ navigation }: Props) {
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
+    if (!identifier || !password) {
+      Alert.alert("Error", "Please enter your email/phone and password.");
+      return;
+    }
+
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      navigation.navigate('Otp');
-    }, 1000);
+    
+    const isEmail = identifier.includes('@');
+    const credentials = isEmail 
+      ? { email: identifier.trim(), password }
+      : { phone: identifier.trim(), password };
+
+    const { data, error } = await supabase.auth.signInWithPassword(credentials);
+
+    setLoading(false);
+
+    if (error) {
+      Alert.alert("Login Failed", error.message);
+    } else {
+      // Force replace to drawer
+      navigation.replace('MainDrawer' as any);
+    }
   };
 
   return (
@@ -57,12 +76,13 @@ export default function LoginScreen({ navigation }: Props) {
               </Text>
 
               <View className="mb-5">
-                <Text className="text-xs font-bold text-slate-400 mb-2 ml-1 uppercase tracking-wider">Phone Number</Text>
+                <Text className="text-xs font-bold text-slate-400 mb-2 ml-1 uppercase tracking-wider">Email or Phone</Text>
                 <TextInput
-                  placeholder="Enter your phone number"
-                  keyboardType="phone-pad"
-                  value={phoneNumber}
-                  onChangeText={setPhoneNumber}
+                  placeholder="Enter your email or phone"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  value={identifier}
+                  onChangeText={setIdentifier}
                   placeholderTextColor="#64748b"
                   className="bg-slate-950 border border-slate-800 text-white p-4 rounded-2xl text-base focus:border-emerald-500 transition-colors"
                 />
