@@ -6,15 +6,15 @@ import {
   Pressable,
   FlatList,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  ActivityIndicator
 } from "react-native";
-import * as Location from "expo-location";
 import { geminiModel } from "../../services/gemini";
-import { useUserStore } from "../../store/userStore"; // Import your Zustand store
+import { useUserStore } from "../../store/userStore";
 
 export default function ChatbotScreen() {
   const [message, setMessage] = useState("");
-  const [weatherContext, setWeatherContext] = useState("Fetching weather...");
+  const [isSending, setIsSending] = useState(false);
   const [chat, setChat] = useState([
     {
       id: "1",
@@ -25,42 +25,16 @@ export default function ChatbotScreen() {
 
   const flatListRef = useRef<FlatList>(null);
 
-  // 1. Pull dynamic user details from your Zustand Store
-  const { name, location, farmSize, mainCrop } = useUserStore();
+  // Pull dynamic user details and weather from Zustand store (already fetched in AppNavigator)
+  const { name, location, farmSize, mainCrop, weather } = useUserStore();
 
-  // 2. Fetch real-time weather once when the chat screen opens
-  useEffect(() => {
-    const fetchLocalWeather = async () => {
-      try {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
-          setWeatherContext("Weather unknown (Permission denied)");
-          return;
-        }
-
-        const loc = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.Balanced,
-        });
-        const { latitude, longitude } = loc.coords;
-
-        const res = await fetch(
-          `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`
-        );
-        const data = await res.json();
-        const current = data.current_weather;
-
-        setWeatherContext(`${current.temperature}°C, Wind: ${current.windspeed} km/h`);
-      } catch (error) {
-        console.log("Chatbot weather fetch error:", error);
-        setWeatherContext("Weather temporarily unavailable");
-      }
-    };
-
-    fetchLocalWeather();
-  }, []);
+  // Build weather context string from store
+  const weatherContext = weather 
+    ? `${weather.temperature}°C, ${weather.condition}, Wind: ${weather.wind} km/h`
+    : "Weather data unavailable";
 
   const sendMessage = async () => {
-    if (!message.trim()) return;
+    if (!message.trim() || isSending) return;
 
     const userMessage = {
       id: Date.now().toString(),
@@ -71,6 +45,7 @@ export default function ChatbotScreen() {
     setChat(prev => [...prev, userMessage]);
     const currentInput = message;
     setMessage("");
+    setIsSending(true);
 
     if (!process.env.EXPO_PUBLIC_GEMINI_API_KEY) {
       setTimeout(() => {
@@ -79,12 +54,12 @@ export default function ChatbotScreen() {
           text: "⚠️ Gemini API key is missing. Please add EXPO_PUBLIC_GEMINI_API_KEY in your .env file.",
           sender: "bot"
         }]);
+        setIsSending(false);
       }, 500);
       return;
     }
 
     try {
-      // 3. Generate the dynamic System Prompt
       const currentDate = new Date().toLocaleDateString('en-IN', { 
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
       });
@@ -93,19 +68,19 @@ export default function ChatbotScreen() {
       
       CONTEXT ABOUT THE FARMER:
       - Name: ${name}
-      - General Location: ${location}
-      - Farm Size: ${farmSize}
-      - Primary Crop: ${mainCrop}
+      - General Location: ${location || 'Unknown'}
+      - Farm Size: ${farmSize || 'Unknown'}
+      - Primary Crop: ${mainCrop || 'Unknown'}
       - Current Date: ${currentDate}
       - Current Local Weather: ${weatherContext}
 
       INSTRUCTIONS: Use this context to provide highly personalized, precise, and concise advice. 
       If they ask a generic question (e.g., "Should I water my farm today?"), check their weather and crop context to answer. 
       Do not narrate the context back to them unless it directly justifies your advice.
+      Keep responses concise (2-4 paragraphs max).
 
       USER QUERY: `;
       
-      // Send the combined prompt + user input to Gemini 2.5 Flash
       const result = await geminiModel.generateContent(systemPrompt + currentInput);
       const text = await result.response.text();
 
@@ -121,6 +96,8 @@ export default function ChatbotScreen() {
         text: "Error connecting to AI. Please try again or check your API key.",
         sender: "bot"
       }]);
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -192,15 +169,22 @@ export default function ChatbotScreen() {
           placeholderTextColor="#64748b"
           selectionColor="#34d399"
           className="flex-1 bg-slate-900 border border-slate-800 rounded-full px-5 py-3.5 text-slate-100 text-base"
+          editable={!isSending}
+          onSubmitEditing={sendMessage}
         />
 
         <Pressable
           onPress={sendMessage}
-          className="ml-3 bg-emerald-500 w-12 h-12 rounded-full items-center justify-center shadow-lg shadow-emerald-500/30 active:scale-95 active:bg-emerald-600 transition-all"
+          disabled={isSending}
+          className={`ml-3 w-12 h-12 rounded-full items-center justify-center shadow-lg shadow-emerald-500/30 active:scale-95 transition-all ${isSending ? 'bg-emerald-700' : 'bg-emerald-500 active:bg-emerald-600'}`}
         >
-          <Text className="text-white font-extrabold text-[10px] uppercase tracking-widest">
-            Send
-          </Text>
+          {isSending ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <Text className="text-white font-extrabold text-[10px] uppercase tracking-widest">
+              Send
+            </Text>
+          )}
         </Pressable>
 
       </View>

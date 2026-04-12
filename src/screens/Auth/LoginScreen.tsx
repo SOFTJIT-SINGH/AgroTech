@@ -1,21 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Image } from 'expo-image';
 import DynamicButton from '../../components/DynamicButton';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { supabase } from '../../services/supabase';
-import { Alert } from 'react-native';
 
-type AuthStackParamList = {
-  Login: undefined;
-  Signup: undefined;
-  Otp: { email: string };
-};
-
-type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
-
-export default function LoginScreen({ navigation }: Props) {
+export default function LoginScreen({ navigation }: any) {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -39,10 +28,9 @@ export default function LoginScreen({ navigation }: Props) {
 
     if (error) {
       Alert.alert("Login Failed", error.message);
-    } else {
-      // Force replace to drawer
-      navigation.replace('MainDrawer' as any);
     }
+    // Session change is detected by AppNavigator's onAuthStateChange listener.
+    // No manual navigation needed — the conditional navigator swaps automatically.
   };
 
   return (
@@ -98,7 +86,10 @@ export default function LoginScreen({ navigation }: Props) {
                   placeholderTextColor="#64748b"
                   className="bg-slate-950 border border-slate-800 text-white p-4 rounded-2xl text-base focus:border-emerald-500 transition-colors"
                 />
-                <Pressable className="mt-4 self-end active:opacity-70">
+                <Pressable 
+                  onPress={() => navigation.navigate('ForgotPassword')}
+                  className="mt-4 self-end active:opacity-70"
+                >
                   <Text className="text-emerald-400 font-semibold text-sm">Forgot Password?</Text>
                 </Pressable>
               </View>

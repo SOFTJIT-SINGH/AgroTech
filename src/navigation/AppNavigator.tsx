@@ -18,19 +18,36 @@ import SowingPredictionScreen from "../screens/SowingPrediction/SowingPrediction
 import BlogDetailsScreen from "@/screens/Blogs/BlogDetailsScreen";
 import EditProfileScreen from "../screens/Profile/EditProfileScreen";
 import HistoryScreen from "../screens/Profile/HistoryScreen";
+import ChangePasswordScreen from "../screens/Profile/ChangePasswordScreen";
+import HelpSupportScreen from "../screens/Profile/HelpSupportScreen";
+import NotificationSettingsScreen from "../screens/Profile/NotificationSettingsScreen";
+import PrivacyPolicyScreen from "../screens/Profile/PrivacyPolicyScreen";
 
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+
   const handleInitialLogin = async (currentSession: Session | null) => {
     if (currentSession) {
+      // Hydrate user store from Supabase metadata
+      const meta = currentSession.user?.user_metadata;
+      if (meta) {
+        useUserStore.getState().updateProfile({
+          name: meta.full_name || meta.fullName || currentSession.user.email?.split('@')[0] || 'Farmer',
+          phone: meta.phone || useUserStore.getState().phone,
+          location: meta.location || useUserStore.getState().location,
+          farmSize: meta.farm_size || meta.farmSize || useUserStore.getState().farmSize,
+          mainCrop: meta.primary_crop || meta.primaryCrop || useUserStore.getState().mainCrop,
+        });
+      }
+
       // Ask for location permission the moment they open the app
       const { status } = await Location.requestForegroundPermissionsAsync();
 
       if (status === "granted") {
-        // Pre-fetch the weather so the Home Screen doesn't show loading states!
+        // Pre-fetch the weather so the Home Screen doesn't show loading states
         useUserStore.getState().fetchWeather();
       }
     }
@@ -48,7 +65,7 @@ export default function AppNavigator() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
       if (event === "SIGNED_IN") {
-        handleInitialLogin(session); // <-- Trigger here
+        handleInitialLogin(session);
       }
     });
 
@@ -76,9 +93,12 @@ export default function AppNavigator() {
           <Stack.Screen name="BlogDetails" component={BlogDetailsScreen} />
           <Stack.Screen name="EditProfile" component={EditProfileScreen} />
           <Stack.Screen name="History" component={HistoryScreen} />
+          <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
+          <Stack.Screen name="HelpSupport" component={HelpSupportScreen} />
+          <Stack.Screen name="NotificationSettings" component={NotificationSettingsScreen} />
+          <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
         </>
       ) : (
-        
         <Stack.Screen name="Auth" component={AuthNavigator} />
       )}
     </Stack.Navigator>

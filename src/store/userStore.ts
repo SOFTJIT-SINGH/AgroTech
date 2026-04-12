@@ -28,13 +28,15 @@ interface UserState {
   isWeatherLoading: boolean;
   addHistory: (item: CropHistory) => void;
   updateProfile: (data: Partial<UserState>) => void;
-  fetchWeather: () => Promise<void>;
+  fetchWeather: (force?: boolean) => Promise<void>;
+  resetStore: () => void;
 }
 
 // Helper to map WMO codes to readable conditions
 const getWeatherCondition = (code: number) => {
   if (code === 0) return "Sunny";
   if (code >= 1 && code <= 3) return "Partly Cloudy";
+  if (code >= 45 && code <= 48) return "Foggy";
   if (code >= 51 && code <= 67) return "Rainy";
   if (code >= 71 && code <= 77) return "Snowy";
   if (code >= 80 && code <= 82) return "Showers";
@@ -42,22 +44,27 @@ const getWeatherCondition = (code: number) => {
   return "Clear";
 };
 
-export const useUserStore = create<UserState>((set, get) => ({
-  name: "Surinder Singh",
-  phone: "+91 9876543210",
-  location: "Punjab, India",
-  farmSize: "5 Acres",
-  mainCrop: "Wheat",
-  history: [],
-  weather: null,
+const initialState = {
+  name: "Farmer",
+  phone: "",
+  location: "",
+  farmSize: "",
+  mainCrop: "",
+  history: [] as CropHistory[],
+  weather: null as WeatherData | null,
   isWeatherLoading: false,
+};
+
+export const useUserStore = create<UserState>((set, get) => ({
+  ...initialState,
   
   addHistory: (item) => set((state) => ({ history: [item, ...state.history] })),
   updateProfile: (data) => set((state) => ({ ...state, ...data })),
+  resetStore: () => set(initialState),
   
-  fetchWeather: async () => {
-    // Prevent duplicate fetching if already loading
-    if (get().isWeatherLoading) return;
+  fetchWeather: async (force?: boolean) => {
+    // Prevent duplicate fetching if already loading (unless forced by pull-to-refresh)
+    if (get().isWeatherLoading && !force) return;
     
     set({ isWeatherLoading: true });
     try {
@@ -70,10 +77,10 @@ export const useUserStore = create<UserState>((set, get) => ({
         return;
       }
 
-      // FIX: Grab cached location first (instant) to prevent infinite hanging
+      // Grab cached location first (instant) to prevent infinite hanging
       let locationObj = await Location.getLastKnownPositionAsync({});
 
-      // FIX: If no cache exists, use Low accuracy (Network-based) instead of GPS
+      // If no cache exists, use Low accuracy (Network-based) instead of GPS
       if (!locationObj) {
         locationObj = await Location.getCurrentPositionAsync({ 
           accuracy: Location.Accuracy.Low 

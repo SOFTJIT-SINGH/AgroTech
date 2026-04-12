@@ -1,32 +1,56 @@
-import { View, Text, ScrollView, Pressable } from "react-native";
+import { View, Text, ScrollView, Pressable, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
 import DynamicButton from "../../components/DynamicButton";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../../services/supabase";
-
 import { useUserStore } from "../../store/userStore";
-import { Alert } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function ProfileScreen({ navigation }: { navigation: any }) {
   const user = useUserStore();
+  const [email, setEmail] = useState('');
+  const [loggingOut, setLoggingOut] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user?.user_metadata) {
-        user.updateProfile({
-          name: session.user.user_metadata.fullName || session.user.email,
-          phone: session.user.user_metadata.phone || user.phone,
-          location: session.user.user_metadata.location || user.location,
-          farmSize: session.user.user_metadata.farmSize || user.farmSize,
-          mainCrop: session.user.user_metadata.primaryCrop || user.mainCrop,
-        });
+      if (session?.user) {
+        setEmail(session.user.email || '');
+        const meta = session.user.user_metadata;
+        if (meta) {
+          user.updateProfile({
+            name: meta.full_name || meta.fullName || session.user.email?.split('@')[0] || 'Farmer',
+            phone: meta.phone || user.phone,
+            location: meta.location || user.location,
+            farmSize: meta.farm_size || meta.farmSize || user.farmSize,
+            mainCrop: meta.primary_crop || meta.primaryCrop || user.mainCrop,
+          });
+        }
       }
     };
     fetchUser();
   }, []);
+
+  const handleLogout = async () => {
+    Alert.alert(
+      "Sign Out",
+      "Are you sure you want to sign out?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Sign Out",
+          style: "destructive",
+          onPress: async () => {
+            setLoggingOut(true);
+            await supabase.auth.signOut();
+            setLoggingOut(false);
+            // Session change auto-navigates to Auth via AppNavigator
+          }
+        }
+      ]
+    );
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-slate-950">
@@ -50,6 +74,10 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
           <Text className="text-white text-3xl font-extrabold mt-5 tracking-tight">
             {user.name}
           </Text>
+
+          {email ? (
+            <Text className="text-slate-500 text-sm mt-1 font-medium">{email}</Text>
+          ) : null}
 
           <View className="bg-emerald-500/10 px-4 py-1.5 rounded-full mt-2.5 border border-emerald-500/20">
             <Text className="text-emerald-400 font-bold text-xs uppercase tracking-widest">
@@ -95,39 +123,35 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
 
           <View className="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden">
             <Pressable onPress={() => navigation.navigate("EditProfile")} className="flex-row justify-between items-center p-5 border-b border-slate-800/80 active:bg-slate-800/60 transition-colors">
-              <Text className="text-slate-200 font-semibold text-base">
-                Edit Profile
-              </Text>
-              <Text className="text-slate-500 font-bold text-xl leading-5">
-                ›
-              </Text>
+              <View className="flex-row items-center">
+                <Ionicons name="create-outline" size={20} color="#94a3b8" style={{ marginRight: 12 }} />
+                <Text className="text-slate-200 font-semibold text-base">Edit Profile</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color="#64748b" />
             </Pressable>
 
             <Pressable onPress={() => navigation.navigate("History")} className="flex-row justify-between items-center p-5 border-b border-slate-800/80 active:bg-slate-800/60 transition-colors">
-              <Text className="text-slate-200 font-semibold text-base">
-                My Crops & Scans
-              </Text>
-              <Text className="text-slate-500 font-bold text-xl leading-5">
-                ›
-              </Text>
+              <View className="flex-row items-center">
+                <Ionicons name="leaf-outline" size={20} color="#94a3b8" style={{ marginRight: 12 }} />
+                <Text className="text-slate-200 font-semibold text-base">My Crops & Scans</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color="#64748b" />
             </Pressable>
 
-            <Pressable onPress={() => Alert.alert("Coming Soon", "Change Password will be available soon.")} className="flex-row justify-between items-center p-5 border-b border-slate-800/80 active:bg-slate-800/60 transition-colors">
-              <Text className="text-slate-200 font-semibold text-base">
-                Change Password
-              </Text>
-              <Text className="text-slate-500 font-bold text-xl leading-5">
-                ›
-              </Text>
+            <Pressable onPress={() => navigation.navigate("ChangePassword")} className="flex-row justify-between items-center p-5 border-b border-slate-800/80 active:bg-slate-800/60 transition-colors">
+              <View className="flex-row items-center">
+                <Ionicons name="lock-closed-outline" size={20} color="#94a3b8" style={{ marginRight: 12 }} />
+                <Text className="text-slate-200 font-semibold text-base">Change Password</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color="#64748b" />
             </Pressable>
 
-            <Pressable onPress={() => Alert.alert("Help & Support", "Contact us at support@agrotech.com")} className="flex-row justify-between items-center p-5 active:bg-slate-800/60 transition-colors">
-              <Text className="text-slate-200 font-semibold text-base">
-                Help & Support
-              </Text>
-              <Text className="text-slate-500 font-bold text-xl leading-5">
-                ›
-              </Text>
+            <Pressable onPress={() => navigation.navigate("HelpSupport")} className="flex-row justify-between items-center p-5 active:bg-slate-800/60 transition-colors">
+              <View className="flex-row items-center">
+                <Ionicons name="help-buoy-outline" size={20} color="#94a3b8" style={{ marginRight: 12 }} />
+                <Text className="text-slate-200 font-semibold text-base">Help & Support</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color="#64748b" />
             </Pressable>
           </View>
         </View>
@@ -139,22 +163,20 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
           </Text>
 
           <View className="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden">
-            <Pressable onPress={() => Alert.alert("Notifications", "Notification settings are up to date.")} className="flex-row justify-between items-center p-5 border-b border-slate-800/80 active:bg-slate-800/60 transition-colors">
-              <Text className="text-slate-200 font-semibold text-base">
-                Notifications
-              </Text>
-              <Text className="text-slate-500 font-bold text-xl leading-5">
-                ›
-              </Text>
+            <Pressable onPress={() => navigation.navigate("NotificationSettings")} className="flex-row justify-between items-center p-5 border-b border-slate-800/80 active:bg-slate-800/60 transition-colors">
+              <View className="flex-row items-center">
+                <Ionicons name="notifications-outline" size={20} color="#94a3b8" style={{ marginRight: 12 }} />
+                <Text className="text-slate-200 font-semibold text-base">Notifications</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color="#64748b" />
             </Pressable>
 
-            <Pressable onPress={() => Alert.alert("Privacy Policy", "Review our terms at agrotech.com/privacy")} className="flex-row justify-between items-center p-5 active:bg-slate-800/60 transition-colors">
-              <Text className="text-slate-200 font-semibold text-base">
-                Privacy Policy
-              </Text>
-              <Text className="text-slate-500 font-bold text-xl leading-5">
-                ›
-              </Text>
+            <Pressable onPress={() => navigation.navigate("PrivacyPolicy")} className="flex-row justify-between items-center p-5 active:bg-slate-800/60 transition-colors">
+              <View className="flex-row items-center">
+                <Ionicons name="shield-checkmark-outline" size={20} color="#94a3b8" style={{ marginRight: 12 }} />
+                <Text className="text-slate-200 font-semibold text-base">Privacy Policy</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color="#64748b" />
             </Pressable>
           </View>
         </View>
@@ -162,11 +184,9 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
         {/* LOGOUT BUTTON */}
         <View className="px-6 mt-10 mb-12">
           <DynamicButton
-            title="LOGOUT"
-            onPress={() => {
-              console.log("Logout");
-              navigation.replace("Auth");
-            }}
+            title="SIGN OUT"
+            onPress={handleLogout}
+            loading={loggingOut}
             variant="outline"
             className="border-red-500/50 bg-red-500/10"
             textClassName="text-red-400"

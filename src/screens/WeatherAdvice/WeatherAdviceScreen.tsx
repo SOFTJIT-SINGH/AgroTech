@@ -60,7 +60,7 @@ export default function WeatherAdviceScreen() {
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await fetchWeather();
+    await fetchWeather(true);
     setRefreshing(false);
   };
 

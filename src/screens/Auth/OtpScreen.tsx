@@ -1,43 +1,49 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DynamicButton from '../../components/DynamicButton';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { supabase } from '../../services/supabase';
-import { Alert } from 'react-native';
 
-type AuthStackParamList = {
-  Login: undefined;
-  Signup: undefined;
-  Otp: { email?: string };
-};
-
-// MainTabs is in AppNavigator, so we replace instead of navigate. 
-// Let's type it loosely for now
-type Props = NativeStackScreenProps<AuthStackParamList, 'Otp'> & { navigation: any, route: any };
-
-export default function OtpScreen({ navigation, route }: Props) {
+export default function OtpScreen({ navigation, route }: any) {
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const email = route?.params?.email;
 
   const handleVerify = async () => {
-    if (!otp || otp.length < 6) return;
+    if (!otp || otp.length < 6) {
+      Alert.alert("Error", "Please enter the 6-digit verification code.");
+      return;
+    }
     
     setLoading(true);
     
     const { data, error } = await supabase.auth.verifyOtp({
       email,
       token: otp,
-      type: 'signup' // or 'email' depending on Supabase configuration
+      type: 'signup'
     });
 
     setLoading(false);
 
     if (error) {
       Alert.alert("Verification Failed", error.message);
+    }
+    // On success, session is set automatically →
+    // AppNavigator's onAuthStateChange detects it and swaps to Main
+  };
+
+  const handleResend = async () => {
+    if (!email) return;
+    
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email,
+    });
+
+    if (error) {
+      Alert.alert("Error", error.message);
     } else {
-      navigation.replace('MainDrawer');
+      Alert.alert("Code Sent", "A new verification code has been sent to your email.");
     }
   };
 
@@ -58,8 +64,9 @@ export default function OtpScreen({ navigation, route }: Props) {
               <Text className="text-4xl font-black text-white tracking-widest text-center shadow-sm">
                 Verification
               </Text>
-              <Text className="text-slate-400 text-lg mt-2 font-medium tracking-wide text-center">
-                We've sent a 6-digit code to your phone.
+              <Text className="text-slate-400 text-base mt-2 font-medium tracking-wide text-center px-6 leading-7">
+                We've sent a 6-digit code to{'\n'}
+                <Text className="text-emerald-400 font-bold">{email || 'your email'}</Text>
               </Text>
             </View>
 
@@ -78,7 +85,7 @@ export default function OtpScreen({ navigation, route }: Props) {
                   placeholderTextColor="#64748b"
                   className="bg-slate-950 border border-slate-800 text-white p-4 rounded-2xl text-2xl tracking-[0.5em] text-center w-full shadow-sm focus:border-emerald-500 transition-colors"
                 />
-                <Pressable className="mt-4 active:opacity-70">
+                <Pressable onPress={handleResend} className="mt-4 active:opacity-70">
                   <Text className="text-emerald-400 font-semibold text-sm">Resend OTP</Text>
                 </Pressable>
               </View>
@@ -93,7 +100,7 @@ export default function OtpScreen({ navigation, route }: Props) {
 
               <View className="flex-row items-center justify-center mt-2">
                 <Pressable onPress={() => navigation.goBack()} className="p-1 active:opacity-70">
-                  <Text className="text-slate-400 font-bold text-base hover:text-emerald-400 transition-colors">Back to Login</Text>
+                  <Text className="text-slate-400 font-bold text-base">Back to Login</Text>
                 </Pressable>
               </View>
             </View>

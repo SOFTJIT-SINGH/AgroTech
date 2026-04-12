@@ -1,14 +1,38 @@
 import React from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, Alert } from 'react-native';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import BottomTabs from './BottomTabs';
-import ProfileScreen from '../screens/Profile/ProfileScreen'; // Placeholder
+import ProfileScreen from '../screens/Profile/ProfileScreen';
+import HistoryScreen from '../screens/Profile/HistoryScreen';
+import HelpSupportScreen from '../screens/Profile/HelpSupportScreen';
+import NotificationSettingsScreen from '../screens/Profile/NotificationSettingsScreen';
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
+import { useUserStore } from '../store/userStore';
+import { supabase } from '../services/supabase';
 
 const Drawer = createDrawerNavigator();
 
 function CustomDrawerContent(props: any) {
+  const { name } = useUserStore();
+
+  const handleSignOut = () => {
+    Alert.alert(
+      "Sign Out",
+      "Are you sure you want to sign out?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Sign Out",
+          style: "destructive",
+          onPress: async () => {
+            await supabase.auth.signOut();
+          }
+        }
+      ]
+    );
+  };
+
   return (
     <View className="flex-1 bg-slate-950">
       <DrawerContentScrollView {...props} contentContainerStyle={{ paddingTop: 0 }}>
@@ -22,7 +46,7 @@ function CustomDrawerContent(props: any) {
             style={{ width: 68, height: 68 }}
             className="rounded-full mb-4 border-2 border-emerald-500"
           />
-          <Text className="text-2xl font-extrabold text-white tracking-tight">Surinder Singh</Text>
+          <Text className="text-2xl font-extrabold text-white tracking-tight">{name}</Text>
           <Text className="text-emerald-400 font-bold text-xs uppercase tracking-widest mt-1">
             Premium Farmer
           </Text>
@@ -36,7 +60,10 @@ function CustomDrawerContent(props: any) {
       
       {/* Drawer Footer */}
       <View className="p-6 border-t border-slate-800 bg-slate-950">
-        <Pressable className="flex-row items-center p-3 rounded-2xl bg-red-500/10 border border-red-500/20 active:bg-red-500/20 transition-colors">
+        <Pressable 
+          onPress={handleSignOut}
+          className="flex-row items-center p-3 rounded-2xl bg-red-500/10 border border-red-500/20 active:bg-red-500/20 transition-colors"
+        >
           <Ionicons name="log-out-outline" size={24} color="#ef4444" />
           <Text className="text-red-400 font-bold text-base ml-3 tracking-wide">Sign Out</Text>
         </Pressable>
@@ -93,7 +120,7 @@ export default function DrawerNavigator() {
       />
       <Drawer.Screen
         name="CropsArchive"
-        component={ProfileScreen} // Mocked out to profile for now
+        component={HistoryScreen}
         options={{
           drawerLabel: 'My Crops',
           drawerIcon: ({ color }) => (
@@ -103,7 +130,7 @@ export default function DrawerNavigator() {
       />
       <Drawer.Screen
         name="SettingsDrawer"
-        component={ProfileScreen} // Mocked out to profile for now
+        component={NotificationSettingsScreen}
         options={{
           drawerLabel: 'Settings',
           drawerIcon: ({ color }) => (
@@ -113,7 +140,7 @@ export default function DrawerNavigator() {
       />
       <Drawer.Screen
         name="SupportDrawer"
-        component={ProfileScreen} // Mocked out to profile for now
+        component={HelpSupportScreen}
         options={{
           drawerLabel: 'Help & Support',
           drawerIcon: ({ color }) => (
