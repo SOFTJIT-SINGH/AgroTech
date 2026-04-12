@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "../services/supabase";
+import * as Location from "expo-location";
+import { useUserStore } from "../store/userStore";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import DrawerNavigator from "./DrawerNavigator";
@@ -22,17 +24,32 @@ const Stack = createNativeStackNavigator();
 export default function AppNavigator() {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const handleInitialLogin = async (currentSession: Session | null) => {
+    if (currentSession) {
+      // Ask for location permission the moment they open the app
+      const { status } = await Location.requestForegroundPermissionsAsync();
+
+      if (status === "granted") {
+        // Pre-fetch the weather so the Home Screen doesn't show loading states!
+        useUserStore.getState().fetchWeather();
+      }
+    }
+  };
 
   useEffect(() => {
     // Check active session on mount
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
+      handleInitialLogin(session);
     });
 
     // Listen for login/logout events
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
+      if (event === "SIGNED_IN") {
+        handleInitialLogin(session); // <-- Trigger here
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -61,7 +78,7 @@ export default function AppNavigator() {
           <Stack.Screen name="History" component={HistoryScreen} />
         </>
       ) : (
-        // User is LOGGED OUT -> Show Auth Flow
+        
         <Stack.Screen name="Auth" component={AuthNavigator} />
       )}
     </Stack.Navigator>

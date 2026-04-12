@@ -1,39 +1,59 @@
-import { View, Text, ScrollView, Pressable } from "react-native";
+import { View, Text, ScrollView, Pressable, Linking, AppState } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
+import { useEffect, useState } from "react";
+import * as Location from "expo-location";
+import { Ionicons } from "@expo/vector-icons";
+import { useUserStore } from "../../store/userStore";
 
 export default function HomeScreen({ navigation }: { navigation: any }) {
+  const { weather, isWeatherLoading, fetchWeather, name } = useUserStore();
+  const [locationGranted, setLocationGranted] = useState<boolean | null>(null);
+
+  // 1. Robust Permission Checker
+  const checkLocationPermission = async () => {
+    const { status } = await Location.getForegroundPermissionsAsync();
+    
+    if (status === "granted") {
+      setLocationGranted(true);
+      if (!weather) fetchWeather();
+    } else {
+      // If undetermined, try asking. If previously denied, this fails instantly.
+      const { status: askStatus } = await Location.requestForegroundPermissionsAsync();
+      if (askStatus === "granted") {
+        setLocationGranted(true);
+        fetchWeather();
+      } else {
+        setLocationGranted(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    checkLocationPermission();
+
+    // 2. Listen for when user returns from the Settings app
+    const subscription = AppState.addEventListener("change", nextAppState => {
+      if (nextAppState === "active") {
+        checkLocationPermission();
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
+
+  // 3. Open Device Settings Button Logic
+  const openSettings = () => {
+    Linking.openSettings();
+  };
+
   const features = [
-    {
-      title: "Crop Disease",
-      icon: "https://cdn-icons-png.flaticon.com/512/2909/2909768.png",
-      screen: "DetectCrop",
-    },
-    {
-      title: "Weather Advice",
-      icon: "https://cdn-icons-png.flaticon.com/512/1163/1163624.png",
-      screen: "WeatherAdvice",
-    },
-    {
-      title: "Crop Suggestion",
-      icon: "https://cdn-icons-png.flaticon.com/512/628/628324.png",
-      screen: "CropSuggestion",
-    },
-    {
-      title: "Sowing Time",
-      icon: "https://cdn-icons-png.flaticon.com/512/3050/3050525.png",
-      screen: "SowingPrediction",
-    },
-    {
-      title: "Fertilizer Plan",
-      icon: "https://cdn-icons-png.flaticon.com/512/2909/2909753.png",
-      screen: "FertilizerPlan",
-    },
-    {
-      title: "Market Prices",
-      icon: "https://cdn-icons-png.flaticon.com/512/3081/3081559.png",
-      screen: "Market",
-    },
+    { title: "Crop Disease", icon: "https://cdn-icons-png.flaticon.com/512/2909/2909768.png", screen: "DetectCrop" },
+    { title: "Weather Advice", icon: "https://cdn-icons-png.flaticon.com/512/1163/1163624.png", screen: "WeatherAdvice" },
+    { title: "Crop Suggestion", icon: "https://cdn-icons-png.flaticon.com/512/628/628324.png", screen: "CropSuggestion" },
+    { title: "Sowing Time", icon: "https://cdn-icons-png.flaticon.com/512/3050/3050525.png", screen: "SowingPrediction" },
+    { title: "Fertilizer Plan", icon: "https://cdn-icons-png.flaticon.com/512/2909/2909753.png", screen: "FertilizerPlan" },
+    { title: "Market Prices", icon: "https://cdn-icons-png.flaticon.com/512/3081/3081559.png", screen: "Market" },
   ];
 
   const marketPrices = [
@@ -46,7 +66,7 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
     <SafeAreaView className="flex-1 bg-slate-950">
       <ScrollView showsVerticalScrollIndicator={false} className="pb-12">
 
-        {/* 1. HEADER */}
+        {/* HEADER */}
         <View className="px-6 pt-5 pb-4 flex-row justify-between items-center">
           <View className="flex-row items-center">
             <Pressable 
@@ -60,7 +80,7 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
                 Welcome Back
               </Text>
               <Text className="text-3xl font-extrabold text-white tracking-tight">
-                Agro<Text className="text-emerald-400">Tech</Text>
+                {name.split(' ')[0]}
               </Text>
             </View>
           </View>
@@ -77,8 +97,33 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
           </Pressable>
         </View>
 
-        {/* 2. HORIZONTAL MARKET TICKER */}
-        <View className="mb-6">
+        {/* SETTINGS PERMISSION BANNER (Shows only if blocked) */}
+        {locationGranted === false && (
+          <View className="mx-6 bg-rose-500/10 rounded-[24px] p-5 mb-6 border border-rose-500/30 flex-row items-center justify-between shadow-lg shadow-rose-900/20">
+            <View className="flex-1 pr-4">
+              <View className="flex-row items-center mb-1">
+                <Ionicons name="warning" size={16} color="#f43f5e" />
+                <Text className="text-rose-400 font-bold text-xs uppercase tracking-widest ml-2">
+                  Action Required
+                </Text>
+              </View>
+              <Text className="text-slate-300 text-[13px] leading-5 font-medium">
+                Please allow location access in your device settings to enable real-time farm weather tracking.
+              </Text>
+            </View>
+            <Pressable 
+              onPress={openSettings} 
+              className="bg-rose-500/20 px-4 py-3 rounded-xl border border-rose-500/40 active:bg-rose-500/40 active:scale-95 transition-all"
+            >
+              <Text className="text-rose-400 font-bold text-[10px] uppercase tracking-wider">
+                Settings
+              </Text>
+            </Pressable>
+          </View>
+        )}
+
+        {/* HORIZONTAL MARKET TICKER */}
+        <View className="mb-6 mt-2">
           <ScrollView 
             horizontal 
             showsHorizontalScrollIndicator={false} 
@@ -98,17 +143,17 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
           </ScrollView>
         </View>
 
-        {/* 3. HERO WEATHER DASHBOARD */}
+        {/* HERO WEATHER DASHBOARD (Crystal Morphism) */}
         <Pressable 
           onPress={() => navigation.navigate("WeatherAdvice")}
-          className="mx-6 bg-slate-900 rounded-[32px] p-6 mb-8 border border-slate-800 relative overflow-hidden active:scale-[0.98] transition-transform"
+          className="mx-6 bg-slate-900/40 backdrop-blur-2xl rounded-[32px] p-6 mb-8 border border-white/10 relative overflow-hidden active:scale-[0.98] transition-transform shadow-2xl"
         >
-          {/* Glowing Orb Background */}
-          <View className="absolute -top-16 -right-16 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl" />
-          <View className="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl" />
+          {/* Intense Glowing Orb Backgrounds for the glass effect */}
+          <View className="absolute -top-16 -right-16 w-48 h-48 bg-emerald-500/30 rounded-full blur-3xl" />
+          <View className="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl" />
 
-          <View className="flex-row justify-between items-start mb-4">
-            <View className="bg-emerald-500/15 px-3 py-1.5 rounded-xl border border-emerald-500/20">
+          <View className="flex-row justify-between items-start mb-4 z-10">
+            <View className="bg-emerald-500/20 px-3 py-1.5 rounded-xl border border-emerald-500/30 backdrop-blur-md">
               <Text className="text-emerald-400 text-[10px] font-black tracking-widest uppercase">
                 Live Location
               </Text>
@@ -120,17 +165,19 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
             />
           </View>
 
-          <View className="mt-2">
+          <View className="mt-2 z-10">
             <Text className="text-white text-6xl font-black tracking-tighter shadow-lg shadow-slate-950">
-              29°
+              {locationGranted === false ? "--" : (isWeatherLoading ? "--" : weather?.temperature)}°
             </Text>
-            <Text className="text-slate-400 font-medium mt-1 text-base">
-              Sunny • Humidity: 60%
+            <Text className="text-slate-200 font-medium mt-1 text-base tracking-wide shadow-sm shadow-slate-950">
+              {locationGranted === false 
+                ? "Location Blocked" 
+                : (isWeatherLoading ? "Analyzing atmosphere..." : `${weather?.condition} • Wind: ${weather?.wind} km/h`)}
             </Text>
           </View>
         </Pressable>
 
-        {/* 4. AI ASSISTANT BANNER */}
+        {/* AI ASSISTANT BANNER */}
         <Pressable
           onPress={() => navigation.navigate("Chatbot")}
           className="mx-6 bg-emerald-500 rounded-3xl p-5 mb-10 flex-row items-center justify-between shadow-lg shadow-emerald-500/20 active:scale-[0.98] active:bg-emerald-600 transition-all"
@@ -151,7 +198,7 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
           </View>
         </Pressable>
 
-        {/* 5. BENTO BOX TOOL GRID */}
+        {/* BENTO BOX TOOL GRID */}
         <View className="px-6 mb-10">
           <Text className="text-xl font-bold text-white mb-5 tracking-wide">
             Farming Tools
@@ -184,7 +231,7 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
           </View>
         </View>
 
-        {/* 6. FEATURED INSIGHT */}
+        {/* FEATURED INSIGHT */}
         <View className="px-6 mb-6">
           <View className="flex-row justify-between items-end mb-4">
             <Text className="text-xl font-bold text-white tracking-wide">
@@ -199,7 +246,6 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
             onPress={() => navigation.navigate("Blogs")}
             className="bg-slate-900 rounded-[28px] overflow-hidden border border-slate-800 active:scale-[0.98] transition-transform"
           >
-            {/* Simulated Image Placeholder */}
             <View className="h-40 bg-slate-800 relative justify-end p-5">
               <View className="absolute inset-0 bg-slate-950/40" />
               <View className="bg-emerald-500 px-3 py-1.5 rounded-lg self-start relative z-10 mb-2">

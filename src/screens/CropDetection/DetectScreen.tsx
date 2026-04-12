@@ -4,12 +4,15 @@ import { CameraView, useCameraPermissions } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native"; 
 import { useUserStore } from "../../store/userStore";
 import { geminiModel } from "../../services/gemini"; // Using your reliable SDK
 
 export default function DetectScreen({ navigation }: { navigation: any }) {
   const { addHistory } = useUserStore();
   const cameraRef = useRef<any>(null);
+
+  const isFocused = useIsFocused();
 
   const [permission, requestPermission] = useCameraPermissions();
   const [image, setImage] = useState<string | null>(null);

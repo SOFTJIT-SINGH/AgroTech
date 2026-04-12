@@ -7,112 +7,66 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState, useEffect } from "react";
-import * as Location from "expo-location";
-import { Ionicons } from "@expo/vector-icons"; // Added for premium UI icons
+import { Ionicons } from "@expo/vector-icons";
+import { useUserStore } from "../../store/userStore";
 
 export default function WeatherAdviceScreen() {
-  const [weather, setWeather] = useState(null);
-  const [advice, setAdvice] = useState([]);
-
-  const [loading, setLoading] = useState(true);
+  const { weather, isWeatherLoading, fetchWeather } = useUserStore();
+  const [advice, setAdvice] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
-const fetchWeather = async () => {
-    try {
-      setLoading(true);
-      const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Balanced, // Add accuracy explicitly
-      });
-      const { latitude, longitude } = location.coords;
-
-      const res = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&hourly=relativehumidity_2m`
-      );
-
-      const data = await res.json();
-      const current = data.current_weather;
-
-      const weatherData = {
-        temperature: current.temperature,
-        wind: current.windspeed,
-        code: current.weathercode
-      };
-
-      setWeather(weatherData);
-      generateAdvice(weatherData);
-    } catch (err) {
-      console.log("Weather error:", err);
-      // Fallback data so the UI doesn't crash on null
-      setWeather({ temperature: "--", wind: "--", code: 0 });
-      setAdvice(["Unable to fetch real-time weather. Check your internet connection."]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    requestLocation();
+    // If arriving here directly and store is empty, fetch it
+    if (!weather) {
+      fetchWeather();
+    }
   }, []);
 
-  const requestLocation = async () => {
-    try {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-
-      if (status !== "granted") {
-        setWeather({ temperature: "--", wind: "--", code: 0 });
-        setAdvice(["Location permission was denied. We cannot fetch local weather for your farm. Please enable it in Settings."]);
-        setLoading(false);
-        return;
-      }
-
-      await fetchWeather();
-    } catch (err) {
-      console.log("Permission error:", err);
-      setLoading(false);
+  useEffect(() => {
+    // Generate advice dynamically when weather state changes
+    if (weather && weather.temperature !== "--") {
+      generateAdvice(weather);
+    } else if (weather?.condition === "Permission Denied") {
+      setAdvice(["Location permission was denied. We cannot fetch local weather for your farm. Please enable it in Settings."]);
+    } else if (weather) {
+      setAdvice(["Unable to fetch real-time weather. Check your internet connection."]);
     }
-  };
+  }, [weather]);
 
-  const generateAdvice = (weather) => {
+  const generateAdvice = (weatherData: any) => {
     let tips = [];
-    const temp = weather.temperature;
+    const temp = Number(weatherData.temperature);
 
     if (temp > 35) {
       tips.push("High temperature detected. Increase irrigation frequency.");
       tips.push("Avoid fertilizer spraying during afternoon.");
       tips.push("Use mulching to retain soil moisture.");
-    }
-
-    if (temp >= 25 && temp <= 35) {
+    } else if (temp >= 25 && temp <= 35) {
       tips.push("Good weather for crop growth.");
       tips.push("Suitable for maize, cotton and rice cultivation.");
       tips.push("Maintain regular irrigation schedule.");
-    }
-
-    if (temp < 20) {
+    } else if (temp < 20) {
       tips.push("Low temperature detected.");
       tips.push("Suitable crops: wheat, barley and mustard.");
       tips.push("Reduce irrigation to avoid water logging.");
     }
 
-    if (weather.wind > 15) {
-      tips.push("Strong wind detected. Avoid pesticide spraying.");
+    if (Number(weatherData.wind) > 15) {
+      tips.push("Strong wind detected. Avoid pesticide spraying to prevent drift.");
     }
 
     setAdvice(tips);
   };
 
-  const onRefresh = () => {
+  const onRefresh = async () => {
     setRefreshing(true);
-    fetchWeather();
-
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1200);
+    await fetchWeather();
+    setRefreshing(false);
   };
 
   return (
     <SafeAreaView className="flex-1 bg-slate-950">
-      {loading ? (
+      {isWeatherLoading && !weather ? (
         <View className="flex-1 justify-center items-center bg-slate-950">
           <ActivityIndicator size="large" color="#34d399" />
           <Text className="mt-4 text-slate-400 font-medium tracking-wide">
@@ -145,7 +99,6 @@ const fetchWeather = async () => {
 
           {/* WEATHER CARD */}
           <View className="mx-6 bg-emerald-500/10 rounded-[28px] p-6 mb-8 border border-emerald-500/20 relative overflow-hidden">
-            {/* Subtle background glow */}
             <View className="absolute -top-10 -right-10 w-32 h-32 bg-emerald-500/20 rounded-full blur-3xl" />
 
             <Text className="text-emerald-400 font-bold text-xs tracking-widest uppercase mb-4">
@@ -155,11 +108,11 @@ const fetchWeather = async () => {
             <View className="flex-row justify-between items-end">
               <View>
                 <Text className="text-slate-400 text-sm font-medium mb-1">
-                  Temperature
+                  {weather?.condition || "Temperature"}
                 </Text>
                 <View className="flex-row items-start">
                   <Text className="text-5xl font-black text-white tracking-tighter">
-                    {weather.temperature}
+                    {weather?.temperature || "--"}
                   </Text>
                   <Text className="text-2xl font-bold text-emerald-400 mt-1 ml-1">
                     °C
@@ -173,7 +126,7 @@ const fetchWeather = async () => {
                 </Text>
                 <View className="flex-row items-baseline">
                   <Text className="text-3xl font-bold text-white tracking-tight">
-                    {weather.wind}
+                    {weather?.wind || "--"}
                   </Text>
                   <Text className="text-sm font-bold text-slate-300 ml-1">
                     km/h
