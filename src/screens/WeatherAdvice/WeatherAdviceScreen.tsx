@@ -17,11 +17,12 @@ export default function WeatherAdviceScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const fetchWeather = async () => {
+const fetchWeather = async () => {
     try {
       setLoading(true);
-
-      const location = await Location.getCurrentPositionAsync({});
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced, // Add accuracy explicitly
+      });
       const { latitude, longitude } = location.coords;
 
       const res = await fetch(
@@ -39,10 +40,12 @@ export default function WeatherAdviceScreen() {
 
       setWeather(weatherData);
       generateAdvice(weatherData);
-      setLoading(false);
-
     } catch (err) {
       console.log("Weather error:", err);
+      // Fallback data so the UI doesn't crash on null
+      setWeather({ temperature: "--", wind: "--", code: 0 });
+      setAdvice(["Unable to fetch real-time weather. Check your internet connection."]);
+    } finally {
       setLoading(false);
     }
   };
@@ -52,17 +55,21 @@ export default function WeatherAdviceScreen() {
   }, []);
 
   const requestLocation = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
 
-    if (status !== "granted") {
-      console.log("Permission denied");
+      if (status !== "granted") {
+        setWeather({ temperature: "--", wind: "--", code: 0 });
+        setAdvice(["Location permission was denied. We cannot fetch local weather for your farm. Please enable it in Settings."]);
+        setLoading(false);
+        return;
+      }
+
+      await fetchWeather();
+    } catch (err) {
+      console.log("Permission error:", err);
       setLoading(false);
-      setWeather({ temperature: "--", wind: "--", code: 0 });
-      setAdvice(["Location permission was denied. We cannot fetch local weather for your farm. Please enable it in Settings."]);
-      return;
     }
-
-    fetchWeather();
   };
 
   const generateAdvice = (weather) => {
