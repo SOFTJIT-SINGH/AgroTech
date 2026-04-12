@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { Switch } from "react-native";
 import {
   View,
   Text,
@@ -24,6 +25,7 @@ export default function ChatbotScreen() {
   ]);
 
   const flatListRef = useRef<FlatList>(null);
+  const [useEnglish, setUseEnglish] = useState(false);
 
   // Pull dynamic user details and weather from Zustand store (already fetched in AppNavigator)
   const { name, location, farmSize, mainCrop, weather, preferredLanguage } = useUserStore();
@@ -64,6 +66,8 @@ export default function ChatbotScreen() {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
       });
 
+      const activeLanguage = useEnglish || !preferredLanguage ? 'English' : preferredLanguage;
+
       const systemPrompt = `You are AgroTech AI, an expert agricultural assistant. 
       
       CONTEXT ABOUT THE FARMER:
@@ -71,12 +75,12 @@ export default function ChatbotScreen() {
       - General Location: ${location || 'Unknown'}
       - Farm Size: ${farmSize || 'Unknown'}
       - Primary Crop: ${mainCrop || 'Unknown'}
-      - Preferred Language: ${preferredLanguage || 'English'}
+      - Active Language: ${activeLanguage}
       - Current Date: ${currentDate}
       - Current Local Weather: ${weatherContext}
 
       INSTRUCTIONS: Use this context to provide highly personalized, precise, and concise advice. 
-      IMPORTANT: You MUST reply in the farmer's Preferred Language (${preferredLanguage || 'English'}).
+      IMPORTANT: You MUST reply in the active language (${activeLanguage}). If it is English, reply in English. If it is another language, reply strictly in that language.
       If they ask a generic question (e.g., "Should I water my farm today?"), check their weather and crop context to answer. 
       Do not narrate the context back to them unless it directly justifies your advice.
       Keep responses concise (2-4 paragraphs max).
@@ -137,17 +141,35 @@ export default function ChatbotScreen() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       {/* HEADER */}
-      <View className="bg-slate-950 pt-16 pb-5 px-6 border-b border-slate-800/80 z-10">
-        <Text className="text-white text-2xl font-extrabold tracking-tight">
-          AgroTech <Text className="text-emerald-400">AI</Text>
-        </Text>
-
-        <View className="flex-row items-center mt-1.5">
-          <View className="w-2 h-2 rounded-full bg-emerald-400 mr-2 shadow-sm shadow-emerald-400/50" />
-          <Text className="text-slate-400 text-xs font-medium uppercase tracking-wider">
-            Online & Ready
+      <View className="bg-slate-950 pt-16 pb-3 px-6 border-b border-slate-800/80 z-10 flex-row justify-between items-center">
+        <View>
+          <Text className="text-white text-2xl font-extrabold tracking-tight">
+            AgroTech <Text className="text-emerald-400">AI</Text>
           </Text>
+
+          <View className="flex-row items-center mt-1.5">
+            <View className="w-2 h-2 rounded-full bg-emerald-400 mr-2 shadow-sm shadow-emerald-400/50" />
+            <Text className="text-slate-400 text-xs font-medium uppercase tracking-wider">
+              Online & Ready
+            </Text>
+          </View>
         </View>
+
+        {/* LANGUAGE TOGGLE */}
+        {preferredLanguage && preferredLanguage.toLowerCase() !== 'english' && (
+          <View className="items-center">
+            <Text className="text-[10px] text-slate-400 font-bold mb-1 uppercase">
+              {useEnglish ? 'English' : preferredLanguage}
+            </Text>
+            <Switch
+              value={useEnglish}
+              onValueChange={setUseEnglish}
+              trackColor={{ false: '#34d399', true: '#334155' }}
+              thumbColor="#f8fafc"
+              style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
+            />
+          </View>
+        )}
       </View>
 
       {/* CHAT LIST */}

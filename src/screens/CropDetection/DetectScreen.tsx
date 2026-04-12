@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { View, Text, Image, Pressable, ActivityIndicator } from "react-native";
+import { View, Text, Image, Pressable, ActivityIndicator, Switch } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -9,12 +9,13 @@ import { useUserStore } from "../../store/userStore";
 import { geminiModel } from "../../services/gemini"; // Using your reliable SDK
 
 export default function DetectScreen({ navigation }: { navigation: any }) {
-  const { addHistory } = useUserStore();
+  const { addHistory, preferredLanguage } = useUserStore();
   const cameraRef = useRef<any>(null);
 
   const isFocused = useIsFocused();
 
   const [permission, requestPermission] = useCameraPermissions();
+  const [useEnglish, setUseEnglish] = useState(false);
   const [image, setImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<any>(null);
@@ -81,20 +82,24 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
     }
 
     try {
+      const activeLanguage = useEnglish || !preferredLanguage ? 'English' : preferredLanguage;
+
       // 1. Prepare the exact prompt instructions
      const prompt = `Analyze this image carefully. First, determine if the main subject is a plant leaf or crop. 
       Reply with ONLY valid JSON and no markdown formatting. The JSON must exactly match this format: { "disease": "string", "confidence": "string", "treatment": "string" }.
       
       RULES:
       1. If the image IS a plant leaf/crop: 
-         - "disease": The name of the disease or 'Healthy'.
+         - "disease": The name of the disease or 'Healthy'. This MUST be written in ${activeLanguage}.
          - "confidence": The confidence percentage (e.g., '92%').
-         - "treatment": Brief, actionable treatment advice.
+         - "treatment": Brief, actionable treatment advice. This MUST be written in ${activeLanguage}.
       
       2. If the image IS NOT a plant leaf/crop: 
-         - "disease": "Not a Plant ([Name of Object])" (e.g., "Not a Plant (Laptop)" or "Not a Plant (Human Face)").
+         - "disease": "Not a Plant" (Translated to ${activeLanguage}).
          - "confidence": "N/A".
-         - "treatment": "Our AI detected a [Name of Object] in the frame. For accurate agricultural analysis, please kindly upload a clear, focused image of a crop leaf."`; 
+         - "treatment": "Our AI detected a non-plant object. Please upload a clear crop leaf." (Translated to ${activeLanguage}).
+         
+      CRITICAL: The JSON keys MUST remain in English ("disease", "confidence", "treatment"), but the VALUES for disease and treatment must strictly be in ${activeLanguage}.`; 
       
       // 2. Format the image for the Gemini SDK
       const imagePart = {
@@ -162,10 +167,26 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
     <SafeAreaView className="flex-1 bg-slate-950">
       
       {/* HEADER */}
-      <View className="px-6 pt-5 pb-4 flex-row items-center z-10 absolute top-10 left-0 right-0 pointer-events-none">
-        <View className="bg-slate-900/80 px-4 py-2 rounded-full border border-slate-800/80 backdrop-blur-md">
+      <View className="px-6 pt-5 pb-4 flex-row items-center justify-between z-10 absolute top-10 left-0 right-0">
+        <View className="bg-slate-900/80 px-4 py-2 rounded-full border border-slate-800/80 backdrop-blur-md pointer-events-none">
            <Text className="text-emerald-400 font-bold text-sm uppercase tracking-widest">Disease Scanner</Text>
         </View>
+
+        {/* LANGUAGE TOGGLE */}
+        {preferredLanguage && preferredLanguage.toLowerCase() !== 'english' && (
+          <View className="items-center bg-slate-900/80 py-1.5 px-3 rounded-xl border border-slate-800/80">
+            <Text className="text-[10px] text-slate-400 font-bold mb-0.5 uppercase tracking-widest">
+              {useEnglish ? 'English' : preferredLanguage}
+            </Text>
+            <Switch
+              value={useEnglish}
+              onValueChange={setUseEnglish}
+              trackColor={{ false: '#34d399', true: '#334155' }}
+              thumbColor="#f8fafc"
+              style={{ transform: [{ scaleX: 0.7 }, { scaleY: 0.7 }], height: 20 }}
+            />
+          </View>
+        )}
       </View>
 
       {!image ? (
