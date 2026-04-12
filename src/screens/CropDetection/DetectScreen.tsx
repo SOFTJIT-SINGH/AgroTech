@@ -95,9 +95,9 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
          - "treatment": Brief, actionable treatment advice. This MUST be written in ${activeLanguage}.
       
       2. If the image IS NOT a plant leaf/crop: 
-         - "disease": "Not a Plant" (Translated to ${activeLanguage}).
+         - "disease": "Not a Plant ([Name of Object])" (e.g., "Not a Plant (Laptop)" or "Not a Plant (Human Face)"). Translate this ENTIRE string including the object name to ${activeLanguage}.
          - "confidence": "N/A".
-         - "treatment": "Our AI detected a non-plant object. Please upload a clear crop leaf." (Translated to ${activeLanguage}).
+         - "treatment": "Our AI detected a [Name of Object] in the frame. For accurate agricultural analysis, please kindly upload a clear, focused image of a crop leaf." Translate this ENTIRE string including the object name to ${activeLanguage}.
          
       CRITICAL: The JSON keys MUST remain in English ("disease", "confidence", "treatment"), but the VALUES for disease and treatment must strictly be in ${activeLanguage}.`; 
       
