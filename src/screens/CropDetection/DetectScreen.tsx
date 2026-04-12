@@ -5,10 +5,10 @@ import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useUserStore } from "../../store/userStore";
+import { geminiModel } from "../../services/gemini"; // Using your reliable SDK
 
 export default function DetectScreen({ navigation }: { navigation: any }) {
   const { addHistory } = useUserStore();
-
   const cameraRef = useRef<any>(null);
 
   const [permission, requestPermission] = useCameraPermissions();
@@ -67,44 +67,54 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
   const analyzePhoto = async (base64Image: string, uri: string) => {
     setIsAnalyzing(true);
     
-    const apiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
-
-    if (!apiKey) {
+    if (!process.env.EXPO_PUBLIC_GEMINI_API_KEY) {
       setIsAnalyzing(false);
       setResult({
         disease: "Missing API Key",
         confidence: "0%",
-        treatment: "Please add EXPO_PUBLIC_GEMINI_API_KEY to your .env file to enable real AI disease detection."
+        treatment: "Please add EXPO_PUBLIC_GEMINI_API_KEY to your .env file."
       });
       return;
     }
 
     try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{
-            parts: [
-              { text: "Analyze this crop leaf. Reply with ONLY valid JSON and no markdown formatting. The JSON must exactly match this format: { \"disease\": \"string name of disease or Healthy\", \"confidence\": \"string percentage like 92%\", \"treatment\": \"string brief simple treatment advice\" }. If it's not a leaf/crop, reply with { \"disease\": \"Invalid Image\", \"confidence\": \"0%\", \"treatment\": \"Please upload a clear picture of a crop leaf.\" }" },
-              { inline_data: { mime_type: "image/jpeg", data: base64Image } }
-            ]
-          }]
-        })
-      });
-
-      const data = await response.json();
-      const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+      // 1. Prepare the exact prompt instructions
+     const prompt = `Analyze this image carefully. First, determine if the main subject is a plant leaf or crop. 
+      Reply with ONLY valid JSON and no markdown formatting. The JSON must exactly match this format: { "disease": "string", "confidence": "string", "treatment": "string" }.
       
+      RULES:
+      1. If the image IS a plant leaf/crop: 
+         - "disease": The name of the disease or 'Healthy'.
+         - "confidence": The confidence percentage (e.g., '92%').
+         - "treatment": Brief, actionable treatment advice.
+      
+      2. If the image IS NOT a plant leaf/crop: 
+         - "disease": "Not a Plant ([Name of Object])" (e.g., "Not a Plant (Laptop)" or "Not a Plant (Human Face)").
+         - "confidence": "N/A".
+         - "treatment": "Our AI detected a [Name of Object] in the frame. For accurate agricultural analysis, please kindly upload a clear, focused image of a crop leaf."`; 
+      
+      // 2. Format the image for the Gemini SDK
+      const imagePart = {
+        inlineData: {
+          data: base64Image,
+          mimeType: "image/jpeg"
+        }
+      };
+
+      // 3. Call the SDK
+      const resultObj = await geminiModel.generateContent([prompt, imagePart]);
+      const rawText = await resultObj.response.text();
+      
+      // 4. Safely parse the JSON (removing any accidental markdown backticks)
       let parsed;
       try {
         const cleanJsonStr = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
         parsed = JSON.parse(cleanJsonStr);
       } catch (e) {
         parsed = {
-          disease: "Result",
+          disease: "Parsing Error",
           confidence: "-",
-          treatment: rawText // Print raw output if JSON parsing failed
+          treatment: "Failed to read the AI response properly."
         };
       }
 
@@ -116,17 +126,20 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
       
       setResult(resObj);
       
-      addHistory({
-        id: Date.now().toString(),
-        imageUri: uri,
-        disease: resObj.disease,
-        confidence: resObj.confidence,
-        treatment: resObj.treatment,
-        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-      });
+      // Save to history state
+      if (resObj.confidence !== "N/A" && resObj.confidence !== "0%") {
+        addHistory({
+          id: Date.now().toString(),
+          imageUri: uri,
+          disease: resObj.disease,
+          confidence: resObj.confidence,
+          treatment: resObj.treatment,
+          date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        });
+      }
 
     } catch (err) {
-      console.log(err);
+      console.log("Scanner Error:", err);
       setResult({
         disease: "Analysis Failed",
         confidence: "0%",

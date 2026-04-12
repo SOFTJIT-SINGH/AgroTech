@@ -10,8 +10,9 @@ npm-debug.*
 *.orig.*
 web-build/
 
-
-
+# ENVIRONMENT VARIABLES - CRITICAL
+.env
+.env.*
 
 ios
 android
