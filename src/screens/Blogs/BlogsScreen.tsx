@@ -4,83 +4,114 @@ import {
   ScrollView,
   TextInput,
   Pressable,
-  RefreshControl
+  RefreshControl,
+  ActivityIndicator
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import { supabase } from "../../services/supabase";
 
-import BlogCard from "../../components/cards/BlogCard";
+interface Blog {
+  id: string;
+  title: string;
+  content: string;
+  category: string;
+  image_url: string;
+  author_name: string;
+  author_id: string;
+  created_at: string;
+}
 
-export default function BlogsScreen({ navigation }) {
+export default function BlogsScreen({ navigation }: any) {
+  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState("");
-
-  const categories = [
-    "All",
-    "Crop Tips",
-    "Fertilizer",
-    "Irrigation",
-    "Market"
-  ];
-
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  const [blogs, setBlogs] = useState([
-    {
-      id: 1,
-      title: "Best Crops for Summer Season",
-      category: "Crop Tips",
-      description: "Learn which crops produce high yield during summer.",
-      date: "12 Mar 2026",
-      image: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6"
-    },
-    {
-      id: 2,
-      title: "How to Use Organic Fertilizers",
-      category: "Fertilizer",
-      description: "Improve soil health with organic fertilizer methods.",
-      date: "10 Mar 2026",
-      image: "https://images.unsplash.com/photo-1464226184884-fa280b87c399"
-    },
-    {
-      id: 3,
-      title: "Smart Irrigation Techniques",
-      category: "Irrigation",
-      description: "Save water and increase crop productivity.",
-      date: "8 Mar 2026",
-      image: "https://images.unsplash.com/photo-1469474968028-56623f02e42e"
-    }
-  ]);
+  const categories = ["All", "Crop Tips", "Fertilizer", "Irrigation", "Market", "Weather", "Technology", "General"];
 
-  const onRefresh = () => {
+  const fetchBlogs = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('blogs')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.log("Blogs fetch error:", error);
+      } else {
+        setBlogs(data || []);
+      }
+    } catch (err) {
+      console.log("Blogs fetch exception:", err);
+    }
+  }, []);
+
+  useEffect(() => {
+    const loadBlogs = async () => {
+      setLoading(true);
+      await fetchBlogs();
+      setLoading(false);
+    };
+    loadBlogs();
+  }, []);
+
+  // Re-fetch when navigating back from CreateBlog
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchBlogs();
+    });
+    return unsubscribe;
+  }, [navigation, fetchBlogs]);
+
+  const onRefresh = async () => {
     setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1000);
+    await fetchBlogs();
+    setRefreshing(false);
+  };
+
+  const formatDate = (isoDate: string) => {
+    const d = new Date(isoDate);
+    return d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
   const filteredBlogs = blogs.filter(blog => {
-    const matchCategory =
-      selectedCategory === "All" || blog.category === selectedCategory;
-
+    const matchCategory = selectedCategory === "All" || blog.category === selectedCategory;
     const matchSearch = blog.title.toLowerCase().includes(search.toLowerCase());
-
     return matchCategory && matchSearch;
   });
+
+  if (loading) {
+    return (
+      <SafeAreaView className="flex-1 bg-slate-950 justify-center items-center">
+        <ActivityIndicator size="large" color="#34d399" />
+        <Text className="text-slate-400 mt-4 font-medium">Loading blogs...</Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-slate-950">
       
       {/* HEADER */}
-      <View className="px-6 pt-5 pb-4">
-        <Text className="text-3xl font-extrabold text-white tracking-tight">
-          Agriculture <Text className="text-emerald-400">Blogs</Text>
-        </Text>
-        <Text className="text-slate-400 font-medium mt-1 text-sm">
-          Farming tips, guides, and latest insights
-        </Text>
+      <View className="px-6 pt-5 pb-4 flex-row justify-between items-start">
+        <View>
+          <Text className="text-3xl font-extrabold text-white tracking-tight">
+            Agriculture <Text className="text-emerald-400">Blogs</Text>
+          </Text>
+          <Text className="text-slate-400 font-medium mt-1 text-sm">
+            Farming tips, guides & community insights
+          </Text>
+        </View>
+        <Pressable
+          onPress={() => navigation.navigate("CreateBlog")}
+          className="bg-emerald-500 p-3 rounded-2xl active:scale-95 active:bg-emerald-600 shadow-lg shadow-emerald-500/30"
+        >
+          <Ionicons name="add" size={22} color="#020617" />
+        </Pressable>
       </View>
 
       {/* SEARCH BAR */}
@@ -143,76 +174,105 @@ export default function BlogsScreen({ navigation }) {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="#34d399" // Emerald-400
+            tintColor="#34d399"
             colors={["#34d399"]}
-            progressBackgroundColor="#0f172a" // Slate-900
+            progressBackgroundColor="#0f172a"
           />
         }
       >
-        {/* FEATURED BLOG */}
-        {filteredBlogs.length > 0 ? (
-          <Pressable
-            onPress={() =>
-              navigation.navigate("BlogDetails", {
-                blog: filteredBlogs[0]
-              })
-            }
-            className="bg-slate-900 rounded-3xl mb-6 overflow-hidden border border-slate-800 active:scale-[0.98] active:opacity-90 transition-all"
-          >
-            <Image
-              source={{ uri: filteredBlogs[0].image }}
-              style={{ width: "100%", height: 220 }}
-              className="bg-slate-800"
-            />
-
-            <View className="p-5">
-              <View className="flex-row justify-between items-center mb-3">
-                <View className="bg-emerald-500/15 px-3 py-1.5 rounded-xl border border-emerald-500/20">
-                  <Text className="text-emerald-400 text-xs font-bold uppercase tracking-wider">
-                    Featured • {filteredBlogs[0].category}
+        {filteredBlogs.length === 0 ? (
+          /* EMPTY STATE */
+          <View className="items-center justify-center mt-12 p-8">
+            <View className="bg-slate-900 w-20 h-20 rounded-full items-center justify-center mb-5 border border-slate-800">
+              <Ionicons name="document-text-outline" size={36} color="#64748b" />
+            </View>
+            <Text className="text-slate-300 font-bold text-lg mb-2 text-center">
+              {search ? `No blogs found for "${search}"` : "No blogs yet"}
+            </Text>
+            <Text className="text-slate-500 text-sm text-center leading-6 px-4">
+              {search ? "Try a different search term." : "Be the first to share your farming knowledge!"}
+            </Text>
+            {!search && (
+              <Pressable
+                onPress={() => navigation.navigate("CreateBlog")}
+                className="mt-6 bg-emerald-500/15 px-6 py-3 rounded-2xl border border-emerald-500/30 active:scale-95"
+              >
+                <Text className="text-emerald-400 font-bold text-sm uppercase tracking-wider">Write a Blog</Text>
+              </Pressable>
+            )}
+          </View>
+        ) : (
+          <>
+            {/* FEATURED BLOG (first item) */}
+            <Pressable
+              onPress={() => navigation.navigate("BlogDetails", { blog: filteredBlogs[0] })}
+              className="bg-slate-900 rounded-3xl mb-6 overflow-hidden border border-slate-800 active:scale-[0.98] active:opacity-90 transition-all"
+            >
+              <Image
+                source={{ uri: filteredBlogs[0].image_url }}
+                style={{ width: "100%", height: 220 }}
+                className="bg-slate-800"
+              />
+              <View className="p-5">
+                <View className="flex-row justify-between items-center mb-3">
+                  <View className="bg-emerald-500/15 px-3 py-1.5 rounded-xl border border-emerald-500/20">
+                    <Text className="text-emerald-400 text-xs font-bold uppercase tracking-wider">
+                      Featured • {filteredBlogs[0].category}
+                    </Text>
+                  </View>
+                  <Text className="text-slate-500 text-xs font-medium">
+                    {formatDate(filteredBlogs[0].created_at)}
                   </Text>
                 </View>
-                <Text className="text-slate-500 text-xs font-medium">
-                  {filteredBlogs[0].date}
+                <Text className="font-extrabold text-white text-xl mb-2 leading-7">
+                  {filteredBlogs[0].title}
                 </Text>
+                <Text className="text-slate-400 text-sm leading-6" numberOfLines={2}>
+                  {filteredBlogs[0].content}
+                </Text>
+                <View className="flex-row items-center mt-3">
+                  <Ionicons name="person-circle-outline" size={16} color="#64748b" />
+                  <Text className="text-slate-500 text-xs font-medium ml-1.5">{filteredBlogs[0].author_name}</Text>
+                </View>
               </View>
+            </Pressable>
 
-              <Text className="font-extrabold text-white text-xl mb-2 leading-7">
-                {filteredBlogs[0].title}
-              </Text>
-
-              <Text className="text-slate-400 text-sm leading-6">
-                {filteredBlogs[0].description}
-              </Text>
-            </View>
-          </Pressable>
-        ) : (
-          /* EMPTY STATE (If search yields no results) */
-          <View className="items-center justify-center mt-10">
-            <Ionicons name="document-text-outline" size={60} color="#334155" />
-            <Text className="text-slate-400 font-medium mt-4 text-base">
-              No blogs found for "{search}"
-            </Text>
-          </View>
+            {/* REMAINING BLOG CARDS */}
+            {filteredBlogs.slice(1).map(blog => (
+              <Pressable
+                key={blog.id}
+                onPress={() => navigation.navigate("BlogDetails", { blog })}
+                className="bg-slate-900 rounded-2xl mb-4 overflow-hidden border border-slate-800 flex-row active:scale-[0.98] active:opacity-90 transition-all"
+              >
+                <Image
+                  source={{ uri: blog.image_url }}
+                  style={{ width: 110, height: 130 }}
+                  className="bg-slate-800"
+                />
+                <View className="flex-1 p-4 justify-between">
+                  <View>
+                    <View className="flex-row items-center justify-between mb-1.5">
+                      <Text className="text-emerald-400 text-[10px] font-bold uppercase tracking-widest">{blog.category}</Text>
+                      <Text className="text-slate-600 text-[10px] font-medium">{formatDate(blog.created_at)}</Text>
+                    </View>
+                    <Text className="font-bold text-white text-[15px] leading-[22px] mb-1.5" numberOfLines={2}>
+                      {blog.title}
+                    </Text>
+                    <Text className="text-slate-500 text-xs leading-5" numberOfLines={2}>
+                      {blog.content}
+                    </Text>
+                  </View>
+                  <View className="flex-row items-center">
+                    <Ionicons name="person-circle-outline" size={14} color="#475569" />
+                    <Text className="text-slate-600 text-[10px] font-medium ml-1">{blog.author_name}</Text>
+                  </View>
+                </View>
+              </Pressable>
+            ))}
+          </>
         )}
-
-        {/* REMAINING BLOG CARDS */}
-        {filteredBlogs.slice(1).map(blog => (
-          <View key={blog.id} className="mb-4">
-             {/* Note: Ensure your internal <BlogCard /> component is styled 
-                 for dark mode to seamlessly match this screen! */}
-            <BlogCard
-              blog={blog}
-              onPress={() =>
-                navigation.navigate("BlogDetails", {
-                  blog: blog
-                })
-              }
-            />
-          </View>
-        ))}
         
-        {/* Extra padding at bottom to account for the Bottom Tab Bar */}
+        {/* Bottom spacing */}
         <View className="h-10" />
       </ScrollView>
 

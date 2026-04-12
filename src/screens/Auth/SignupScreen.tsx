@@ -34,8 +34,16 @@ export default function SignupScreen({ navigation }: Props) {
   };
 
   const handleSignup = async () => {
-    if (!formData.email || !formData.password) {
-      Alert.alert("Error", "Email and Password are required.");
+    if (!formData.fullName.trim()) {
+      Alert.alert("Error", "Please enter your full name.");
+      return;
+    }
+    if (!formData.email.trim()) {
+      Alert.alert("Error", "Email address is required.");
+      return;
+    }
+    if (!formData.password || formData.password.length < 6) {
+      Alert.alert("Error", "Password must be at least 6 characters.");
       return;
     }
     if (formData.password !== formData.confirmPassword) {
@@ -45,18 +53,18 @@ export default function SignupScreen({ navigation }: Props) {
 
     setLoading(true);
     
-    // Attempt standard email/password signup via Supabase
-    // It will send an OTP email if configured in Supabase settings
     const { data, error } = await supabase.auth.signUp({
       email: formData.email.trim(),
       password: formData.password,
       options: {
         data: {
-          fullName: formData.fullName,
-          phone: formData.phone,
-          farmSize: formData.farmSize,
-          primaryCrop: formData.primaryCrop,
-          location: formData.farmLocation
+          full_name: formData.fullName.trim(),
+          phone: formData.phone.trim(),
+          farm_size: formData.farmSize.trim(),
+          primary_crop: formData.primaryCrop.trim(),
+          location: formData.farmLocation.trim(),
+          farming_experience: formData.farmingExperience.trim(),
+          preferred_language: formData.preferredLanguage.trim(),
         }
       }
     });
@@ -66,8 +74,11 @@ export default function SignupScreen({ navigation }: Props) {
     if (error) {
       Alert.alert("Signup Failed", error.message);
     } else {
-      // Proceed to OTP screen
-      navigation.navigate('Otp', { email: formData.email.trim() });
+      Alert.alert(
+        "Account Created",
+        "Your account has been created successfully!",
+        [{ text: "OK", onPress: () => navigation.navigate('Login') }]
+      );
     }
   };
 

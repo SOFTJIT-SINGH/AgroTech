@@ -23,6 +23,8 @@ interface UserState {
   location: string;
   farmSize: string;
   mainCrop: string;
+  farmingExperience: string;
+  preferredLanguage: string;
   history: CropHistory[];
   weather: WeatherData | null;
   isWeatherLoading: boolean;
@@ -50,6 +52,8 @@ const initialState = {
   location: "",
   farmSize: "",
   mainCrop: "",
+  farmingExperience: "",
+  preferredLanguage: "",
   history: [] as CropHistory[],
   weather: null as WeatherData | null,
   isWeatherLoading: false,

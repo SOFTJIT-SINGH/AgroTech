@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../services/supabase';
 
 export default function EditProfileScreen({ navigation }: any) {
-  const { name, phone, location, farmSize, mainCrop, updateProfile } = useUserStore();
+  const { name, phone, location, farmSize, mainCrop, farmingExperience, preferredLanguage, updateProfile } = useUserStore();
   const [loading, setLoading] = useState(false);
   
   const [formData, setFormData] = useState({
@@ -16,6 +16,8 @@ export default function EditProfileScreen({ navigation }: any) {
     location,
     farmSize,
     mainCrop,
+    farmingExperience,
+    preferredLanguage,
   });
 
   const handleSave = async () => {
@@ -38,6 +40,8 @@ export default function EditProfileScreen({ navigation }: any) {
           location: formData.location.trim(),
           farm_size: formData.farmSize.trim(),
           primary_crop: formData.mainCrop.trim(),
+          farming_experience: formData.farmingExperience.trim(),
+          preferred_language: formData.preferredLanguage.trim(),
         }
       });
 
@@ -124,6 +128,30 @@ export default function EditProfileScreen({ navigation }: any) {
               className="bg-slate-900 border border-slate-800 rounded-2xl p-4 text-white font-medium"
               placeholderTextColor="#64748b"
               placeholder="e.g. Wheat"
+            />
+          </View>
+        </View>
+
+        <View className="flex-row mb-5">
+          <View className="flex-1 mr-2">
+            <Text className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2 ml-1">Experience (Yrs)</Text>
+            <TextInput
+              value={formData.farmingExperience}
+              onChangeText={(t) => setFormData({ ...formData, farmingExperience: t })}
+              className="bg-slate-900 border border-slate-800 rounded-2xl p-4 text-white font-medium"
+              placeholderTextColor="#64748b"
+              keyboardType="numeric"
+              placeholder="e.g. 5"
+            />
+          </View>
+          <View className="flex-1 ml-2">
+            <Text className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2 ml-1">Language</Text>
+            <TextInput
+              value={formData.preferredLanguage}
+              onChangeText={(t) => setFormData({ ...formData, preferredLanguage: t })}
+              className="bg-slate-900 border border-slate-800 rounded-2xl p-4 text-white font-medium"
+              placeholderTextColor="#64748b"
+              placeholder="e.g. English"
             />
           </View>
         </View>

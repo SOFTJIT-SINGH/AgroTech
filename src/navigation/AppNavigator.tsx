@@ -15,7 +15,8 @@ import WeatherAdviceScreen from "../screens/WeatherAdvice/WeatherAdviceScreen";
 import FertilizerScreen from "../screens/FertilizerPlan/FertilizerScreen";
 import CropSuggestionScreen from "../screens/BestCrop/CropSuggestionScreen";
 import SowingPredictionScreen from "../screens/SowingPrediction/SowingPredictionScreen";
-import BlogDetailsScreen from "@/screens/Blogs/BlogDetailsScreen";
+import BlogDetailsScreen from "../screens/Blogs/BlogDetailsScreen";
+import CreateBlogScreen from "../screens/Blogs/CreateBlogScreen";
 import EditProfileScreen from "../screens/Profile/EditProfileScreen";
 import HistoryScreen from "../screens/Profile/HistoryScreen";
 import ChangePasswordScreen from "../screens/Profile/ChangePasswordScreen";
@@ -40,6 +41,8 @@ export default function AppNavigator() {
           location: meta.location || useUserStore.getState().location,
           farmSize: meta.farm_size || meta.farmSize || useUserStore.getState().farmSize,
           mainCrop: meta.primary_crop || meta.primaryCrop || useUserStore.getState().mainCrop,
+          farmingExperience: meta.farming_experience || meta.farmingExperience || useUserStore.getState().farmingExperience,
+          preferredLanguage: meta.preferred_language || meta.preferredLanguage || useUserStore.getState().preferredLanguage,
         });
       }
 
@@ -91,6 +94,7 @@ export default function AppNavigator() {
           <Stack.Screen name="CropSuggestion" component={CropSuggestionScreen} />
           <Stack.Screen name="SowingPrediction" component={SowingPredictionScreen} />
           <Stack.Screen name="BlogDetails" component={BlogDetailsScreen} />
+          <Stack.Screen name="CreateBlog" component={CreateBlogScreen} />
           <Stack.Screen name="EditProfile" component={EditProfileScreen} />
           <Stack.Screen name="History" component={HistoryScreen} />
           <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />

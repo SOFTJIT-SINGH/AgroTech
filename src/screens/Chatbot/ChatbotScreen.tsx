@@ -26,7 +26,7 @@ export default function ChatbotScreen() {
   const flatListRef = useRef<FlatList>(null);
 
   // Pull dynamic user details and weather from Zustand store (already fetched in AppNavigator)
-  const { name, location, farmSize, mainCrop, weather } = useUserStore();
+  const { name, location, farmSize, mainCrop, weather, preferredLanguage } = useUserStore();
 
   // Build weather context string from store
   const weatherContext = weather 
@@ -71,10 +71,12 @@ export default function ChatbotScreen() {
       - General Location: ${location || 'Unknown'}
       - Farm Size: ${farmSize || 'Unknown'}
       - Primary Crop: ${mainCrop || 'Unknown'}
+      - Preferred Language: ${preferredLanguage || 'English'}
       - Current Date: ${currentDate}
       - Current Local Weather: ${weatherContext}
 
       INSTRUCTIONS: Use this context to provide highly personalized, precise, and concise advice. 
+      IMPORTANT: You MUST reply in the farmer's Preferred Language (${preferredLanguage || 'English'}).
       If they ask a generic question (e.g., "Should I water my farm today?"), check their weather and crop context to answer. 
       Do not narrate the context back to them unless it directly justifies your advice.
       Keep responses concise (2-4 paragraphs max).

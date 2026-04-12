@@ -95,22 +95,32 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
           <View className="bg-slate-900 rounded-3xl p-6 border border-slate-800">
             <View className="flex-row justify-between items-center border-b border-slate-800/80 pb-4 mb-4">
               <Text className="text-slate-400 font-medium text-sm">Phone</Text>
-              <Text className="text-slate-100 font-bold text-base">{user.phone}</Text>
+              <Text className="text-slate-100 font-bold text-base">{user.phone || '—'}</Text>
             </View>
 
             <View className="flex-row justify-between items-center border-b border-slate-800/80 pb-4 mb-4">
               <Text className="text-slate-400 font-medium text-sm">Location</Text>
-              <Text className="text-slate-100 font-bold text-base">{user.location}</Text>
+              <Text className="text-slate-100 font-bold text-base">{user.location || '—'}</Text>
             </View>
 
             <View className="flex-row justify-between items-center border-b border-slate-800/80 pb-4 mb-4">
               <Text className="text-slate-400 font-medium text-sm">Farm Size</Text>
-              <Text className="text-slate-100 font-bold text-base">{user.farmSize}</Text>
+              <Text className="text-slate-100 font-bold text-base">{user.farmSize || '—'}</Text>
+            </View>
+
+            <View className="flex-row justify-between items-center border-b border-slate-800/80 pb-4 mb-4">
+              <Text className="text-slate-400 font-medium text-sm">Main Crop</Text>
+              <Text className="text-emerald-400 font-extrabold text-base">{user.mainCrop || '—'}</Text>
+            </View>
+
+            <View className="flex-row justify-between items-center border-b border-slate-800/80 pb-4 mb-4">
+              <Text className="text-slate-400 font-medium text-sm">Experience</Text>
+              <Text className="text-slate-100 font-bold text-base">{user.farmingExperience ? `${user.farmingExperience} Yrs` : '—'}</Text>
             </View>
 
             <View className="flex-row justify-between items-center">
-              <Text className="text-slate-400 font-medium text-sm">Main Crop</Text>
-              <Text className="text-emerald-400 font-extrabold text-base">{user.mainCrop}</Text>
+              <Text className="text-slate-400 font-medium text-sm">Language</Text>
+              <Text className="text-slate-100 font-bold text-base">{user.preferredLanguage || '—'}</Text>
             </View>
           </View>
         </View>
