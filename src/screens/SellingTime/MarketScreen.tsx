@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
+import { geminiModel } from "../../services/gemini";
 
 export default function MarketScreen() {
   const [data, setData] = useState([]);
@@ -33,20 +34,32 @@ export default function MarketScreen() {
       setLoading(true);
       setHasSearched(true);
 
-      const res = await fetch(API);
-      const json = await res.json();
+      const prompt = `You are an agricultural market price API. Provide realistic, current market prices for the crop "${searchTerm}" in Punjab Mandis (e.g., Amritsar, Ludhiana, or Jalandhar). 
+Return exactly a JSON array of objects, with no markdown, no backticks, and no extra text. 
+Each object must have these exact keys:
+"commodity" (string, the crop name),
+"market" (string, the mandi name),
+"grade" (string, e.g., "FAQ", "Grade A"),
+"min_price" (number, realistic minimum price per quintal in INR),
+"max_price" (number, realistic maximum price per quintal in INR),
+"modal_price" (number, realistic common/modal price per quintal in INR).
+Provide 2 to 5 realistic records. If the crop is completely invalid or not a real agricultural product, return an empty array [].`;
 
-      const records = json.records || [];
+      const aiResult = await geminiModel.generateContent(prompt);
+      const responseText = aiResult.response.text().trim();
+      
+      // Remove any markdown code blocks Gemini might add
+      const jsonStr = responseText.replace(/```json/gi, '').replace(/```/g, '').trim();
+      
+      let records = [];
+      try {
+        records = JSON.parse(jsonStr);
+      } catch (e) {
+        console.error("JSON Parse Error:", e, "Response was:", jsonStr);
+      }
+
       setData(records);
-
-      // Filter the fetched records by the search term
-      const result = records.filter((item) =>
-        item.commodity
-          ?.toLowerCase()
-          .includes(searchTerm.toLowerCase())
-      );
-
-      setFiltered(result);
+      setFiltered(records);
       setLoading(false);
 
     } catch (error) {
