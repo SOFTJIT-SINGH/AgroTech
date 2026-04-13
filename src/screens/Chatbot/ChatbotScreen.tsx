@@ -8,10 +8,44 @@ import {
   FlatList,
   KeyboardAvoidingView,
   Platform,
-  ActivityIndicator
+  ActivityIndicator,
+  Animated
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { geminiModel } from "../../services/gemini";
 import { useUserStore } from "../../store/userStore";
+
+const TypingIndicator = () => {
+  const op1 = useRef(new Animated.Value(0.3)).current;
+  const op2 = useRef(new Animated.Value(0.3)).current;
+  const op3 = useRef(new Animated.Value(0.3)).current;
+
+  useEffect(() => {
+    const animate = () => {
+      Animated.sequence([
+        Animated.timing(op1, { toValue: 1, duration: 200, useNativeDriver: true }),
+        Animated.timing(op2, { toValue: 1, duration: 200, useNativeDriver: true }),
+        Animated.timing(op3, { toValue: 1, duration: 200, useNativeDriver: true }),
+        Animated.timing(op1, { toValue: 0.3, duration: 200, useNativeDriver: true }),
+        Animated.timing(op2, { toValue: 0.3, duration: 200, useNativeDriver: true }),
+        Animated.timing(op3, { toValue: 0.3, duration: 200, useNativeDriver: true }),
+      ]).start((result) => {
+        if (result.finished) {
+          animate();
+        }
+      });
+    };
+    animate();
+  }, []);
+
+  return (
+    <View className="flex-row items-center h-6 px-1">
+      <Animated.View style={{ opacity: op1 }} className="w-2 h-2 rounded-full bg-emerald-400 mr-1.5" />
+      <Animated.View style={{ opacity: op2 }} className="w-2 h-2 rounded-full bg-emerald-400 mr-1.5" />
+      <Animated.View style={{ opacity: op3 }} className="w-2 h-2 rounded-full bg-emerald-400" />
+    </View>
+  );
+};
 
 export default function ChatbotScreen() {
   const [message, setMessage] = useState("");
@@ -123,13 +157,17 @@ export default function ChatbotScreen() {
               : "bg-slate-900 border border-slate-800 rounded-3xl rounded-tl-sm"
           }`}
         >
-          <Text
-            className={`text-base leading-6 ${
-              isUser ? "text-white font-medium" : "text-slate-200"
-            }`}
-          >
-            {item.text}
-          </Text>
+          {item.isTyping ? (
+            <TypingIndicator />
+          ) : (
+            <Text
+              className={`text-base leading-6 ${
+                isUser ? "text-white font-medium" : "text-slate-200"
+              }`}
+            >
+              {item.text}
+            </Text>
+          )}
         </View>
       </View>
     );
@@ -175,7 +213,7 @@ export default function ChatbotScreen() {
       {/* CHAT LIST */}
       <FlatList
         ref={flatListRef}
-        data={chat}
+        data={isSending ? [...chat, { id: 'typing', text: '...', sender: 'bot', isTyping: true }] : chat}
         renderItem={renderItem}
         keyExtractor={item => item.id}
         contentContainerStyle={{ paddingTop: 24, paddingBottom: 20 }}
@@ -205,9 +243,7 @@ export default function ChatbotScreen() {
           {isSending ? (
             <ActivityIndicator size="small" color="#fff" />
           ) : (
-            <Text className="text-white font-extrabold text-[10px] uppercase tracking-widest">
-              Send
-            </Text>
+            <Ionicons name="send" size={18} color="#fff" style={{ marginLeft: 3 }} />
           )}
         </Pressable>
 

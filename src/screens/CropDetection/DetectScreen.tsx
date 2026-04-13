@@ -189,7 +189,7 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
         )}
       </View>
 
-      {!image ? (
+      {!image && isFocused ? (
         <CameraView
           ref={cameraRef}
           style={{ flex: 1 }}
