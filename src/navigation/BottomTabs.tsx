@@ -32,6 +32,7 @@ export default function BottomTabs() {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
+        tabBarHideOnKeyboard: true,
         tabBarStyle: {
           height: 75,
           borderTopWidth: 1,

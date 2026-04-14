@@ -176,7 +176,8 @@ export default function ChatbotScreen() {
   return (
     <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: "#020617" }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
     >
       {/* HEADER */}
       <View className="bg-slate-950 pt-16 pb-3 px-6 border-b border-slate-800/80 z-10 flex-row justify-between items-center">
