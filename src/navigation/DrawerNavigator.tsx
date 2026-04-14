@@ -77,7 +77,7 @@ function CustomDrawerContent(props: any) {
 export default function DrawerNavigator() {
   return (
     <Drawer.Navigator
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
+      drawerContent={CustomDrawerContent}
       screenOptions={{
         headerShown: false,
         drawerStyle: {

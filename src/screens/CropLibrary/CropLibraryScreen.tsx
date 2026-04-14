@@ -134,9 +134,8 @@ export default function CropLibraryScreen() {
             return (
               <View 
                 key={index} 
-                className={`mb-6 rounded-[24px] bg-slate-900 border overflow-hidden transition-all duration-300 ${
-                  isExpanded ? 'border-emerald-500 shadow-lg shadow-emerald-500/20' : 'border-slate-800'
-                }`}
+                style={{ borderColor: isExpanded ? '#10b981' : '#1e293b' }}
+                className="mb-6 rounded-[24px] bg-slate-900 border overflow-hidden"
               >
                 <Pressable 
                   onPress={() => toggleExpand(index)}
