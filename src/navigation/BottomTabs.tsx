@@ -76,7 +76,7 @@ export default function BottomTabs() {
         component={ChatbotScreen}
         options={{
           tabBarIcon: () => (
-            <Ionicons name="chatbubble-ellipses" size={30} color="#020617" /> // slate-950 to contrast with emerald button
+            <MaterialCommunityIcons name="robot" size={30} color="#020617" /> // slate-950 to contrast with emerald button
           ),
           tabBarButton: props => (
             <ChatbotButton {...props} />

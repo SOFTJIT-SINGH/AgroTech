@@ -6,7 +6,9 @@ import ProfileScreen from '../screens/Profile/ProfileScreen';
 import HistoryScreen from '../screens/Profile/HistoryScreen';
 import HelpSupportScreen from '../screens/Profile/HelpSupportScreen';
 import NotificationSettingsScreen from '../screens/Profile/NotificationSettingsScreen';
-import { Ionicons } from '@expo/vector-icons';
+import CropLibraryScreen from '../screens/CropLibrary/CropLibraryScreen';
+import AboutUsScreen from '../screens/AboutUs/AboutUsScreen';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useUserStore } from '../store/userStore';
 import { supabase } from '../services/supabase';
@@ -53,7 +55,7 @@ function CustomDrawerContent(props: any) {
         </View>
 
         {/* Drawer Items */}
-        <View className="flex-1 px-4 pt-6 space-y-2">
+        <View className="flex-1 px-4 pt-2 space-y-2">
           <DrawerItemList {...props} />
         </View>
       </DrawerContentScrollView>
@@ -86,7 +88,7 @@ export default function DrawerNavigator() {
         drawerActiveTintColor: '#34d399', // emerald-400
         drawerInactiveTintColor: '#94a3b8', // slate-400
         drawerLabelStyle: {
-          marginLeft: -16,
+          marginLeft: -8,
           fontWeight: 'bold',
           fontSize: 15,
           letterSpacing: 0.5,
@@ -145,6 +147,26 @@ export default function DrawerNavigator() {
           drawerLabel: 'Help & Support',
           drawerIcon: ({ color }) => (
             <Ionicons name="help-buoy-outline" size={22} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="CropLibraryDrawer"
+        component={CropLibraryScreen}
+        options={{
+          drawerLabel: 'Crop Library',
+          drawerIcon: ({ color }) => (
+            <MaterialCommunityIcons name="book-open-variant" size={22} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="AboutUsDrawer"
+        component={AboutUsScreen}
+        options={{
+          drawerLabel: 'About Us',
+          drawerIcon: ({ color }) => (
+            <Ionicons name="information-circle-outline" size={24} color={color} />
           ),
         }}
       />

@@ -20,11 +20,6 @@ export default function SignupScreen({ navigation }: Props) {
     fullName: '',
     email: '',
     phone: '',
-    farmLocation: '',
-    farmSize: '',
-    primaryCrop: '',
-    farmingExperience: '',
-    preferredLanguage: '',
     password: '',
     confirmPassword: '',
   });
@@ -60,11 +55,6 @@ export default function SignupScreen({ navigation }: Props) {
         data: {
           full_name: formData.fullName.trim(),
           phone: formData.phone.trim(),
-          farm_size: formData.farmSize.trim(),
-          primary_crop: formData.primaryCrop.trim(),
-          location: formData.farmLocation.trim(),
-          farming_experience: formData.farmingExperience.trim(),
-          preferred_language: formData.preferredLanguage.trim(),
         }
       }
     });
@@ -141,65 +131,6 @@ export default function SignupScreen({ navigation }: Props) {
                     keyboardType="phone-pad"
                     value={formData.phone}
                     onChangeText={(val) => updateField('phone', val)}
-                    placeholderTextColor="#64748b"
-                    className="bg-slate-950 border border-slate-800 text-white p-4 rounded-2xl text-base focus:border-emerald-500 transition-colors"
-                  />
-                </View>
-                
-                <View className="flex-row space-x-4">
-                  <View className="flex-1 mr-2">
-                    <Text className="text-xs font-bold text-slate-400 mb-2 ml-1 uppercase tracking-wider">Experience (Yrs)</Text>
-                    <TextInput
-                      placeholder="e.g. 5"
-                      keyboardType="numeric"
-                      value={formData.farmingExperience}
-                      onChangeText={(val) => updateField('farmingExperience', val)}
-                      placeholderTextColor="#64748b"
-                      className="bg-slate-950 border border-slate-800 text-white p-4 rounded-2xl text-base focus:border-emerald-500 transition-colors"
-                    />
-                  </View>
-                  <View className="flex-1 ml-2">
-                    <Text className="text-xs font-bold text-slate-400 mb-2 ml-1 uppercase tracking-wider">Language</Text>
-                    <TextInput
-                      placeholder="e.g. English"
-                      value={formData.preferredLanguage}
-                      onChangeText={(val) => updateField('preferredLanguage', val)}
-                      placeholderTextColor="#64748b"
-                      className="bg-slate-950 border border-slate-800 text-white p-4 rounded-2xl text-base focus:border-emerald-500 transition-colors"
-                    />
-                  </View>
-                </View>
-
-                <View className="flex-row space-x-4">
-                  <View className="flex-1 mr-2">
-                    <Text className="text-xs font-bold text-slate-400 mb-2 ml-1 uppercase tracking-wider">Farm Size (Acres)</Text>
-                    <TextInput
-                      placeholder="e.g. 10"
-                      keyboardType="numeric"
-                      value={formData.farmSize}
-                      onChangeText={(val) => updateField('farmSize', val)}
-                      placeholderTextColor="#64748b"
-                      className="bg-slate-950 border border-slate-800 text-white p-4 rounded-2xl text-base focus:border-emerald-500 transition-colors"
-                    />
-                  </View>
-                  <View className="flex-1 ml-2">
-                    <Text className="text-xs font-bold text-slate-400 mb-2 ml-1 uppercase tracking-wider">Primary Crop</Text>
-                    <TextInput
-                      placeholder="e.g. Wheat"
-                      value={formData.primaryCrop}
-                      onChangeText={(val) => updateField('primaryCrop', val)}
-                      placeholderTextColor="#64748b"
-                      className="bg-slate-950 border border-slate-800 text-white p-4 rounded-2xl text-base focus:border-emerald-500 transition-colors"
-                    />
-                  </View>
-                </View>
-
-                <View>
-                  <Text className="text-xs font-bold text-slate-400 mb-2 ml-1 uppercase tracking-wider">Farm Location / Address</Text>
-                  <TextInput
-                    placeholder="Village, District, State"
-                    value={formData.farmLocation}
-                    onChangeText={(val) => updateField('farmLocation', val)}
                     placeholderTextColor="#64748b"
                     className="bg-slate-950 border border-slate-800 text-white p-4 rounded-2xl text-base focus:border-emerald-500 transition-colors"
                   />
