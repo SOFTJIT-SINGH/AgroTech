@@ -7,6 +7,8 @@ import HistoryScreen from '../screens/Profile/HistoryScreen';
 import HelpSupportScreen from '../screens/Profile/HelpSupportScreen';
 import NotificationSettingsScreen from '../screens/Profile/NotificationSettingsScreen';
 import CropLibraryScreen from '../screens/CropLibrary/CropLibraryScreen';
+import FertilizerLibraryScreen from '../screens/FertilizerLibrary/FertilizerLibraryScreen';
+import PestsLibraryScreen from '../screens/PestsLibrary/PestsLibraryScreen';
 import AboutUsScreen from '../screens/AboutUs/AboutUsScreen';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
@@ -157,6 +159,26 @@ export default function DrawerNavigator() {
           drawerLabel: 'Crop Library',
           drawerIcon: ({ color }) => (
             <MaterialCommunityIcons name="book-open-variant" size={22} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="FertilizerLibraryDrawer"
+        component={FertilizerLibraryScreen}
+        options={{
+          drawerLabel: 'Fertilizers',
+          drawerIcon: ({ color }) => (
+            <MaterialCommunityIcons name="flask-outline" size={22} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="PestsLibraryDrawer"
+        component={PestsLibraryScreen}
+        options={{
+          drawerLabel: 'Pests & Diseases',
+          drawerIcon: ({ color }) => (
+            <MaterialCommunityIcons name="bug-outline" size={22} color={color} />
           ),
         }}
       />

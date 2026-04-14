@@ -23,6 +23,10 @@ import ChangePasswordScreen from "../screens/Profile/ChangePasswordScreen";
 import HelpSupportScreen from "../screens/Profile/HelpSupportScreen";
 import NotificationSettingsScreen from "../screens/Profile/NotificationSettingsScreen";
 import PrivacyPolicyScreen from "../screens/Profile/PrivacyPolicyScreen";
+import CropLibraryScreen from "../screens/CropLibrary/CropLibraryScreen";
+import FertilizerLibraryScreen from "../screens/FertilizerLibrary/FertilizerLibraryScreen";
+import PestsLibraryScreen from "../screens/PestsLibrary/PestsLibraryScreen";
+import AboutUsScreen from "../screens/AboutUs/AboutUsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -101,6 +105,10 @@ export default function AppNavigator() {
           <Stack.Screen name="HelpSupport" component={HelpSupportScreen} />
           <Stack.Screen name="NotificationSettings" component={NotificationSettingsScreen} />
           <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
+          <Stack.Screen name="CropLibrary" component={CropLibraryScreen} />
+          <Stack.Screen name="FertilizerLibrary" component={FertilizerLibraryScreen} />
+          <Stack.Screen name="PestsLibrary" component={PestsLibraryScreen} />
+          <Stack.Screen name="AboutUs" component={AboutUsScreen} />
         </>
       ) : (
         <Stack.Screen name="Auth" component={AuthNavigator} />

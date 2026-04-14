@@ -50,6 +50,9 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
   const features = [
     { title: "Crop Disease", icon: "https://cdn-icons-png.flaticon.com/512/2909/2909768.png", screen: "DetectCrop" },
     { title: "Weather Advice", icon: "https://cdn-icons-png.flaticon.com/512/1163/1163624.png", screen: "WeatherAdvice" },
+    { title: "Crop Library", icon: "https://cdn-icons-png.flaticon.com/512/3022/3022718.png", screen: "CropLibrary" },
+    { title: "Fertilizer Library", icon: "https://cdn-icons-png.flaticon.com/512/1047/1047683.png", screen: "FertilizerLibrary" },
+    { title: "Pests Library", icon: "https://cdn-icons-png.flaticon.com/512/2909/2909768.png", screen: "PestsLibrary" },
     { title: "Crop Suggestion", icon: "https://cdn-icons-png.flaticon.com/512/628/628324.png", screen: "CropSuggestion" },
     { title: "Sowing Time", icon: "https://cdn-icons-png.flaticon.com/512/3050/3050525.png", screen: "SowingPrediction" },
     { title: "Fertilizer Plan", icon: "https://cdn-icons-png.flaticon.com/512/2909/2909753.png", screen: "FertilizerPlan" },
