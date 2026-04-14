@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { View, Text, Image, Pressable, ActivityIndicator, Switch } from "react-native";
+import { View, Text, Image, Pressable, ActivityIndicator, Switch, ScrollView, Alert } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,6 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native"; 
 import { useUserStore } from "../../store/userStore";
 import { geminiModel } from "../../services/gemini"; // Using your reliable SDK
+import { supabase } from "../../services/supabase";
 
 export default function DetectScreen({ navigation }: { navigation: any }) {
   const { addHistory, preferredLanguage } = useUserStore();
@@ -19,6 +20,7 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
   const [image, setImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<any>(null);
+  const [isPosting, setIsPosting] = useState(false);
 
   if (!permission) {
     return <View className="flex-1 bg-slate-950" />;
@@ -76,7 +78,10 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
       setResult({
         disease: "Missing API Key",
         confidence: "0%",
-        treatment: "Please add EXPO_PUBLIC_GEMINI_API_KEY to your .env file."
+        treatment: "Please add EXPO_PUBLIC_GEMINI_API_KEY to your .env file.",
+        plantDetails: "-",
+        improvementTips: "-",
+        pestAndDiseaseInfo: "-"
       });
       return;
     }
@@ -84,24 +89,28 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
     try {
       const activeLanguage = useEnglish || !preferredLanguage ? 'English' : preferredLanguage;
 
-      // 1. Prepare the exact prompt instructions
-     const prompt = `Analyze this image carefully. First, determine if the main subject is a plant leaf or crop. 
-      Reply with ONLY valid JSON and no markdown formatting. The JSON must exactly match this format: { "disease": "string", "confidence": "string", "treatment": "string" }.
+      const prompt = `Analyze this image carefully. First, determine if the main subject is a plant, leaf, or crop. 
+      Reply with ONLY valid JSON and no markdown formatting. The JSON must exactly match this format: { "disease": "string", "confidence": "string", "treatment": "string", "plantDetails": "string", "improvementTips": "string", "pestAndDiseaseInfo": "string" }.
       
       RULES:
       1. If the image IS a plant leaf/crop: 
-         - "disease": The name of the disease or 'Healthy'. This MUST be written in ${activeLanguage}.
+         - "disease": The name of the disease or 'Healthy'. (in ${activeLanguage})
          - "confidence": The confidence percentage (e.g., '92%').
-         - "treatment": Brief, actionable treatment advice. This MUST be written in ${activeLanguage}.
+         - "treatment": Brief, actionable treatment advice. (in ${activeLanguage})
+         - "plantDetails": Professional detail of the plant, what it needs, supplements, fertilizers, and irrigation. (in ${activeLanguage})
+         - "improvementTips": How to improve its growth effectively. (in ${activeLanguage})
+         - "pestAndDiseaseInfo": What pests or diseases it is prone to in which season and how to protect/cure it. (in ${activeLanguage})
       
-      2. If the image IS NOT a plant leaf/crop: 
-         - "disease": "Not a Plant ([Name of Object])" (e.g., "Not a Plant (Laptop)" or "Not a Plant (Human Face)"). Translate this ENTIRE string including the object name to ${activeLanguage}.
-         - "confidence": "N/A".
-         - "treatment": "Our AI detected a [Name of Object] in the frame. For accurate agricultural analysis, please kindly upload a clear, focused image of a crop leaf." Translate this ENTIRE string including the object name to ${activeLanguage}.
+      2. If the image IS NOT a plant: 
+         - "disease": "Not a Plant" (in ${activeLanguage})
+         - "confidence": "N/A"
+         - "treatment": "Our AI detected an object. Please upload a clear image of a crop leaf." (in ${activeLanguage})
+         - "plantDetails": "N/A"
+         - "improvementTips": "N/A"
+         - "pestAndDiseaseInfo": "N/A"
          
-      CRITICAL: The JSON keys MUST remain in English ("disease", "confidence", "treatment"), but the VALUES for disease and treatment must strictly be in ${activeLanguage}.`; 
+      CRITICAL: The keys MUST remain in English ("disease", "confidence", "treatment", "plantDetails", "improvementTips", "pestAndDiseaseInfo"), but the VALUES must strictly be in ${activeLanguage}.`; 
       
-      // 2. Format the image for the Gemini SDK
       const imagePart = {
         inlineData: {
           data: base64Image,
@@ -109,11 +118,9 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
         }
       };
 
-      // 3. Call the SDK
       const resultObj = await geminiModel.generateContent([prompt, imagePart]);
       const rawText = await resultObj.response.text();
       
-      // 4. Safely parse the JSON (removing any accidental markdown backticks)
       let parsed;
       try {
         const cleanJsonStr = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
@@ -122,19 +129,24 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
         parsed = {
           disease: "Parsing Error",
           confidence: "-",
-          treatment: "Failed to read the AI response properly."
+          treatment: "Failed to read the AI response properly.",
+          plantDetails: "-",
+          improvementTips: "-",
+          pestAndDiseaseInfo: "-"
         };
       }
 
       const resObj = {
         disease: parsed.disease || "Unknown",
         confidence: parsed.confidence || "Low",
-        treatment: parsed.treatment || "Unable to determine treatment."
+        treatment: parsed.treatment || "Unable to determine treatment.",
+        plantDetails: parsed.plantDetails || "Details unavailable.",
+        improvementTips: parsed.improvementTips || "Tips unavailable.",
+        pestAndDiseaseInfo: parsed.pestAndDiseaseInfo || "Info unavailable."
       };
       
       setResult(resObj);
       
-      // Save to history state
       if (resObj.confidence !== "N/A" && resObj.confidence !== "0%") {
         addHistory({
           id: Date.now().toString(),
@@ -151,10 +163,47 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
       setResult({
         disease: "Analysis Failed",
         confidence: "0%",
-        treatment: "There was an error communicating with the AI. Please try again."
+        treatment: "There was an error communicating with the AI. Please try again.",
+        plantDetails: "-",
+        improvementTips: "-",
+        pestAndDiseaseInfo: "-"
       });
     } finally {
       setIsAnalyzing(false);
+    }
+  };
+
+  const handlePostBlog = async () => {
+    if (!result) return;
+    setIsPosting(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+         Alert.alert("Error", "You must be logged in to post a blog.");
+         return;
+      }
+      
+      const content = `Based on my crop scan:\n\n**Detected Status**: ${result.disease} (Confidence: ${result.confidence})\n\n**Actionable Treatment**:\n${result.treatment}\n\n**Plant Care Details**:\n${result.plantDetails}\n\n**Improvement Tips**:\n${result.improvementTips}\n\n**Pest & Disease Outlook**:\n${result.pestAndDiseaseInfo}`;
+
+      const { error } = await supabase.from('blogs').insert({
+        title: `Crop Scan: ${result.disease === 'Healthy' ? 'Healthy Check' : result.disease}`,
+        content: content,
+        category: 'Crop Tips',
+        image_url: 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=800',
+        author_name: useUserStore.getState().name || session.user.email?.split('@')[0] || 'Anonymous',
+        author_id: session.user.id,
+      });
+
+      if (error) throw error;
+
+      Alert.alert("Success! 🎉", "Your comprehensive scan analysis was posted as a blog. You can view & edit it from the Blogs tab.", [
+        { text: "View Blogs", onPress: () => navigation.navigate("Blogs") },
+        { text: "OK", style: "cancel" }
+      ]);
+    } catch(err: any) {
+      Alert.alert("Error", err.message);
+    } finally {
+      setIsPosting(false);
     }
   };
 
@@ -229,39 +278,75 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
           </View>
         </CameraView>
       ) : (
-        <View className="flex-1 px-6 pt-20">
+        <ScrollView className="flex-1 px-6 pt-24" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 60 }}>
           
-          <View className="rounded-[32px] overflow-hidden border border-slate-800 bg-slate-900 shadow-2xl mb-6 absolute top-24 left-6 right-6">
+          <View className="rounded-[32px] overflow-hidden border border-slate-800 bg-slate-900 shadow-2xl mb-6">
             <Image
               source={{ uri: image }}
               style={{ width: "100%", height: 320 }}
               className="opacity-90"
             />
             {isAnalyzing && (
-              <View className="absolute inset-0 bg-slate-950/70 justify-center items-center">
+              <View className="absolute inset-0 bg-slate-950/80 justify-center items-center">
                 <ActivityIndicator size="large" color="#34d399" />
-                <Text className="text-emerald-400 font-bold mt-4 tracking-widest uppercase text-xs">Analyzing Leaf Data...</Text>
+                <Text className="text-emerald-400 font-bold mt-4 tracking-widest uppercase text-xs">Analyzing Extensive Plant Data...</Text>
               </View>
             )}
           </View>
 
           {!isAnalyzing && result && (
-            <View className="bg-slate-900 absolute top-[400px] left-6 right-6 p-6 rounded-[32px] border border-slate-800 shadow-xl">
+            <View className="bg-slate-900 p-6 rounded-[32px] border border-slate-800 shadow-xl mb-6">
               
-              <View className="flex-row justify-between items-start mb-4">
-                <View>
+              <View className="flex-row justify-between items-start mb-6">
+                <View className="flex-1 pr-4">
                   <Text className="text-slate-400 font-bold text-[10px] uppercase tracking-widest mb-1">Detected Issue</Text>
-                  <Text className="text-white font-extrabold text-2xl">{result.disease}</Text>
+                  <Text className="text-white font-extrabold text-2xl leading-8">{result.disease}</Text>
                 </View>
-                <View className="bg-emerald-500/10 px-3 py-1.5 rounded-xl border border-emerald-500/20">
+                <View className="bg-emerald-500/10 px-3 py-1.5 rounded-xl border border-emerald-500/20 mt-1">
                   <Text className="text-emerald-400 font-bold text-xs uppercase">{result.confidence}</Text>
                 </View>
               </View>
               
-              <View className="bg-slate-950/50 p-4 rounded-2xl border border-slate-800/50 mb-6">
+              <View className="bg-slate-950/50 p-4 rounded-2xl border border-slate-800/50 mb-4">
                 <Text className="font-bold text-emerald-400 mb-2 text-xs uppercase tracking-wider">Recommended Treatment</Text>
                 <Text className="text-slate-300 text-sm leading-6">{result.treatment}</Text>
               </View>
+
+              {result.plantDetails !== "N/A" && (
+                <>
+                  <View className="bg-slate-950/50 p-4 rounded-2xl border border-slate-800/50 mb-4">
+                    <Text className="font-bold text-emerald-400 mb-2 text-xs uppercase tracking-wider">Plant Details & Requirements</Text>
+                    <Text className="text-slate-300 text-sm leading-6">{result.plantDetails}</Text>
+                  </View>
+
+                  <View className="bg-slate-950/50 p-4 rounded-2xl border border-slate-800/50 mb-4">
+                    <Text className="font-bold text-emerald-400 mb-2 text-xs uppercase tracking-wider">Improvement Tips</Text>
+                    <Text className="text-slate-300 text-sm leading-6">{result.improvementTips}</Text>
+                  </View>
+
+                  <View className="bg-slate-950/50 p-4 rounded-2xl border border-slate-800/50 mb-6">
+                    <Text className="font-bold text-emerald-400 mb-2 text-xs uppercase tracking-wider">Pest & Disease Outlook</Text>
+                    <Text className="text-slate-300 text-sm leading-6">{result.pestAndDiseaseInfo}</Text>
+                  </View>
+
+                  <Pressable
+                    onPress={handlePostBlog}
+                    disabled={isPosting}
+                    className="bg-emerald-600/20 py-4 rounded-2xl items-center border border-emerald-500/30 active:scale-95 transition-all mb-3 flex-row justify-center gap-2"
+                  >
+                    {isPosting ? (
+                      <ActivityIndicator size="small" color="#34d399" />
+                    ) : (
+                      <>
+                        <Ionicons name="share-social" size={18} color="#34d399" />
+                        <Text className="text-emerald-400 font-extrabold text-sm uppercase tracking-wider">
+                          Post as Public Blog
+                        </Text>
+                      </>
+                    )}
+                  </Pressable>
+                </>
+              )}
 
               <Pressable
                 onPress={resetScanner}
@@ -275,7 +360,7 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
             </View>
           )}
 
-        </View>
+        </ScrollView>
       )}
 
     </SafeAreaView>

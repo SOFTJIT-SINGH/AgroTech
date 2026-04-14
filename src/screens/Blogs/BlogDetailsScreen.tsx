@@ -63,14 +63,25 @@ export default function BlogDetailsScreen({ route, navigation }: any) {
         <Ionicons name="chevron-back" size={24} color="#f8fafc" />
       </Pressable>
 
-      {/* DELETE BUTTON (only for owner) */}
+      {/* ACTIONS ROW (only for owner) */}
       {isOwner && (
-        <Pressable
-          onPress={handleDelete}
-          className="absolute top-14 right-5 z-10 w-11 h-11 bg-red-500/20 rounded-full items-center justify-center border border-red-500/30 active:scale-90"
-        >
-          <Ionicons name="trash-outline" size={20} color="#f43f5e" />
-        </Pressable>
+        <View className="absolute top-14 right-5 z-10 flex-row items-center gap-3">
+          {/* EDIT BUTTON */}
+          <Pressable
+            onPress={() => navigation.navigate('CreateBlog', { editBlog: blog })}
+            className="w-11 h-11 bg-emerald-500/20 rounded-full items-center justify-center border border-emerald-500/30 active:scale-90"
+          >
+            <Ionicons name="pencil" size={20} color="#34d399" />
+          </Pressable>
+
+          {/* DELETE BUTTON */}
+          <Pressable
+            onPress={handleDelete}
+            className="w-11 h-11 bg-red-500/20 rounded-full items-center justify-center border border-red-500/30 active:scale-90"
+          >
+            <Ionicons name="trash-outline" size={20} color="#f43f5e" />
+          </Pressable>
+        </View>
       )}
 
       <ScrollView 

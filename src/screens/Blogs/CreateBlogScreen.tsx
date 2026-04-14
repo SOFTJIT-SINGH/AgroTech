@@ -18,12 +18,14 @@ const STOCK_IMAGES: Record<string, string> = {
   'General': 'https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800',
 };
 
-export default function CreateBlogScreen({ navigation }: any) {
+export default function CreateBlogScreen({ route, navigation }: any) {
   const { name } = useUserStore();
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [category, setCategory] = useState('General');
-  const [imageUrl, setImageUrl] = useState('');
+  const editBlog = route?.params?.editBlog;
+
+  const [title, setTitle] = useState(editBlog?.title || '');
+  const [content, setContent] = useState(editBlog?.content || '');
+  const [category, setCategory] = useState(editBlog?.category || 'General');
+  const [imageUrl, setImageUrl] = useState(editBlog?.image_url && editBlog.image_url.startsWith('http') && !Object.values(STOCK_IMAGES).includes(editBlog.image_url) ? editBlog.image_url : '');
   const [loading, setLoading] = useState(false);
 
   const handlePublish = async () => {
@@ -48,25 +50,43 @@ export default function CreateBlogScreen({ navigation }: any) {
     // Use category-matched stock image if user didn't provide one
     const finalImageUrl = imageUrl.trim() || STOCK_IMAGES[category] || STOCK_IMAGES['General'];
 
-    const { error } = await supabase.from('blogs').insert({
-      title: title.trim(),
-      content: content.trim(),
-      category,
-      image_url: finalImageUrl,
-      author_name: name || session.user.email?.split('@')[0] || 'Anonymous',
-      author_id: session.user.id,
-    });
+    let error;
+    if (editBlog) {
+      const { error: updateError } = await supabase.from('blogs').update({
+        title: title.trim(),
+        content: content.trim(),
+        category,
+        image_url: finalImageUrl,
+      }).eq('id', editBlog.id);
+      error = updateError;
+    } else {
+      const { error: insertError } = await supabase.from('blogs').insert({
+        title: title.trim(),
+        content: content.trim(),
+        category,
+        image_url: finalImageUrl,
+        author_name: name || session.user.email?.split('@')[0] || 'Anonymous',
+        author_id: session.user.id,
+      });
+      error = insertError;
+    }
 
     setLoading(false);
 
     if (error) {
-      console.log("Blog insert error:", error);
+      console.log("Blog save error:", error);
       Alert.alert("Error", error.message);
     } else {
       Alert.alert(
-        "Published! 🎉",
-        "Your blog has been posted and is now visible to all farmers.",
-        [{ text: "OK", onPress: () => navigation.goBack() }]
+        editBlog ? "Updated! 🎉" : "Published! 🎉",
+        editBlog ? "Your blog has been updated successfully." : "Your blog has been posted and is now visible to all farmers.",
+        [{ text: "OK", onPress: () => {
+          if (editBlog) {
+            navigation.navigate("Blogs");
+          } else {
+            navigation.goBack();
+          }
+        }}]
       );
     }
   };
@@ -174,7 +194,7 @@ export default function CreateBlogScreen({ navigation }: any) {
 
         {/* Publish Button */}
         <DynamicButton
-          title="PUBLISH BLOG"
+          title={editBlog ? "UPDATE BLOG" : "PUBLISH BLOG"}
           onPress={handlePublish}
           loading={loading}
           className="mb-12 rounded-2xl bg-emerald-600"
