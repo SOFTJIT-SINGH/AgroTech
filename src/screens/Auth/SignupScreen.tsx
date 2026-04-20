@@ -66,8 +66,8 @@ export default function SignupScreen({ navigation }: Props) {
     } else {
       Alert.alert(
         "Account Created",
-        "Your account has been created successfully!",
-        [{ text: "OK", onPress: () => navigation.navigate('Login') }]
+        "Your account has been created successfully! Please verify your email.",
+        [{ text: "OK", onPress: () => navigation.navigate('Otp', { email: formData.email.trim() }) }]
       );
     }
   };

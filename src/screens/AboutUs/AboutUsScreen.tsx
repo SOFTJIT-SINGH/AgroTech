@@ -11,7 +11,7 @@ export default function AboutUsScreen() {
     <SafeAreaView className="flex-1 bg-slate-950">
       {/* Header */}
       <View className="px-6 pt-6 pb-4 border-b border-slate-800 flex-row items-center">
-        <Pressable onPress={() => navigation.navigate('MainDrawerHome')} className="mr-4 p-2 bg-slate-900 rounded-full border border-slate-800">
+        <Pressable onPress={() => navigation.goBack()} className="mr-4 p-2 bg-slate-900 rounded-full border border-slate-800">
           <Ionicons name="arrow-back" size={24} color="#34d399" />
         </Pressable>
         <View>

@@ -7,6 +7,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 const crops = [
   "Wheat",
@@ -45,6 +47,7 @@ const fertilizerGuide = {
 };
 
 export default function FertilizerScreen() {
+  const navigation = useNavigation();
   const [crop, setCrop] = useState(null);
   const [soil, setSoil] = useState(null);
   const [farm, setFarm] = useState(null);
@@ -132,12 +135,30 @@ export default function FertilizerScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-slate-950">
-      <ScrollView className="px-6" showsVerticalScrollIndicator={false}>
+      {/* HEADER */}
+      <View className="px-6 pt-4 pb-4 border-b border-slate-900 flex-row items-center">
+        <Pressable 
+          onPress={() => navigation.goBack()}
+          className="mr-4 p-2 bg-slate-900 rounded-full border border-slate-800 active:scale-95 transition-all"
+        >
+          <Ionicons name="arrow-back" size={24} color="#34d399" />
+        </Pressable>
+        <View>
+          <Text className="text-xl font-black text-white tracking-tight">Fertilizer <Text className="text-emerald-400">Plan</Text></Text>
+          <Text className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-0.5">Nutrient Guide</Text>
+        </View>
+      </View>
+
+      <ScrollView 
+        className="px-6" 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingTop: 20 }}
+      >
         
-        {/* HEADER */}
-        <View className="pt-5 pb-6">
-          <Text className="text-3xl font-extrabold text-white tracking-tight">
-            Fertilizer <Text className="text-emerald-400">Planner</Text>
+        {/* HERO SECTION */}
+        <View className="mb-8">
+          <Text className="text-2xl font-extrabold text-white tracking-tight leading-8">
+            Soil Nutrient <Text className="text-emerald-400">Scheduler</Text>
           </Text>
           <Text className="text-slate-400 font-medium mt-1 text-sm">
             Generate an optimal nutrient schedule for your crop

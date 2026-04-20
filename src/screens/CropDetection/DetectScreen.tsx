@@ -4,7 +4,7 @@ import { CameraView, useCameraPermissions } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { useIsFocused } from "@react-navigation/native"; 
+import { useIsFocused } from "@react-navigation/native";
 import { useUserStore } from "../../store/userStore";
 import { geminiModel } from "../../services/gemini"; // Using your reliable SDK
 import { supabase } from "../../services/supabase";
@@ -34,7 +34,7 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
         </View>
         <Text className="text-2xl font-bold text-white mb-3 text-center">Camera Access</Text>
         <Text className="text-slate-400 text-center mb-8 px-4">We need camera access to detect diseases on your crop leaves.</Text>
-        <Pressable 
+        <Pressable
           onPress={requestPermission}
           className="bg-emerald-500 px-8 py-4 rounded-2xl active:bg-emerald-600 active:scale-95 transition-all w-full items-center"
         >
@@ -72,7 +72,7 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
 
   const analyzePhoto = async (base64Image: string, uri: string) => {
     setIsAnalyzing(true);
-    
+
     if (!process.env.EXPO_PUBLIC_GEMINI_API_KEY) {
       setIsAnalyzing(false);
       setResult({
@@ -109,8 +109,21 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
          - "improvementTips": "N/A"
          - "pestAndDiseaseInfo": "N/A"
          
-      CRITICAL: The keys MUST remain in English ("disease", "confidence", "treatment", "plantDetails", "improvementTips", "pestAndDiseaseInfo"), but the VALUES must strictly be in ${activeLanguage}.`; 
-      
+      CRITICAL: The keys MUST remain in English ("disease", "confidence", "treatment", "plantDetails", "improvementTips", "pestAndDiseaseInfo"), but the VALUES must strictly be in ${activeLanguage}.`;
+
+      // const temp =   const prompt = `Analyze this crop leaf image.
+      // Output strictly JSON (no markdown, no text) in this schema:
+      // {
+      //   "disease": "Detected disease or 'Healthy'",
+      //   "confidence": "Certainty percentage",
+      //   "treatment": "Actionable treatment advice",
+      //   "plantDetails": "Details about plant care, soil, and water",
+      //   "improvementTips": "Growth and yield optimization tips",
+      //   "pestAndDiseaseInfo": "Seasonal risks and prevention"
+      // }
+      // Rules: Values must be in ${activeLanguage}. Keys must stay in English as defined above.`;
+
+
       const imagePart = {
         inlineData: {
           data: base64Image,
@@ -120,7 +133,7 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
 
       const resultObj = await geminiModel.generateContent([prompt, imagePart]);
       const rawText = await resultObj.response.text();
-      
+
       let parsed;
       try {
         const cleanJsonStr = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
@@ -144,9 +157,9 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
         improvementTips: parsed.improvementTips || "Tips unavailable.",
         pestAndDiseaseInfo: parsed.pestAndDiseaseInfo || "Info unavailable."
       };
-      
+
       setResult(resObj);
-      
+
       if (resObj.confidence !== "N/A" && resObj.confidence !== "0%") {
         addHistory({
           id: Date.now().toString(),
@@ -179,10 +192,10 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) {
-         Alert.alert("Error", "You must be logged in to post a blog.");
-         return;
+        Alert.alert("Error", "You must be logged in to post a blog.");
+        return;
       }
-      
+
       const content = `Based on my crop scan:\n\n**Detected Status**: ${result.disease} (Confidence: ${result.confidence})\n\n**Actionable Treatment**:\n${result.treatment}\n\n**Plant Care Details**:\n${result.plantDetails}\n\n**Improvement Tips**:\n${result.improvementTips}\n\n**Pest & Disease Outlook**:\n${result.pestAndDiseaseInfo}`;
 
       const { error } = await supabase.from('blogs').insert({
@@ -200,7 +213,7 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
         { text: "View Blogs", onPress: () => navigation.navigate("Blogs") },
         { text: "OK", style: "cancel" }
       ]);
-    } catch(err: any) {
+    } catch (err: any) {
       Alert.alert("Error", err.message);
     } finally {
       setIsPosting(false);
@@ -214,17 +227,28 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
 
   return (
     <SafeAreaView className="flex-1 bg-slate-950">
-      
-      {/* HEADER */}
-      <View className="px-6 pt-5 pb-4 flex-row items-center justify-between z-10 absolute top-10 left-0 right-0">
-        <View className="bg-slate-900/80 px-4 py-2 rounded-full border border-slate-800/80 backdrop-blur-md pointer-events-none">
-           <Text className="text-emerald-400 font-bold text-sm uppercase tracking-widest">Disease Scanner</Text>
+      <View className="px-6 pt-4 pb-4 border-b border-slate-900 flex-row items-center justify-between bg-slate-950 z-20">
+        <View className="flex-row items-center">
+          <Pressable
+            onPress={() => navigation.goBack()}
+            className="mr-4 p-2 bg-slate-900 rounded-full border border-slate-800 active:scale-95 transition-all"
+          >
+            <Ionicons name="arrow-back" size={24} color="#34d399" />
+          </Pressable>
+          <View>
+            <Text className="text-xl font-black text-white tracking-tight">
+              Disease <Text className="text-emerald-400">Scanner</Text>
+            </Text>
+            <Text className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-0.5">
+              AI Analysis
+            </Text>
+          </View>
         </View>
 
         {/* LANGUAGE TOGGLE */}
-        {preferredLanguage && preferredLanguage.toLowerCase() !== 'english' && (
-          <View className="items-center bg-slate-900/80 py-1.5 px-3 rounded-xl border border-slate-800/80">
-            <Text className="text-[10px] text-slate-400 font-bold mb-0.5 uppercase tracking-widest">
+        {Boolean(preferredLanguage && preferredLanguage.toLowerCase() !== 'english') && (
+          <View className="items-center bg-slate-900 py-1 px-3 rounded-xl border border-slate-800">
+            <Text className="text-[8px] text-slate-500 font-bold mb-0.5 uppercase tracking-widest">
               {useEnglish ? 'English' : preferredLanguage}
             </Text>
             <Switch
@@ -232,7 +256,7 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
               onValueChange={setUseEnglish}
               trackColor={{ false: '#34d399', true: '#334155' }}
               thumbColor="#f8fafc"
-              style={{ transform: [{ scaleX: 0.7 }, { scaleY: 0.7 }], height: 20 }}
+              style={{ transform: [{ scaleX: 0.6 }, { scaleY: 0.6 }], height: 16 }}
             />
           </View>
         )}
@@ -244,7 +268,7 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
           style={{ flex: 1 }}
         >
           <View className="flex-1 justify-end items-center pb-12 px-6">
-            
+
             {/* Guide frame overlaid on camera */}
             <View className="absolute top-1/4 bottom-1/3 left-10 right-10 border-2 border-emerald-500/50 rounded-3xl items-center justify-center pointer-events-none">
               <View className="w-8 h-8 border-t-4 border-l-4 border-emerald-400 absolute top-0 left-0 rounded-tl-xl" />
@@ -255,7 +279,6 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
 
             <View className="bg-slate-950/80 w-full p-6 rounded-[32px] border border-slate-800/80 backdrop-blur-lg flex-col shadow-2xl items-center">
               <Text className="text-slate-300 font-medium mb-6 text-center text-sm">Position the crop leaf within the frame</Text>
-              
               <View className="flex-row w-full justify-between items-center gap-4">
                 <Pressable
                   onPress={pickImage}
@@ -263,15 +286,13 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
                 >
                   <Ionicons name="images-outline" size={24} color="#94a3b8" />
                 </Pressable>
-
                 <Pressable
                   onPress={takePhoto}
                   className="w-20 h-20 rounded-full bg-slate-800 border-4 border-slate-700 items-center justify-center active:scale-95 transition-transform"
                 >
                   <View className="w-14 h-14 bg-emerald-500 rounded-full border-2 border-slate-950" />
                 </Pressable>
-
-                <View className="w-16 h-16" /> {/* Placeholder for balance */}
+                <View className="w-16 h-16" />
               </View>
             </View>
 
@@ -279,7 +300,7 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
         </CameraView>
       ) : (
         <ScrollView className="flex-1 px-6 pt-24" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 60 }}>
-          
+
           <View className="rounded-[32px] overflow-hidden border border-slate-800 bg-slate-900 shadow-2xl mb-6">
             <Image
               source={{ uri: image }}
@@ -296,7 +317,7 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
 
           {!isAnalyzing && result && (
             <View className="bg-slate-900 p-6 rounded-[32px] border border-slate-800 shadow-xl mb-6">
-              
+
               <View className="flex-row justify-between items-start mb-6">
                 <View className="flex-1 pr-4">
                   <Text className="text-slate-400 font-bold text-[10px] uppercase tracking-widest mb-1">Detected Issue</Text>
@@ -306,7 +327,7 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
                   <Text className="text-emerald-400 font-bold text-xs uppercase">{result.confidence}</Text>
                 </View>
               </View>
-              
+
               <View className="bg-slate-950/50 p-4 rounded-2xl border border-slate-800/50 mb-4">
                 <Text className="font-bold text-emerald-400 mb-2 text-xs uppercase tracking-wider">Recommended Treatment</Text>
                 <Text className="text-slate-300 text-sm leading-6">{result.treatment}</Text>
@@ -332,17 +353,17 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
                   <Pressable
                     onPress={handlePostBlog}
                     disabled={isPosting}
-                    className="bg-emerald-600/20 py-4 rounded-2xl items-center border border-emerald-500/30 active:scale-95 transition-all mb-3 flex-row justify-center gap-2"
+                    className="bg-emerald-600/20 py-4 rounded-2xl items-center border border-emerald-500/30 active:scale-95 transition-all mb-3 flex-row justify-center"
                   >
                     {isPosting ? (
                       <ActivityIndicator size="small" color="#34d399" />
                     ) : (
-                      <>
-                        <Ionicons name="share-social" size={18} color="#34d399" />
+                      <View className="flex-row items-center justify-center">
+                        <Ionicons name="share-social" size={18} color="#34d399" style={{ marginRight: 8 }} />
                         <Text className="text-emerald-400 font-extrabold text-sm uppercase tracking-wider">
                           Post as Public Blog
                         </Text>
-                      </>
+                      </View>
                     )}
                   </Pressable>
                 </>

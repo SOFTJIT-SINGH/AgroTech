@@ -195,20 +195,18 @@ export default function ChatbotScreen() {
         </View>
 
         {/* LANGUAGE TOGGLE */}
-        {preferredLanguage && preferredLanguage.toLowerCase() !== 'english' && (
-          <View className="items-center">
-            <Text className="text-[10px] text-slate-400 font-bold mb-1 uppercase">
-              {useEnglish ? 'English' : preferredLanguage}
-            </Text>
-            <Switch
-              value={useEnglish}
-              onValueChange={setUseEnglish}
-              trackColor={{ false: '#34d399', true: '#334155' }}
-              thumbColor="#f8fafc"
-              style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
-            />
-          </View>
-        )}
+        <View className="items-center">
+          <Text className="text-[10px] text-slate-400 font-bold mb-1 uppercase">
+            {useEnglish ? 'English' : (preferredLanguage || 'Regional')}
+          </Text>
+          <Switch
+            value={useEnglish}
+            onValueChange={setUseEnglish}
+            trackColor={{ false: '#34d399', true: '#334155' }}
+            thumbColor="#f8fafc"
+            style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
+          />
+        </View>
       </View>
 
       {/* CHAT LIST */}

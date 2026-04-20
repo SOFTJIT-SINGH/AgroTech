@@ -3,14 +3,17 @@ import {
   Text,
   ScrollView,
   RefreshControl,
-  ActivityIndicator
+  ActivityIndicator,
+  Pressable
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useUserStore } from "../../store/userStore";
+import { useNavigation } from "@react-navigation/native";
 
 export default function WeatherAdviceScreen() {
+  const navigation = useNavigation();
   const { weather, isWeatherLoading, fetchWeather } = useUserStore();
   const [advice, setAdvice] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -66,6 +69,20 @@ export default function WeatherAdviceScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-slate-950">
+      {/* HEADER */}
+      <View className="px-6 pt-4 pb-4 border-b border-slate-900 flex-row items-center">
+        <Pressable 
+          onPress={() => navigation.goBack()}
+          className="mr-4 p-2 bg-slate-900 rounded-full border border-slate-800 active:scale-95 transition-all"
+        >
+          <Ionicons name="arrow-back" size={24} color="#34d399" />
+        </Pressable>
+        <View>
+          <Text className="text-xl font-black text-white tracking-tight">Weather <Text className="text-emerald-400">Advisory</Text></Text>
+          <Text className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-0.5">Live Farm Data</Text>
+        </View>
+      </View>
+
       {isWeatherLoading && !weather ? (
         <View className="flex-1 justify-center items-center bg-slate-950">
           <ActivityIndicator size="large" color="#34d399" />
@@ -77,6 +94,7 @@ export default function WeatherAdviceScreen() {
         <ScrollView
           showsVerticalScrollIndicator={false}
           className="pb-10"
+          contentContainerStyle={{ paddingTop: 20 }}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -87,10 +105,10 @@ export default function WeatherAdviceScreen() {
             />
           }
         >
-          {/* HEADER */}
-          <View className="px-6 pt-5 pb-6">
-            <Text className="text-3xl font-extrabold text-white tracking-tight">
-              Weather <Text className="text-emerald-400">Advisory</Text>
+          {/* WELCOME SECTION */}
+          <View className="px-6 mb-8">
+            <Text className="text-2xl font-extrabold text-white tracking-tight leading-8">
+              Farm Weather <Text className="text-emerald-400">Insights</Text>
             </Text>
             <Text className="text-slate-400 font-medium mt-1 text-sm">
               Smart irrigation & crop advice based on your location

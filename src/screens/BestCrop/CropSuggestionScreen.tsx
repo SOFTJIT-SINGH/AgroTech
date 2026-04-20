@@ -6,6 +6,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 const options = {
   soil: ["Loamy", "Clay", "Sandy", "Black"],
@@ -23,10 +25,11 @@ const options = {
 };
 
 export default function CropSuggestionScreen() {
-  const [form, setForm] = useState({});
-  const [result, setResult] = useState(null);
+  const navigation = useNavigation();
+  const [form, setForm] = useState<any>({});
+  const [result, setResult] = useState<any>(null);
 
-  const updateField = (key, value) => {
+  const updateField = (key: string, value: string) => {
     setForm({ ...form, [key]: value });
   };
 
@@ -126,15 +129,28 @@ export default function CropSuggestionScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-slate-950">
+      {/* HEADER */}
+      <View className="px-6 pt-4 pb-4 border-b border-slate-900 flex-row items-center">
+        <Pressable 
+          onPress={() => navigation.goBack()}
+          className="mr-4 p-2 bg-slate-900 rounded-full border border-slate-800 active:scale-95 transition-all"
+        >
+          <Ionicons name="arrow-back" size={24} color="#34d399" />
+        </Pressable>
+        <View>
+          <Text className="text-xl font-black text-white tracking-tight">Best <Text className="text-emerald-400">Crop</Text></Text>
+          <Text className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-0.5">AI Suggestion</Text>
+        </View>
+      </View>
+
       <ScrollView 
         className="px-6"
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingTop: 20 }}
       >
-        
-        {/* HEADER */}
-        <View className="pt-5 pb-6">
-          <Text className="text-3xl font-extrabold text-white tracking-tight leading-10">
-            Smart Crop <Text className="text-emerald-400">Suggestion</Text>
+        <View className="mb-8">
+          <Text className="text-2xl font-extrabold text-white tracking-tight leading-8">
+            Smart Crop <Text className="text-emerald-400">Finder</Text>
           </Text>
           <Text className="text-slate-400 font-medium mt-1 text-sm">
             Select your farm conditions below and our AI will recommend the most profitable crop.
