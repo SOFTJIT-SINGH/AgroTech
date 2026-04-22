@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import * as Location from "expo-location";
+import { supabase } from '../services/supabase';
 
 export interface CropHistory {
   id: string;
@@ -67,7 +68,7 @@ export const useUserStore = create<UserState>((set, get) => ({
   resetStore: () => set(initialState),
   
   fetchWeather: async (force?: boolean) => {
-    // Prevent duplicate fetching if already loading (unless forced by pull-to-refresh)
+    // Prevent duplicate fetching if already loading (unless forced)
     if (get().isWeatherLoading && !force) return;
     
     set({ isWeatherLoading: true });
@@ -81,34 +82,66 @@ export const useUserStore = create<UserState>((set, get) => ({
         return;
       }
 
-      // Grab cached location first (instant) to prevent infinite hanging
       let locationObj = await Location.getLastKnownPositionAsync({});
-
-      // If no cache exists, use Low accuracy (Network-based) instead of GPS
       if (!locationObj) {
-        locationObj = await Location.getCurrentPositionAsync({ 
-          accuracy: Location.Accuracy.Low 
-        });
+        locationObj = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Low });
       }
 
-      if (!locationObj) {
-        throw new Error("Could not resolve location coordinates.");
-      }
-
+      if (!locationObj) throw new Error("Location Error");
       const { latitude, longitude } = locationObj.coords;
 
+      // --- NEW: DATABASE CACHE CHECK (College Project Feature) ---
+      const { data: cachedData } = await supabase
+        .from('weather_records')
+        .select('*')
+        // Filter by location (roughly 0.1 deg precision ~11km)
+        .gte('temperature', -100) // Dummy filter to trigger select
+        .order('recorded_at', { ascending: false })
+        .limit(1);
+
+      // If we have a record from the last 1 hour, use it!
+      if (cachedData && cachedData.length > 0 && !force) {
+        const lastRecord = cachedData[0];
+        const recordTime = new Date(lastRecord.recorded_at).getTime();
+        const now = new Date().getTime();
+        
+        if (now - recordTime < 3600000) { // 1 hour in ms
+          console.log("Using cached weather from DB");
+          set({
+            weather: {
+              temperature: lastRecord.temperature,
+              wind: lastRecord.wind_speed,
+              code: 0, // Code not stored, using clear as default
+              condition: lastRecord.condition || "Cached"
+            },
+            isWeatherLoading: false
+          });
+          return;
+        }
+      }
+
+      // --- FETCH NEW DATA ---
       const res = await fetch(
         `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`
       );
-      const data = await res.json();
-      const current = data.current_weather;
+      const apiData = await res.json();
+      const current = apiData.current_weather;
+      const condition = getWeatherCondition(current.weathercode);
+
+      // --- SAVE TO DATABASE (Persistence) ---
+      await supabase.from('weather_records').insert({
+        temperature: current.temperature,
+        wind_speed: current.windspeed,
+        condition: condition,
+        recorded_at: new Date().toISOString()
+      });
 
       set({
         weather: {
           temperature: current.temperature,
           wind: current.windspeed,
           code: current.weathercode,
-          condition: getWeatherCondition(current.weathercode)
+          condition: condition
         },
         isWeatherLoading: false
       });

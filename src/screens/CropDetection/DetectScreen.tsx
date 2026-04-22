@@ -8,6 +8,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { useUserStore } from "../../store/userStore";
 import { geminiModel } from "../../services/gemini"; // Using your reliable SDK
 import { supabase } from "../../services/supabase";
+import { uriToBlob, base64ToArrayBuffer } from "../../utils/fileUtils";
 
 export default function DetectScreen({ navigation }: { navigation: any }) {
   const { addHistory, preferredLanguage } = useUserStore();
@@ -161,6 +162,40 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
       setResult(resObj);
 
       if (resObj.confidence !== "N/A" && resObj.confidence !== "0%") {
+        // --- NEW: PERSIST SCAN TO DATABASE ---
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          try {
+            // 1. Upload image to Storage
+            const fileName = `scan_${Date.now()}.jpg`;
+            
+            // Use base64ToArrayBuffer - most compatible on Android
+            const arrayBuffer = base64ToArrayBuffer(base64Image);
+            
+            const { data: uploadData, error: storageError } = await supabase.storage
+              .from('images')
+              .upload(fileName, arrayBuffer, { contentType: 'image/jpeg' });
+
+            if (storageError) throw storageError;
+
+            const { data: urlData } = supabase.storage
+              .from('images')
+              .getPublicUrl(fileName);
+
+            // 2. Save to disease_reports
+            await supabase.from('disease_reports').insert({
+              user_id: session.user.id,
+              disease_name: resObj.disease,
+              confidence_score: parseFloat(resObj.confidence.replace('%', '')),
+              treatment: resObj.treatment,
+              image_url: urlData.publicUrl,
+              detected_on: new Date().toISOString()
+            });
+          } catch (dbErr) {
+            console.error("Database save error:", dbErr);
+          }
+        }
+
         addHistory({
           id: Date.now().toString(),
           imageUri: uri,

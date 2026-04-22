@@ -7,6 +7,7 @@ import { supabase } from '../../services/supabase';
 import { useUserStore } from '../../store/userStore';
 import * as ImagePicker from 'expo-image-picker';
 import { Image } from 'expo-image';
+import { uriToBlob, base64ToArrayBuffer } from '../../utils/fileUtils';
 
 const CATEGORIES = ['Crop Tips', 'Fertilizer', 'Irrigation', 'Market', 'Weather', 'Technology', 'General'];
 
@@ -29,6 +30,7 @@ export default function CreateBlogScreen({ route, navigation }: any) {
   const [category, setCategory] = useState(editBlog?.category || 'General');
   const [imageUrl, setImageUrl] = useState(editBlog?.image_url && editBlog.image_url.startsWith('http') && !Object.values(STOCK_IMAGES).includes(editBlog.image_url) ? editBlog.image_url : '');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [imageBase64, setImageBase64] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const pickImage = async () => {
@@ -37,10 +39,12 @@ export default function CreateBlogScreen({ route, navigation }: any) {
       allowsEditing: true,
       aspect: [16, 9],
       quality: 0.8,
+      base64: true,
     });
 
     if (!result.canceled) {
       setSelectedImage(result.assets[0].uri);
+      setImageBase64(result.assets[0].base64 || null);
     }
   };
 
@@ -70,12 +74,15 @@ export default function CreateBlogScreen({ route, navigation }: any) {
     if (selectedImage) {
       try {
         const fileName = `blog_${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
-        const response = await fetch(selectedImage);
-        const blob = await response.blob();
+        
+        // Use ArrayBuffer for max compatibility
+        const fileData = imageBase64 
+          ? base64ToArrayBuffer(imageBase64) 
+          : await uriToBlob(selectedImage);
         
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('images')
-          .upload(fileName, blob, {
+          .upload(fileName, fileData, {
             contentType: 'image/jpeg'
           });
 

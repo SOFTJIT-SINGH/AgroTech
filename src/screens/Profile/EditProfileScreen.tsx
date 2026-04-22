@@ -31,17 +31,33 @@ export default function EditProfileScreen({ navigation }: any) {
     // 1. Update local Zustand store
     updateProfile(formData);
 
-    // 2. Persist to Supabase user_metadata
+    // 2. Persist to Supabase
     try {
-      const { error } = await supabase.auth.updateUser({
-        data: {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) throw new Error("Not logged in");
+
+      // Update public.profiles table
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
           full_name: formData.name.trim(),
           phone: formData.phone.trim(),
-          location: formData.location.trim(),
+          farm_location: formData.location.trim(),
           farm_size: formData.farmSize.trim(),
           primary_crop: formData.mainCrop.trim(),
           farming_experience: formData.farmingExperience.trim(),
           preferred_language: formData.preferredLanguage.trim(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', session.user.id);
+
+      if (profileError) throw profileError;
+
+      // Also update auth.user_metadata for session consistency
+      const { error: authError } = await supabase.auth.updateUser({
+        data: {
+          full_name: formData.name.trim(),
+          phone: formData.phone.trim(),
         }
       });
 

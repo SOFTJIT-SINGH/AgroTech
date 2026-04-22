@@ -18,14 +18,21 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
         setEmail(session.user.email || '');
-        const meta = session.user.user_metadata;
-        if (meta) {
+        
+        // Fetch full profile from the NEW merged public.profiles table
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+
+        if (profileData) {
           user.updateProfile({
-            name: meta.full_name || meta.fullName || session.user.email?.split('@')[0] || 'Farmer',
-            phone: meta.phone || user.phone,
-            location: meta.location || user.location,
-            farmSize: meta.farm_size || meta.farmSize || user.farmSize,
-            mainCrop: meta.primary_crop || meta.primaryCrop || user.mainCrop,
+            name: profileData.full_name || profileData.name || 'Farmer',
+            phone: profileData.phone || user.phone,
+            location: profileData.farm_location || user.location,
+            farmSize: profileData.farm_size || user.farmSize,
+            mainCrop: profileData.primary_crop || user.mainCrop,
           });
         }
       }

@@ -14,6 +14,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { geminiModel } from "../../services/gemini";
 import { useUserStore } from "../../store/userStore";
+import { supabase } from "../../services/supabase";
 
 const TypingIndicator = () => {
   const op1 = useRef(new Animated.Value(0.3)).current;
@@ -60,6 +61,29 @@ export default function ChatbotScreen() {
 
   const flatListRef = useRef<FlatList>(null);
   const [useEnglish, setUseEnglish] = useState(false);
+
+  // --- NEW: FETCH CHAT HISTORY ---
+  useEffect(() => {
+    const fetchHistory = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) return;
+
+      const { data, error } = await supabase
+        .from('chatlogs')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .order('timestamp', { ascending: true });
+
+      if (data && data.length > 0) {
+        const historyMessages = data.flatMap(log => [
+          { id: log.chat_id + '_q', text: log.query, sender: 'user' },
+          { id: log.chat_id + '_r', text: log.response, sender: 'bot' }
+        ]);
+        setChat(prev => [...prev, ...historyMessages]);
+      }
+    };
+    fetchHistory();
+  }, []);
 
   // Pull dynamic user details and weather from Zustand store (already fetched in AppNavigator)
   const { name, location, farmSize, mainCrop, weather, preferredLanguage } = useUserStore();
@@ -123,10 +147,21 @@ export default function ChatbotScreen() {
       
       const result = await geminiModel.generateContent(systemPrompt + currentInput);
       const text = await result.response.text();
+      const botResponse = text.trim();
+
+      // --- NEW: SAVE TO DATABASE ---
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        await supabase.from('chatlogs').insert({
+          user_id: session.user.id,
+          query: currentInput,
+          response: botResponse,
+        });
+      }
 
       setChat(prev => [...prev, {
         id: (Date.now() + 1).toString() + "bot",
-        text: text.trim(),
+        text: botResponse,
         sender: "bot"
       }]);
     } catch(err) {

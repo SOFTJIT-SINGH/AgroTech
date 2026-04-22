@@ -91,7 +91,8 @@ export default function SignupScreen({ navigation }: Props) {
     <SafeAreaView className="flex-1 bg-slate-950">
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="flex-1"
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
         <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 40 }} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
           <View className="flex-1 justify-center px-6 pt-10 relative">
