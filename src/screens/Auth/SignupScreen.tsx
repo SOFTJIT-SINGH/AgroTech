@@ -59,17 +59,32 @@ export default function SignupScreen({ navigation }: Props) {
       }
     });
 
+    if (error) {
+      setLoading(false);
+      Alert.alert("Signup Failed", error.message);
+      return;
+    }
+
+    if (data.user) {
+      // Manually insert into public.profiles table (Merged)
+      const { error: profilesError } = await supabase.from('profiles').insert({
+        id: data.user.id,
+        full_name: formData.fullName.trim(),
+        name: formData.fullName.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+      });
+
+      if (profilesError) console.error("Error inserting into public.profiles:", profilesError);
+    }
+
     setLoading(false);
 
-    if (error) {
-      Alert.alert("Signup Failed", error.message);
-    } else {
-      Alert.alert(
-        "Account Created",
-        "Your account has been created successfully! Please verify your email.",
-        [{ text: "OK", onPress: () => navigation.navigate('Otp', { email: formData.email.trim() }) }]
-      );
-    }
+    Alert.alert(
+      "Please verify your email through OTP",
+      "An OTP has been sent to you by AgroTech developed by Surinder Singh! .",
+      [{ text: "OK", onPress: () => navigation.navigate('Otp', { email: formData.email.trim() }) }]
+    );
   };
 
   return (

@@ -14,6 +14,7 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useUserStore } from '../store/userStore';
 import { supabase } from '../services/supabase';
+import { getInitials } from '../utils/stringUtils';
 
 const Drawer = createDrawerNavigator();
 
@@ -45,11 +46,13 @@ function CustomDrawerContent(props: any) {
           {/* Ambient Glow */}
           <View className="absolute -top-10 -right-10 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl" />
           
-          <Image
-            source={{ uri: "https://cdn-icons-png.flaticon.com/512/149/149071.png" }}
-            style={{ width: 68, height: 68 }}
-            className="rounded-full mb-4 border-2 border-emerald-500"
-          />
+          <View 
+            className="w-[68px] h-[68px] rounded-full mb-4 border-2 border-emerald-500 bg-slate-800 items-center justify-center"
+          >
+            <Text className="text-white text-2xl font-black tracking-tighter">
+              {getInitials(name)}
+            </Text>
+          </View>
           <Text className="text-2xl font-extrabold text-white tracking-tight">{name}</Text>
           <Text className="text-emerald-400 font-bold text-xs uppercase tracking-widest mt-1">
             Premium Farmer

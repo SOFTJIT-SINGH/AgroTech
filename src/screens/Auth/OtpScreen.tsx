@@ -20,13 +20,20 @@ export default function OtpScreen({ navigation, route }: any) {
     const { data, error } = await supabase.auth.verifyOtp({
       email,
       token: otp,
-      type: 'signup'
+      type: 'signup',
+      
     });
 
     setLoading(false);
 
     if (error) {
       Alert.alert("Verification Failed", error.message);
+    } else {
+      Alert.alert(
+        "Welcome to AgroTech! 🎉",
+        "Your account has been verified successfully. We are excited to have you join our farming community.",
+        [{ text: "Get Started" }]
+      );
     }
     // On success, session is set automatically →
     // AppNavigator's onAuthStateChange detects it and swaps to Main

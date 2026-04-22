@@ -5,6 +5,8 @@ import { Ionicons } from '@expo/vector-icons';
 import DynamicButton from '../../components/DynamicButton';
 import { supabase } from '../../services/supabase';
 import { useUserStore } from '../../store/userStore';
+import * as ImagePicker from 'expo-image-picker';
+import { Image } from 'expo-image';
 
 const CATEGORIES = ['Crop Tips', 'Fertilizer', 'Irrigation', 'Market', 'Weather', 'Technology', 'General'];
 
@@ -26,7 +28,21 @@ export default function CreateBlogScreen({ route, navigation }: any) {
   const [content, setContent] = useState(editBlog?.content || '');
   const [category, setCategory] = useState(editBlog?.category || 'General');
   const [imageUrl, setImageUrl] = useState(editBlog?.image_url && editBlog.image_url.startsWith('http') && !Object.values(STOCK_IMAGES).includes(editBlog.image_url) ? editBlog.image_url : '');
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [16, 9],
+      quality: 0.8,
+    });
+
+    if (!result.canceled) {
+      setSelectedImage(result.assets[0].uri);
+    }
+  };
 
   const handlePublish = async () => {
     if (!title.trim()) {
@@ -48,7 +64,34 @@ export default function CreateBlogScreen({ route, navigation }: any) {
     }
 
     // Use category-matched stock image if user didn't provide one
-    const finalImageUrl = imageUrl.trim() || STOCK_IMAGES[category] || STOCK_IMAGES['General'];
+    let finalImageUrl = imageUrl.trim() || STOCK_IMAGES[category] || STOCK_IMAGES['General'];
+
+    // Handle Image Upload to Supabase Storage if a local image was picked
+    if (selectedImage) {
+      try {
+        const fileName = `blog_${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
+        const response = await fetch(selectedImage);
+        const blob = await response.blob();
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('images')
+          .upload(fileName, blob, {
+            contentType: 'image/jpeg'
+          });
+
+        if (uploadError) throw uploadError;
+
+        const { data: urlData } = supabase.storage
+          .from('images')
+          .getPublicUrl(fileName);
+          
+        finalImageUrl = urlData.publicUrl;
+      } catch (err: any) {
+        setLoading(false);
+        Alert.alert("Upload Error", err.message || "Failed to upload image.");
+        return;
+      }
+    }
 
     let error;
     if (editBlog) {
@@ -144,18 +187,40 @@ export default function CreateBlogScreen({ route, navigation }: any) {
           </ScrollView>
         </View>
 
-        {/* Image URL (Optional) */}
+        {/* Image Picker */}
         <View className="mb-5">
-          <Text className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2 ml-1">Cover Image URL <Text className="text-slate-600">(Optional)</Text></Text>
-          <TextInput
-            value={imageUrl}
-            onChangeText={setImageUrl}
-            placeholder="https://... or leave empty for auto image"
-            placeholderTextColor="#64748b"
-            autoCapitalize="none"
-            className="bg-slate-900 border border-slate-800 rounded-2xl p-4 text-white text-base"
-          />
-          <Text className="text-slate-600 text-xs mt-1.5 ml-1">Leave empty to use a default image for the selected category</Text>
+          <Text className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2 ml-1">Cover Image</Text>
+          <Pressable 
+            onPress={pickImage}
+            className="bg-slate-900 border border-dashed border-slate-700 rounded-2xl h-48 overflow-hidden items-center justify-center"
+          >
+            {selectedImage || (imageUrl && imageUrl.startsWith('http')) ? (
+              <View className="w-full h-full relative">
+                <Image 
+                  source={{ uri: selectedImage || imageUrl }} 
+                  className="w-full h-full"
+                  contentFit="cover"
+                />
+                <View className="absolute inset-0 bg-black/30 items-center justify-center">
+                  <Ionicons name="camera" size={32} color="white" />
+                  <Text className="text-white font-bold mt-2">Change Image</Text>
+                </View>
+              </View>
+            ) : (
+              <View className="items-center">
+                <View className="bg-slate-800 p-4 rounded-full mb-3">
+                  <Ionicons name="image-outline" size={32} color="#34d399" />
+                </View>
+                <Text className="text-slate-300 font-bold">Pick an Image</Text>
+                <Text className="text-slate-500 text-xs mt-1">Recommended: 16:9 aspect ratio</Text>
+              </View>
+            )}
+          </Pressable>
+          {selectedImage && (
+            <Pressable onPress={() => setSelectedImage(null)} className="mt-2 self-end px-3 py-1">
+              <Text className="text-red-400 text-xs font-bold">Remove Image</Text>
+            </Pressable>
+          )}
         </View>
 
         {/* Content */}

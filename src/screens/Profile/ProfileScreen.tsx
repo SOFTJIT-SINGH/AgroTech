@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../services/supabase";
 import { useUserStore } from "../../store/userStore";
 import { Ionicons } from "@expo/vector-icons";
+import { getInitials } from "../../utils/stringUtils";
 
 export default function ProfileScreen({ navigation }: { navigation: any }) {
   const user = useUserStore();
@@ -61,14 +62,13 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
           <View className="relative">
             {/* Subtle background glow effect */}
             <View className="absolute inset-0 bg-emerald-500/30 rounded-full blur-xl scale-110" />
-            <Image
-              source={{
-                uri: "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-              }}
-              style={{ width: 110, height: 110 }}
-              contentFit="cover"
-              className="rounded-full border-[4px] border-slate-950 bg-slate-800 relative z-10"
-            />
+            <View 
+              className="w-[110px] h-[110px] rounded-full border-[4px] border-slate-950 bg-slate-800 relative z-10 items-center justify-center"
+            >
+              <Text className="text-white text-4xl font-black tracking-tighter">
+                {getInitials(user.name)}
+              </Text>
+            </View>
           </View>
 
           <Text className="text-white text-3xl font-extrabold mt-5 tracking-tight">
