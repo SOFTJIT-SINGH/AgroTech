@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -33,10 +34,17 @@ export default function CommunityChatScreen({ navigation }: any) {
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'community_messages' },
         (payload) => {
-          setMessages((prev) => [...prev, payload.new]);
+          console.log("New Message Received:", payload.new);
+          setMessages((prev) => {
+            // Avoid duplicates
+            if (prev.find(m => m.id === payload.new.id)) return prev;
+            return [...prev, payload.new];
+          });
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log("Subscription status:", status);
+      });
 
     return () => {
       supabase.removeChannel(channel);
@@ -44,41 +52,54 @@ export default function CommunityChatScreen({ navigation }: any) {
   }, []);
 
   const fetchMessages = async () => {
-    const { data, error } = await supabase
-      .from("community_messages")
-      .select("*")
-      .order("created_at", { ascending: true })
-      .limit(50);
+    try {
+      const { data, error } = await supabase
+        .from("community_messages")
+        .select("*")
+        .order("created_at", { ascending: true })
+        .limit(100);
 
-    if (data) setMessages(data);
-    setLoading(false);
+      if (error) throw error;
+      if (data) setMessages(data);
+    } catch (err: any) {
+      console.error("Fetch Messages Error:", err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const sendMessage = async () => {
     if (!inputText.trim()) return;
 
     setIsSending(true);
-    const { data: { session } } = await supabase.auth.getSession();
-    
-    if (!session?.user) {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.user) {
+        Alert.alert("Error", "You must be logged in to chat.");
+        setIsSending(false);
+        return;
+      }
+
+      const newMessage = {
+        user_id: session.user.id,
+        user_name: name || "Farmer",
+        content: inputText.trim(),
+      };
+
+      const { error } = await supabase.from("community_messages").insert(newMessage);
+      
+      if (error) {
+        console.error("Chat Insert Error:", error);
+        Alert.alert("Error", "Failed to send message: " + error.message);
+      } else {
+        setInputText("");
+      }
+    } catch (err: any) {
+      Alert.alert("Error", err.message);
+    } finally {
       setIsSending(false);
-      return;
     }
-
-    const newMessage = {
-      user_id: session.user.id,
-      user_name: name || "Farmer",
-      content: inputText.trim(),
-    };
-
-    const { error } = await supabase.from("community_messages").insert(newMessage);
-    
-    if (error) {
-      console.error("Chat Error:", error.message);
-    } else {
-      setInputText("");
-    }
-    setIsSending(false);
   };
 
   const renderItem = ({ item }: { item: any }) => {
