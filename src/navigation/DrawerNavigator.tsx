@@ -10,6 +10,7 @@ import CropLibraryScreen from '../screens/CropLibrary/CropLibraryScreen';
 import FertilizerLibraryScreen from '../screens/FertilizerLibrary/FertilizerLibraryScreen';
 import PestsLibraryScreen from '../screens/PestsLibrary/PestsLibraryScreen';
 import AboutUsScreen from '../screens/AboutUs/AboutUsScreen';
+import CommunityChatScreen from '../screens/CommunityChat/CommunityChatScreen';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useUserStore } from '../store/userStore';
@@ -112,6 +113,16 @@ export default function DrawerNavigator() {
           drawerLabel: 'Dashboard',
           drawerIcon: ({ color }) => (
             <Ionicons name="grid-outline" size={22} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="CommunityChatDrawer"
+        component={CommunityChatScreen}
+        options={{
+          drawerLabel: 'Community Chat',
+          drawerIcon: ({ color }) => (
+            <Ionicons name="people-outline" size={22} color={color} />
           ),
         }}
       />
