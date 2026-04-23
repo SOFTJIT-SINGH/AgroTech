@@ -18,23 +18,6 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
         setEmail(session.user.email || '');
-        
-        // Fetch full profile from the NEW merged public.profiles table
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
-
-        if (profileData) {
-          user.updateProfile({
-            name: profileData.full_name || profileData.name || 'Farmer',
-            phone: profileData.phone || user.phone,
-            location: profileData.farm_location || user.location,
-            farmSize: profileData.farm_size || user.farmSize,
-            mainCrop: profileData.primary_crop || user.mainCrop,
-          });
-        }
       }
     };
     fetchUser();
@@ -70,11 +53,18 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
             {/* Subtle background glow effect */}
             <View className="absolute inset-0 bg-emerald-500/30 rounded-full blur-xl scale-110" />
             <View 
-              className="w-[110px] h-[110px] rounded-full border-[4px] border-slate-950 bg-slate-800 relative z-10 items-center justify-center"
+              className="w-[110px] h-[110px] rounded-full border-[4px] border-slate-950 bg-slate-800 relative z-10 items-center justify-center overflow-hidden"
             >
-              <Text className="text-white text-4xl font-black tracking-tighter">
-                {getInitials(user.name)}
-              </Text>
+              {user.profileImage ? (
+                <Image
+                  source={{ uri: user.profileImage }}
+                  style={{ width: '100%', height: '100%' }}
+                />
+              ) : (
+                <Text className="text-white text-4xl font-black tracking-tighter">
+                  {getInitials(user.name)}
+                </Text>
+              )}
             </View>
           </View>
 

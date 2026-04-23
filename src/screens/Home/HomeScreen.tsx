@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import * as Location from "expo-location";
 import { Ionicons } from "@expo/vector-icons";
 import { useUserStore } from "../../store/userStore";
+import { getInitials } from "../../utils/stringUtils";
 
 export default function HomeScreen({ navigation }: { navigation: any }) {
   const { weather, isWeatherLoading, fetchWeather, name } = useUserStore();
@@ -80,7 +81,7 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
             </Pressable>
             <View>
               <Text className="text-slate-400 font-semibold text-sm uppercase tracking-widest mb-1">
-                Welcome Back
+                Welcome
               </Text>
               <Text className="text-3xl font-extrabold text-white tracking-tight">
                 {name.split(' ')[0]}
@@ -90,13 +91,18 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
 
           <Pressable 
             onPress={() => navigation.navigate("Profile")}
-            className="p-1 bg-slate-900 rounded-full border border-slate-700/80 active:scale-90 transition-all"
+            className="w-12 h-12 bg-slate-900 rounded-full border border-slate-700/80 items-center justify-center overflow-hidden active:scale-90 transition-all"
           >
-            <Image
-              source={{ uri: "https://cdn-icons-png.flaticon.com/512/149/149071.png" }}
-              style={{ width: 44, height: 44 }}
-              className="rounded-full"
-            />
+            {useUserStore.getState().profileImage ? (
+              <Image
+                source={{ uri: useUserStore.getState().profileImage! }}
+                style={{ width: '100%', height: '100%' }}
+              />
+            ) : (
+              <Text className="text-emerald-400 font-bold text-lg">
+                {getInitials(name)}
+              </Text>
+            )}
           </Pressable>
         </View>
 

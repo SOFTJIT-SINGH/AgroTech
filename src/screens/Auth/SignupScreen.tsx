@@ -65,24 +65,11 @@ export default function SignupScreen({ navigation }: Props) {
       return;
     }
 
-    if (data.user) {
-      // Manually insert into public.profiles table (Merged)
-      const { error: profilesError } = await supabase.from('profiles').insert({
-        id: data.user.id,
-        full_name: formData.fullName.trim(),
-        name: formData.fullName.trim(),
-        email: formData.email.trim(),
-        phone: formData.phone.trim(),
-      });
-
-      if (profilesError) console.error("Error inserting into public.profiles:", profilesError);
-    }
-
     setLoading(false);
 
     Alert.alert(
-      "Please verify your email through OTP",
-      "An OTP has been sent to you by AgroTech developed by Surinder Singh! .",
+      "Verify Your Email",
+      "We've sent a 6-digit verification code to your email. Please verify to continue.",
       [{ text: "OK", onPress: () => navigation.navigate('Otp', { email: formData.email.trim() }) }]
     );
   };

@@ -36,25 +36,57 @@ export default function AppNavigator() {
 
   const handleInitialLogin = async (currentSession: Session | null) => {
     if (currentSession) {
-      // Hydrate user store from Supabase metadata
+      const userId = currentSession.user.id;
       const meta = currentSession.user?.user_metadata;
+
+      // 1. First, hydrate from metadata for immediate UI update (if not already set)
       if (meta) {
+        const currentStore = useUserStore.getState();
         useUserStore.getState().updateProfile({
-          name: meta.full_name || meta.fullName || currentSession.user.email?.split('@')[0] || 'Farmer',
-          phone: meta.phone || useUserStore.getState().phone,
-          location: meta.location || useUserStore.getState().location,
-          farmSize: meta.farm_size || meta.farmSize || useUserStore.getState().farmSize,
-          mainCrop: meta.primary_crop || meta.primaryCrop || useUserStore.getState().mainCrop,
-          farmingExperience: meta.farming_experience || meta.farmingExperience || useUserStore.getState().farmingExperience,
-          preferredLanguage: meta.preferred_language || meta.preferredLanguage || useUserStore.getState().preferredLanguage,
+          name: meta.full_name || meta.fullName || (currentStore.name !== 'Farmer' ? currentStore.name : currentSession.user.email?.split('@')[0]) || 'Farmer',
+          phone: meta.phone || currentStore.phone,
         });
       }
 
-      // Ask for location permission the moment they open the app
-      const { status } = await Location.requestForegroundPermissionsAsync();
+      // 2. Fetch full profile from the database for accuracy
+      try {
+        const { data: profileData, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', userId)
+          .single();
 
+        if (profileData) {
+          // Profile exists, update store
+          useUserStore.getState().updateProfile({
+            name: profileData.full_name || profileData.name || useUserStore.getState().name,
+            phone: profileData.phone || useUserStore.getState().phone,
+            profileImage: profileData.profile_image || useUserStore.getState().profileImage,
+            location: profileData.farm_location || useUserStore.getState().location,
+            farmSize: profileData.farm_size || useUserStore.getState().farmSize,
+            mainCrop: profileData.primary_crop || useUserStore.getState().mainCrop,
+            farmingExperience: profileData.farming_experience || useUserStore.getState().farmingExperience,
+            preferredLanguage: profileData.preferred_language || useUserStore.getState().preferredLanguage,
+          });
+        } else if (!error || error.code === 'PGRST116') {
+          // Profile missing (Self-healing)
+          console.log("Profile missing, creating one...");
+          await supabase.from('profiles').upsert({
+            id: userId,
+            full_name: meta?.full_name || currentSession.user.email?.split('@')[0] || 'Farmer',
+            name: meta?.full_name || currentSession.user.email?.split('@')[0] || 'Farmer',
+            email: currentSession.user.email,
+            phone: meta?.phone || '',
+            updated_at: new Date().toISOString(),
+          });
+        }
+      } catch (err) {
+        console.error("Error fetching/syncing profile:", err);
+      }
+
+      // 3. Ask for location permission
+      const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === "granted") {
-        // Pre-fetch the weather so the Home Screen doesn't show loading states
         useUserStore.getState().fetchWeather();
       }
     }

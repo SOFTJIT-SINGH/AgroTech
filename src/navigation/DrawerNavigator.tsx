@@ -48,11 +48,18 @@ function CustomDrawerContent(props: any) {
           <View className="absolute -top-10 -right-10 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl" />
           
           <View 
-            className="w-[68px] h-[68px] rounded-full mb-4 border-2 border-emerald-500 bg-slate-800 items-center justify-center"
+            className="w-[68px] h-[68px] rounded-full mb-4 border-2 border-emerald-500 bg-slate-800 items-center justify-center overflow-hidden"
           >
-            <Text className="text-white text-2xl font-black tracking-tighter">
-              {getInitials(name)}
-            </Text>
+            {useUserStore.getState().profileImage ? (
+              <Image
+                source={{ uri: useUserStore.getState().profileImage! }}
+                style={{ width: '100%', height: '100%' }}
+              />
+            ) : (
+              <Text className="text-white text-2xl font-black tracking-tighter">
+                {getInitials(name)}
+              </Text>
+            )}
           </View>
           <Text className="text-2xl font-extrabold text-white tracking-tight">{name}</Text>
           <Text className="text-emerald-400 font-bold text-xs uppercase tracking-widest mt-1">

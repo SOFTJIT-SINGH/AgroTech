@@ -20,7 +20,6 @@ export default function CommunityChatScreen({ navigation }: any) {
   const [messages, setMessages] = useState<any[]>([]);
   const [inputText, setInputText] = useState("");
   const [loading, setLoading] = useState(true);
-  const [isSending, setIsSending] = useState(false);
   const { name } = useUserStore();
   const flatListRef = useRef<FlatList>(null);
 
@@ -34,17 +33,20 @@ export default function CommunityChatScreen({ navigation }: any) {
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'community_messages' },
         (payload) => {
-          console.log("New Message Received:", payload.new);
           setMessages((prev) => {
-            // Avoid duplicates
-            if (prev.find(m => m.id === payload.new.id)) return prev;
-            return [...prev, payload.new];
+            // 1. Remove any optimistic message from this user with same content
+            // (This prevents double-showing when the real message arrives)
+            const filtered = prev.filter(m => 
+              !(m.isOptimistic && m.content === payload.new.content && m.user_id === payload.new.user_id)
+            );
+            
+            // 2. Add real message if not already present
+            if (filtered.find(m => m.id === payload.new.id)) return filtered;
+            return [...filtered, payload.new];
           });
         }
       )
-      .subscribe((status) => {
-        console.log("Subscription status:", status);
-      });
+      .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
@@ -71,34 +73,44 @@ export default function CommunityChatScreen({ navigation }: any) {
   const sendMessage = async () => {
     if (!inputText.trim()) return;
 
-    setIsSending(true);
+    const messageContent = inputText.trim();
+    setInputText(""); // Clear input immediately for better UX
+
     try {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session?.user) {
         Alert.alert("Error", "You must be logged in to chat.");
-        setIsSending(false);
         return;
       }
 
+      // OPTIMISTIC UI: Add message locally immediately
+      const optimisticId = `temp-${Date.now()}`;
       const newMessage = {
+        id: optimisticId,
         user_id: session.user.id,
         user_name: name || "Farmer",
-        content: inputText.trim(),
+        content: messageContent,
+        created_at: new Date().toISOString(),
+        isOptimistic: true,
       };
 
-      const { error } = await supabase.from("community_messages").insert(newMessage);
+      setMessages((prev) => [...prev, newMessage]);
+
+      const { error } = await supabase.from("community_messages").insert({
+        user_id: session.user.id,
+        user_name: name || "Farmer",
+        content: messageContent,
+      });
       
       if (error) {
         console.error("Chat Insert Error:", error);
+        // Remove optimistic message on error
+        setMessages((prev) => prev.filter(m => m.id !== optimisticId));
         Alert.alert("Error", "Failed to send message: " + error.message);
-      } else {
-        setInputText("");
       }
     } catch (err: any) {
       Alert.alert("Error", err.message);
-    } finally {
-      setIsSending(false);
     }
   };
 
@@ -106,7 +118,7 @@ export default function CommunityChatScreen({ navigation }: any) {
     const initials = getInitials(item.user_name || "F");
     
     return (
-      <View className="mb-6 px-6">
+      <View className={`mb-6 px-6 ${item.isOptimistic ? 'opacity-70' : 'opacity-100'}`}>
         <View className="flex-row">
           <View className="w-10 h-10 rounded-full bg-emerald-500 items-center justify-center border border-emerald-400/30">
             <Text className="text-white font-bold text-xs">{initials}</Text>
@@ -172,14 +184,9 @@ export default function CommunityChatScreen({ navigation }: any) {
           />
           <Pressable
             onPress={sendMessage}
-            disabled={isSending}
-            className={`w-14 h-14 rounded-2xl items-center justify-center ${isSending ? 'bg-slate-800' : 'bg-emerald-500'}`}
+            className="w-14 h-14 rounded-2xl items-center justify-center bg-emerald-500 active:scale-90"
           >
-            {isSending ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Ionicons name="send" size={24} color="#fff" />
-            )}
+            <Ionicons name="send" size={24} color="#fff" />
           </Pressable>
         </View>
       </KeyboardAvoidingView>

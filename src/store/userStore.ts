@@ -1,4 +1,6 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from "expo-location";
 import { supabase } from '../services/supabase';
 
@@ -21,6 +23,7 @@ export interface WeatherData {
 interface UserState {
   name: string;
   phone: string;
+  profileImage: string | null;
   location: string;
   farmSize: string;
   mainCrop: string;
@@ -50,6 +53,7 @@ const getWeatherCondition = (code: number) => {
 const initialState = {
   name: "Farmer",
   phone: "",
+  profileImage: null,
   location: "",
   farmSize: "",
   mainCrop: "",
@@ -60,18 +64,20 @@ const initialState = {
   isWeatherLoading: false,
 };
 
-export const useUserStore = create<UserState>((set, get) => ({
-  ...initialState,
-  
-  addHistory: (item) => set((state) => ({ history: [item, ...state.history] })),
-  updateProfile: (data) => set((state) => ({ ...state, ...data })),
-  resetStore: () => set(initialState),
-  
-  fetchWeather: async (force?: boolean) => {
-    // Prevent duplicate fetching if already loading (unless forced)
-    if (get().isWeatherLoading && !force) return;
-    
-    set({ isWeatherLoading: true });
+export const useUserStore = create<UserState>()(
+  persist(
+    (set, get) => ({
+      ...initialState,
+      
+      addHistory: (item) => set((state) => ({ history: [item, ...state.history] })),
+      updateProfile: (data) => set((state) => ({ ...state, ...data })),
+      resetStore: () => set(initialState),
+      
+      fetchWeather: async (force?: boolean) => {
+        // Prevent duplicate fetching if already loading (unless forced)
+        if (get().isWeatherLoading && !force) return;
+        
+        set({ isWeatherLoading: true });
     try {
       const { status } = await Location.getForegroundPermissionsAsync();
       if (status !== "granted") {
@@ -152,5 +158,11 @@ export const useUserStore = create<UserState>((set, get) => ({
         isWeatherLoading: false 
       });
     }
-  }
-}));
+      }
+    }),
+    {
+      name: 'user-storage',
+      storage: createJSONStorage(() => AsyncStorage),
+    }
+  )
+);
