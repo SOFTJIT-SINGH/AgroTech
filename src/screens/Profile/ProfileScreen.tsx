@@ -178,10 +178,18 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
               <Ionicons name="chevron-forward" size={18} color="#64748b" />
             </Pressable>
 
-            <Pressable onPress={() => navigation.navigate("PrivacyPolicy")} className="flex-row justify-between items-center p-5 active:bg-slate-800/60 transition-colors">
+            <Pressable onPress={() => navigation.navigate("PrivacyPolicy")} className="flex-row justify-between items-center p-5 border-b border-slate-800/80 active:bg-slate-800/60 transition-colors">
               <View className="flex-row items-center">
                 <Ionicons name="shield-checkmark-outline" size={20} color="#94a3b8" style={{ marginRight: 12 }} />
                 <Text className="text-slate-200 font-semibold text-base">Privacy Policy</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color="#64748b" />
+            </Pressable>
+
+            <Pressable onPress={() => navigation.navigate("AboutUs")} className="flex-row justify-between items-center p-5 active:bg-slate-800/60 transition-colors">
+              <View className="flex-row items-center">
+                <Ionicons name="information-circle-outline" size={20} color="#94a3b8" style={{ marginRight: 12 }} />
+                <Text className="text-slate-200 font-semibold text-base">About AgroTech</Text>
               </View>
               <Ionicons name="chevron-forward" size={18} color="#64748b" />
             </Pressable>

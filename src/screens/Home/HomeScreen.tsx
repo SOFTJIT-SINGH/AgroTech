@@ -49,22 +49,15 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
   };
 
   const features = [
-    { title: "Crop Disease", icon: "https://cdn-icons-png.flaticon.com/512/2909/2909768.png", screen: "DetectCrop" },
-    { title: "Weather Advice", icon: "https://cdn-icons-png.flaticon.com/512/1163/1163624.png", screen: "WeatherAdvice" },
-    { title: "Crop Library", icon: "https://cdn-icons-png.flaticon.com/512/3022/3022718.png", screen: "CropLibrary" },
-    { title: "Fertilizer Library", icon: "https://cdn-icons-png.flaticon.com/512/1047/1047683.png", screen: "FertilizerLibrary" },
-    { title: "Pests Library", icon: "https://cdn-icons-png.flaticon.com/512/2909/2909768.png", screen: "PestsLibrary" },
-    { title: "Crop Suggestion", icon: "https://cdn-icons-png.flaticon.com/512/628/628324.png", screen: "CropSuggestion" },
-    { title: "Sowing Time", icon: "https://cdn-icons-png.flaticon.com/512/3050/3050525.png", screen: "SowingPrediction" },
-    { title: "Fertilizer Plan", icon: "https://cdn-icons-png.flaticon.com/512/2909/2909753.png", screen: "FertilizerPlan" },
-    { title: "Market Prices", icon: "https://cdn-icons-png.flaticon.com/512/3081/3081559.png", screen: "Market" },
+    { title: "Crop Disease", icon: "https://img.icons8.com/fluency/96/plant-under-sun.png", screen: "DetectCrop" },
+    { title: "Weather Advice", icon: "https://img.icons8.com/fluency/96/partly-cloudy-day.png", screen: "WeatherAdvice" },
+    { title: "Crop Library", icon: "https://img.icons8.com/fluency/96/book.png", screen: "CropLibrary" },
+    { title: "Fertilizer Library", icon: "https://img.icons8.com/fluency/96/compost.png", screen: "FertilizerLibrary" },
+    { title: "Crop Suggestion", icon: "https://img.icons8.com/fluency/96/idea.png", screen: "CropSuggestion" },
+    { title: "Sowing Time", icon: "https://img.icons8.com/fluency/96/calendar.png", screen: "SowingPrediction" },
+    { title: "Fertilizer Plan", icon: "https://img.icons8.com/fluency/96/test-tube.png", screen: "FertilizerPlan" },
   ];
 
-  const marketPrices = [
-    { crop: "Wheat", price: "₹2200", trend: "up" },
-    { crop: "Rice", price: "₹2100", trend: "up" },
-    { crop: "Maize", price: "₹1900", trend: "down" },
-  ];
 
   return (
     <SafeAreaView className="flex-1 bg-slate-950">
@@ -131,26 +124,6 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
           </View>
         )}
 
-        {/* HORIZONTAL MARKET TICKER */}
-        <View className="mb-6 mt-2">
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false} 
-            contentContainerStyle={{ paddingHorizontal: 24, gap: 12 }}
-          >
-            {marketPrices.map((item, index) => (
-              <Pressable 
-                key={index}
-                onPress={() => navigation.navigate("Market")}
-                className="bg-slate-900 flex-row items-center px-4 py-2.5 rounded-2xl border border-slate-800 active:bg-slate-800 transition-colors"
-              >
-                <Text className="text-slate-300 font-medium mr-2">{item.crop}</Text>
-                <Text className="text-emerald-400 font-bold">{item.price}</Text>
-                <Text className="text-emerald-500/50 text-xs ml-1">/q</Text>
-              </Pressable>
-            ))}
-          </ScrollView>
-        </View>
 
         {/* HERO WEATHER DASHBOARD (Crystal Morphism) */}
         <Pressable 

@@ -8,7 +8,6 @@ import HelpSupportScreen from '../screens/Profile/HelpSupportScreen';
 import NotificationSettingsScreen from '../screens/Profile/NotificationSettingsScreen';
 import CropLibraryScreen from '../screens/CropLibrary/CropLibraryScreen';
 import FertilizerLibraryScreen from '../screens/FertilizerLibrary/FertilizerLibraryScreen';
-import PestsLibraryScreen from '../screens/PestsLibrary/PestsLibraryScreen';
 import AboutUsScreen from '../screens/AboutUs/AboutUsScreen';
 import CommunityChatScreen from '../screens/CommunityChat/CommunityChatScreen';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -190,16 +189,6 @@ export default function DrawerNavigator() {
           drawerLabel: 'Fertilizers',
           drawerIcon: ({ color }) => (
             <MaterialCommunityIcons name="flask-outline" size={22} color={color} />
-          ),
-        }}
-      />
-      <Drawer.Screen
-        name="PestsLibraryDrawer"
-        component={PestsLibraryScreen}
-        options={{
-          drawerLabel: 'Pests & Diseases',
-          drawerIcon: ({ color }) => (
-            <MaterialCommunityIcons name="bug-outline" size={22} color={color} />
           ),
         }}
       />

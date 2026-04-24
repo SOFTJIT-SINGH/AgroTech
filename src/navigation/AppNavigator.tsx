@@ -25,7 +25,6 @@ import NotificationSettingsScreen from "../screens/Profile/NotificationSettingsS
 import PrivacyPolicyScreen from "../screens/Profile/PrivacyPolicyScreen";
 import CropLibraryScreen from "../screens/CropLibrary/CropLibraryScreen";
 import FertilizerLibraryScreen from "../screens/FertilizerLibrary/FertilizerLibraryScreen";
-import PestsLibraryScreen from "../screens/PestsLibrary/PestsLibraryScreen";
 import AboutUsScreen from "../screens/AboutUs/AboutUsScreen";
 
 const Stack = createNativeStackNavigator();
@@ -94,17 +93,38 @@ export default function AppNavigator() {
 
   useEffect(() => {
     // Check active session on mount
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setLoading(false);
-      handleInitialLogin(session);
-    });
+    const checkSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) {
+          if (error.message.includes("Refresh Token Not Found") || error.status === 400) {
+            console.log("Auth session invalid, signing out...");
+            await supabase.auth.signOut();
+            setSession(null);
+          }
+        } else {
+          setSession(session);
+          if (session) {
+            handleInitialLogin(session);
+          }
+        }
+      } catch (err) {
+        console.error("Unexpected session check error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkSession();
 
     // Listen for login/logout events
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Auth event:", event);
       setSession(session);
-      if (event === "SIGNED_IN") {
+      if (event === "SIGNED_IN" && session) {
         handleInitialLogin(session);
+      } else if (event === "SIGNED_OUT") {
+        setSession(null);
       }
     });
 
@@ -139,7 +159,6 @@ export default function AppNavigator() {
           <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
           <Stack.Screen name="CropLibrary" component={CropLibraryScreen} />
           <Stack.Screen name="FertilizerLibrary" component={FertilizerLibraryScreen} />
-          <Stack.Screen name="PestsLibrary" component={PestsLibraryScreen} />
           <Stack.Screen name="AboutUs" component={AboutUsScreen} />
         </>
       ) : (
