@@ -9,6 +9,8 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { fetchGeminiResponse } from "../../services/gemini";
+import { ActivityIndicator } from "react-native";
 
 const crops = [
   "Wheat",
@@ -35,7 +37,7 @@ const farmSizes = [
   "10+ Acres"
 ];
 
-const fertilizerGuide = {
+const fertilizerGuide: any = {
   Wheat: { N: 120, P: 60, K: 40 },
   Rice: { N: 150, P: 70, K: 60 },
   Maize: { N: 120, P: 60, K: 50 },
@@ -48,17 +50,61 @@ const fertilizerGuide = {
 
 export default function FertilizerScreen() {
   const navigation = useNavigation();
-  const [crop, setCrop] = useState(null);
-  const [soil, setSoil] = useState(null);
-  const [farm, setFarm] = useState(null);
+  const [crop, setCrop] = useState<string | null>(null);
+  const [soil, setSoil] = useState<string | null>(null);
+  const [farm, setFarm] = useState<string | null>(null);
 
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
 
-  const [plan, setPlan] = useState(null);
+  const [plan, setPlan] = useState<any>(null);
 
-  const generatePlan = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const generatePlan = async () => {
     if (!crop || !soil || !farm) return;
+
+    setIsLoading(true);
+    const prompt = `
+      As an agricultural expert, provide a detailed fertilizer plan for the following:
+      Crop: ${crop}
+      Soil Type: ${soil}
+      Farm Size: ${farm}
+      Sowing Date: ${date.toDateString()}
+      
+      Return the response in this JSON format:
+      {
+        "baseDose": {
+          "nitrogen": number,
+          "phosphorus": number,
+          "potassium": number
+        },
+        "stages": [
+          {
+            "stage": "Stage Name",
+            "day": number,
+            "tip": "Short actionable tip"
+          }
+        ]
+      }
+    `;
+
+    try {
+      const data = await fetchGeminiResponse(prompt);
+      if (data && data.baseDose) {
+        setPlan(data);
+      } else {
+        generateStaticPlan();
+      }
+    } catch (error) {
+      generateStaticPlan();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const generateStaticPlan = () => {
+    if (!crop || !crop || !fertilizerGuide[crop]) return;
 
     const guide = fertilizerGuide[crop];
 
@@ -99,6 +145,8 @@ export default function FertilizerScreen() {
       stages
     });
   };
+
+
 
   const Selector = ({ title, data, value, setValue }) => (
     <View className="mb-7">
@@ -197,23 +245,33 @@ export default function FertilizerScreen() {
           />
         )}
 
-        {/* GENERATE BUTTON */}
         <Pressable
           onPress={generatePlan}
+          disabled={!crop || !soil || !farm || isLoading}
           className={`py-4 rounded-2xl items-center mb-6 shadow-lg transition-all ${
-            crop && soil && farm
+            crop && soil && farm && !isLoading
               ? "bg-emerald-500 shadow-emerald-500/20 active:scale-95 active:bg-emerald-600"
               : "bg-slate-800 opacity-50"
           }`}
-          disabled={!crop || !soil || !farm}
         >
-          <Text className={`font-extrabold text-base uppercase tracking-wider ${crop && soil && farm ? "text-slate-950" : "text-slate-500"}`}>
-            Generate Plan
-          </Text>
+          {isLoading ? (
+            <ActivityIndicator color="#0f172a" />
+          ) : (
+            <Text className={`font-extrabold text-base uppercase tracking-wider ${crop && soil && farm ? "text-slate-950" : "text-slate-500"}`}>
+              Generate Plan
+            </Text>
+          )}
         </Pressable>
 
-        {/* RESULT CARD */}
-        {plan && (
+        {/* RESULT CARD / LOADING STATE */}
+        {isLoading ? (
+          <View className="bg-slate-900 p-8 rounded-[28px] mb-12 border border-slate-800 items-center justify-center shadow-xl shadow-slate-950">
+            <ActivityIndicator size="large" color="#34d399" />
+            <Text className="text-emerald-400 font-bold mt-4 tracking-widest uppercase text-[10px]">
+              AI Generating Nutrient Schedule...
+            </Text>
+          </View>
+        ) : plan && (
           <View className="bg-slate-900 p-6 rounded-[28px] mb-12 border border-slate-800 relative shadow-xl shadow-slate-950">
             
             <Text className="text-emerald-400 font-bold text-xs uppercase tracking-widest mb-4">
@@ -287,6 +345,7 @@ export default function FertilizerScreen() {
 
           </View>
         )}
+
 
       </ScrollView>
     </SafeAreaView>

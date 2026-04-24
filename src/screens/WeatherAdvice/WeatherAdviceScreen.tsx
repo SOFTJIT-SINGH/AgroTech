@@ -11,12 +11,15 @@ import { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useUserStore } from "../../store/userStore";
 import { useNavigation } from "@react-navigation/native";
+import { fetchGeminiResponse } from "../../services/gemini";
 
 export default function WeatherAdviceScreen() {
   const navigation = useNavigation();
   const { weather, isWeatherLoading, fetchWeather } = useUserStore();
-  const [advice, setAdvice] = useState<string[]>([]);
+  const [isAdviceLoading, setIsAdviceLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [advice, setAdvice] = useState<string[]>([]);
+  const [suggestedCrops, setSuggestedCrops] = useState<string[]>(["Wheat", "Rice", "Maize", "Cotton"]);
 
   useEffect(() => {
     // If arriving here directly and store is empty, fetch it
@@ -36,7 +39,38 @@ export default function WeatherAdviceScreen() {
     }
   }, [weather]);
 
-  const generateAdvice = (weatherData: any) => {
+  const generateAdvice = async (weatherData: any) => {
+    setIsAdviceLoading(true);
+    const prompt = `
+      As a professional agricultural expert, provide 3 short, actionable farming tips and 4 recommended crops based on the following weather:
+      Temperature: ${weatherData.temperature}°C
+      Condition: ${weatherData.condition}
+      Wind Speed: ${weatherData.wind} km/h
+      
+      Return the response in this JSON format:
+      {
+        "tips": ["tip1", "tip2", "tip3"],
+        "crops": ["crop1", "crop2", "crop3", "crop4"]
+      }
+    `;
+
+    try {
+      const data = await fetchGeminiResponse(prompt);
+      if (data && data.tips && data.crops) {
+        setAdvice(data.tips);
+        setSuggestedCrops(data.crops);
+      } else {
+        // Fallback to basic logic if AI fails
+        generateStaticAdvice(weatherData);
+      }
+    } catch (error) {
+      generateStaticAdvice(weatherData);
+    } finally {
+      setIsAdviceLoading(false);
+    }
+  };
+
+  const generateStaticAdvice = (weatherData: any) => {
     let tips = [];
     const temp = Number(weatherData.temperature);
 
@@ -48,18 +82,13 @@ export default function WeatherAdviceScreen() {
       tips.push("Good weather for crop growth.");
       tips.push("Suitable for maize, cotton and rice cultivation.");
       tips.push("Maintain regular irrigation schedule.");
-    } else if (temp < 20) {
-      tips.push("Low temperature detected.");
-      tips.push("Suitable crops: wheat, barley and mustard.");
-      tips.push("Reduce irrigation to avoid water logging.");
+    } else {
+      tips.push("Cooler temperatures detected. Monitor soil moisture.");
+      tips.push("Ensure proper drainage for winter crops.");
     }
-
-    if (Number(weatherData.wind) > 15) {
-      tips.push("Strong wind detected. Avoid pesticide spraying to prevent drift.");
-    }
-
     setAdvice(tips);
   };
+
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -154,11 +183,13 @@ export default function WeatherAdviceScreen() {
             </View>
           </View>
 
-          {/* ADVICE SECTION */}
           <View className="px-6 mb-8">
-            <Text className="text-xl font-bold text-slate-100 mb-4 px-1">
-              Farming Advice
-            </Text>
+            <View className="flex-row items-center justify-between mb-4 px-1">
+              <Text className="text-xl font-bold text-slate-100">
+                Farming Advice
+              </Text>
+              {isAdviceLoading && <ActivityIndicator size="small" color="#34d399" />}
+            </View>
 
             {advice.map((tip, index) => (
               <View
@@ -182,7 +213,7 @@ export default function WeatherAdviceScreen() {
             </Text>
 
             <View className="flex-row flex-wrap gap-3">
-              {["Wheat", "Rice", "Maize", "Cotton"].map((crop, index) => (
+              {suggestedCrops.map((crop, index) => (
                 <View 
                   key={index} 
                   className="bg-slate-900 px-5 py-3 rounded-xl border border-slate-800"

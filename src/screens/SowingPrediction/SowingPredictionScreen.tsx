@@ -9,6 +9,8 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { fetchGeminiResponse } from "../../services/gemini";
+import { ActivityIndicator } from "react-native";
 
 const crops = [
   "Wheat",
@@ -23,7 +25,7 @@ const crops = [
   "Soybean"
 ];
 
-const cropCalendar = {
+const cropCalendar: any = {
   Wheat: { start: "11-01", end: "11-30" },
   Rice: { start: "06-01", end: "07-15" },
   Maize: { start: "06-01", end: "06-30" },
@@ -38,14 +40,62 @@ const cropCalendar = {
 
 export default function SowingPredictionScreen() {
   const navigation = useNavigation();
-  const [crop, setCrop] = useState(null);
+  const [crop, setCrop] = useState<string | null>(null);
   const [date, setDate] = useState(new Date());
-
   const [showPicker, setShowPicker] = useState(false);
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [tips, setTips] = useState<string[]>([
+    "Ensure optimal soil moisture before sowing to promote germination.",
+    "Use certified and treated seed varieties to prevent early diseases.",
+    "Apply required base fertilizers uniformly during the sowing process."
+  ]);
 
-  const calculatePrediction = () => {
-    if (!crop) return;
+  const calculatePrediction = async () => {
+    if (!crop) {
+      alert("Please select a crop first.");
+      return;
+    }
+
+    setIsLoading(true);
+    const prompt = `
+      As an agricultural expert, predict the optimal sowing window and risk level for the following crop and planned date:
+      Crop: ${crop}
+      Planned Preparation Date: ${date.toDateString()}
+      
+      Return the response in this JSON format:
+      {
+        "risk": "High" | "Medium" | "Low" | "Very Low",
+        "message": "Explanation of the risk and timing.",
+        "recommended_start": "YYYY-MM-DD",
+        "recommended_end": "YYYY-MM-DD",
+        "tips": ["tip1", "tip2", "tip3"]
+      }
+    `;
+
+    try {
+      const data = await fetchGeminiResponse(prompt);
+      if (data && data.risk) {
+        setResult({
+          crop,
+          start: new Date(data.recommended_start),
+          end: new Date(data.recommended_end),
+          risk: data.risk,
+          message: data.message
+        });
+        if (data.tips) setTips(data.tips);
+      } else {
+        calculateStaticPrediction();
+      }
+    } catch (error) {
+      calculateStaticPrediction();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const calculateStaticPrediction = () => {
+    if (!crop || !cropCalendar[crop]) return;
 
     const calendar = cropCalendar[crop];
     const today = new Date();
@@ -60,14 +110,10 @@ export default function SowingPredictionScreen() {
     if (date < start) {
       risk = "Low";
       message = "Good time for sowing preparation. You are ahead of schedule.";
-    }
-
-    if (date >= start && date <= end) {
+    } else if (date >= start && date <= end) {
       risk = "Very Low";
       message = "Perfect sowing window for this crop. Maximum yield potential.";
-    }
-
-    if (date > end) {
+    } else {
       risk = "High";
       message = "Late sowing detected. This may significantly reduce your yield.";
     }
@@ -80,6 +126,8 @@ export default function SowingPredictionScreen() {
       message
     });
   };
+
+
 
   // Helper to dynamically color the risk badge
   const getRiskColors = (riskLevel) => {
@@ -179,18 +227,31 @@ export default function SowingPredictionScreen() {
           />
         )}
 
-        {/* PREDICT BUTTON */}
         <Pressable
           onPress={calculatePrediction}
-          className="bg-emerald-500 py-4 rounded-2xl mb-6 items-center shadow-lg shadow-emerald-500/20 active:scale-95 active:bg-emerald-600 transition-all"
+          disabled={isLoading}
+          className={`py-4 rounded-2xl mb-6 items-center shadow-lg transition-all ${
+            isLoading ? "bg-emerald-800" : "bg-emerald-500 shadow-emerald-500/20 active:scale-95 active:bg-emerald-600"
+          }`}
         >
-          <Text className="text-slate-950 font-extrabold text-base uppercase tracking-wider">
-            Predict Sowing Time
-          </Text>
+          {isLoading ? (
+            <ActivityIndicator color="#0f172a" />
+          ) : (
+            <Text className="text-slate-950 font-extrabold text-base uppercase tracking-wider">
+              Predict Sowing Time
+            </Text>
+          )}
         </Pressable>
 
-        {/* RESULT CARD */}
-        {result && (
+        {/* RESULT CARD / LOADING STATE */}
+        {isLoading ? (
+          <View className="bg-slate-900 p-8 rounded-[28px] mb-12 border border-slate-800 items-center justify-center shadow-xl shadow-slate-950">
+            <ActivityIndicator size="large" color="#34d399" />
+            <Text className="text-emerald-400 font-bold mt-4 tracking-widest uppercase text-[10px]">
+              AI Calculating Sowing Window...
+            </Text>
+          </View>
+        ) : result && (
           <View className="bg-slate-900 p-6 rounded-[28px] mb-12 border border-slate-800 relative overflow-hidden shadow-xl shadow-slate-950">
             
             <View className="flex-row justify-between items-start mb-5 border-b border-slate-800/80 pb-5">
@@ -221,30 +282,19 @@ export default function SowingPredictionScreen() {
                 Farming Tips
               </Text>
 
-              <View className="flex-row items-start mb-2">
-                <Text className="text-emerald-500 mr-2 font-bold">•</Text>
-                <Text className="text-slate-400 font-medium text-sm flex-1 leading-5">
-                  Ensure optimal soil moisture before sowing to promote germination.
-                </Text>
-              </View>
-
-              <View className="flex-row items-start mb-2">
-                <Text className="text-emerald-500 mr-2 font-bold">•</Text>
-                <Text className="text-slate-400 font-medium text-sm flex-1 leading-5">
-                  Use certified and treated seed varieties to prevent early diseases.
-                </Text>
-              </View>
-
-              <View className="flex-row items-start">
-                <Text className="text-emerald-500 mr-2 font-bold">•</Text>
-                <Text className="text-slate-400 font-medium text-sm flex-1 leading-5">
-                  Apply required base fertilizers uniformly during the sowing process.
-                </Text>
-              </View>
+              {tips.map((tip, index) => (
+                <View key={index} className="flex-row items-start mb-2">
+                  <Text className="text-emerald-500 mr-2 font-bold">•</Text>
+                  <Text className="text-slate-400 font-medium text-sm flex-1 leading-5">
+                    {tip}
+                  </Text>
+                </View>
+              ))}
             </View>
 
           </View>
         )}
+
 
       </ScrollView>
     </SafeAreaView>

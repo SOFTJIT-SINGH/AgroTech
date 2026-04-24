@@ -8,6 +8,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { fetchGeminiResponse } from "../../services/gemini";
+import { ActivityIndicator } from "react-native";
 
 const options = {
   soil: ["Loamy", "Clay", "Sandy", "Black"],
@@ -28,70 +30,72 @@ export default function CropSuggestionScreen() {
   const navigation = useNavigation();
   const [form, setForm] = useState<any>({});
   const [result, setResult] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const updateField = (key: string, value: string) => {
     setForm({ ...form, [key]: value });
   };
 
-  const calculateBestCrop = () => {
-    let scores = {
-      Wheat: 0,
-      Rice: 0,
-      Maize: 0,
-      Cotton: 0,
-      Sugarcane: 0,
-      Mustard: 0,
-      Potato: 0,
-      Tomato: 0,
-      Barley: 0,
-      Soybean: 0
+  const calculateBestCrop = async () => {
+    if (Object.keys(form).length < 3) {
+      alert("Please select at least 3 conditions for a better recommendation.");
+      return;
+    }
+
+    setIsLoading(true);
+    const prompt = `
+      As an agricultural expert, analyze these farm conditions and recommend the single best crop to grow.
+      Conditions:
+      ${Object.entries(form).map(([key, value]) => `${key}: ${value}`).join("\n")}
+      
+      Return the response in this JSON format:
+      {
+        "crop": "Crop Name",
+        "reason": "Short explanation of why this crop is best for these conditions."
+      }
+    `;
+
+    try {
+      const data = await fetchGeminiResponse(prompt);
+      if (data && data.crop) {
+        setResult({
+          crop: data.crop,
+          reason: data.reason
+        });
+      } else {
+        calculateStaticBestCrop();
+      }
+    } catch (error) {
+      calculateStaticBestCrop();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const calculateStaticBestCrop = () => {
+    let scores: any = {
+      Wheat: 0, Rice: 0, Maize: 0, Cotton: 0, Sugarcane: 0,
+      Mustard: 0, Potato: 0, Tomato: 0, Barley: 0, Soybean: 0
     };
 
-    if (form.soil === "Loamy") {
-      scores.Wheat += 2;
-      scores.Maize += 2;
-      scores.Potato += 2;
-    }
-    if (form.soil === "Black") {
-      scores.Cotton += 3;
-      scores.Soybean += 2;
-    }
-    if (form.season === "Winter") {
-      scores.Wheat += 3;
-      scores.Mustard += 2;
-      scores.Barley += 2;
-    }
-    if (form.season === "Monsoon") {
-      scores.Rice += 3;
-      scores.Soybean += 2;
-    }
-    if (form.water === "High") {
-      scores.Rice += 3;
-      scores.Sugarcane += 2;
-    }
-    if (form.rainfall === "Low") {
-      scores.Mustard += 2;
-      scores.Barley += 2;
-    }
-    if (form.temp === "Hot") {
-      scores.Cotton += 2;
-      scores.Maize += 2;
-    }
-    if (form.demand === "High") {
-      scores.Tomato += 2;
-      scores.Potato += 2;
-    }
+    if (form.soil === "Loamy") { scores.Wheat += 2; scores.Maize += 2; scores.Potato += 2; }
+    if (form.soil === "Black") { scores.Cotton += 3; scores.Soybean += 2; }
+    if (form.season === "Winter") { scores.Wheat += 3; scores.Mustard += 2; scores.Barley += 2; }
+    if (form.season === "Monsoon") { scores.Rice += 3; scores.Soybean += 2; }
+    if (form.water === "High") { scores.Rice += 3; scores.Sugarcane += 2; }
+    if (form.rainfall === "Low") { scores.Mustard += 2; scores.Barley += 2; }
+    if (form.temp === "Hot") { scores.Cotton += 2; scores.Maize += 2; }
+    if (form.demand === "High") { scores.Tomato += 2; scores.Potato += 2; }
 
-    // Default to the first key if no selections are made
-    const best = Object.keys(scores).reduce((a, b) =>
-      scores[a] > scores[b] ? a : b
-    );
+    const best = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
 
     setResult({
       crop: best,
-      score: scores[best]
+      reason: `Based on current conditions, ${best} is traditionally the most reliable crop for your soil and season.`
     });
   };
+
+
 
   const Selector = ({ title, field }) => (
     <View className="mb-7">
@@ -171,18 +175,31 @@ export default function CropSuggestionScreen() {
         <Selector title="Experience Level" field="experience" />
         <Selector title="Crop Duration" field="duration" />
 
-        {/* ANALYZE BUTTON */}
         <Pressable
           onPress={calculateBestCrop}
-          className="bg-emerald-500 py-4 rounded-2xl mt-4 mb-6 items-center shadow-lg shadow-emerald-500/20 active:scale-95 active:bg-emerald-600 transition-all"
+          disabled={isLoading}
+          className={`py-4 rounded-2xl mt-4 mb-6 items-center shadow-lg transition-all ${
+            isLoading ? "bg-emerald-800" : "bg-emerald-500 shadow-emerald-500/20 active:scale-95 active:bg-emerald-600"
+          }`}
         >
-          <Text className="text-slate-950 font-extrabold text-base uppercase tracking-wider">
-            Analyze Conditions
-          </Text>
+          {isLoading ? (
+            <ActivityIndicator color="#0f172a" />
+          ) : (
+            <Text className="text-slate-950 font-extrabold text-base uppercase tracking-wider">
+              Analyze Conditions
+            </Text>
+          )}
         </Pressable>
 
-        {/* RESULT CARD */}
-        {result && (
+        {/* RESULT CARD / LOADING STATE */}
+        {isLoading ? (
+          <View className="bg-slate-900 p-8 rounded-[28px] mt-2 mb-12 border border-slate-800 items-center justify-center shadow-xl shadow-slate-950">
+            <ActivityIndicator size="large" color="#34d399" />
+            <Text className="text-emerald-400 font-bold mt-4 tracking-widest uppercase text-[10px]">
+              AI Analyzing Farm Profile...
+            </Text>
+          </View>
+        ) : result && (
           <View className="bg-slate-900 p-6 rounded-[28px] mt-2 mb-12 border border-emerald-500/30 relative overflow-hidden shadow-xl shadow-slate-950">
             {/* Subtle background glow effect */}
             <View className="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500/20 rounded-full blur-3xl" />
@@ -199,10 +216,11 @@ export default function CropSuggestionScreen() {
             </Text>
 
             <Text className="text-slate-400 leading-6 text-sm font-medium">
-              Based on your specific farm profile, <Text className="text-slate-200 font-bold">{result.crop}</Text> is the most suitable crop choice, offering the highest yield potential for your environment.
+              {result.reason || `Based on your specific farm profile, ${result.crop} is the most suitable crop choice, offering the highest yield potential for your environment.`}
             </Text>
           </View>
         )}
+
 
       </ScrollView>
     </SafeAreaView>

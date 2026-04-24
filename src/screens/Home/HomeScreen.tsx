@@ -6,10 +6,18 @@ import * as Location from "expo-location";
 import { Ionicons } from "@expo/vector-icons";
 import { useUserStore } from "../../store/userStore";
 import { getInitials } from "../../utils/stringUtils";
+import { fetchGeminiResponse } from "../../services/gemini";
+import { ActivityIndicator } from "react-native";
 
 export default function HomeScreen({ navigation }: { navigation: any }) {
   const { weather, isWeatherLoading, fetchWeather, name } = useUserStore();
   const [locationGranted, setLocationGranted] = useState<boolean | null>(null);
+  const [insight, setInsight] = useState<any>({
+    title: "Best Crops for Summer Season",
+    category: "Crop Tips",
+    description: "Learn which crops provide maximum yield during the summer heat and how to protect them from heat stress."
+  });
+  const [isInsightLoading, setIsInsightLoading] = useState(false);
 
   // 1. Robust Permission Checker
   const checkLocationPermission = async () => {
@@ -42,6 +50,35 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
 
     return () => subscription.remove();
   }, []);
+
+  const fetchDailyInsight = async () => {
+    setIsInsightLoading(true);
+    const prompt = `
+      Provide a daily farming insight for a farmer. It should be relevant and helpful.
+      Return the response in this JSON format:
+      {
+        "title": "Short catchy title",
+        "category": "e.g. Soil Health, Pest Control, Crop Tips",
+        "description": "2-3 sentences of detailed advice."
+      }
+    `;
+
+    try {
+      const data = await fetchGeminiResponse(prompt);
+      if (data && data.title) {
+        setInsight(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch insight:", error);
+    } finally {
+      setIsInsightLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDailyInsight();
+  }, []);
+
 
   // 3. Open Device Settings Button Logic
   const openSettings = () => {
@@ -226,23 +263,29 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
 
           <Pressable 
             onPress={() => navigation.navigate("Blogs")}
+            disabled={isInsightLoading}
             className="bg-slate-900 rounded-[28px] overflow-hidden border border-slate-800 active:scale-[0.98] transition-transform"
           >
             <View className="h-40 bg-slate-800 relative justify-end p-5">
               <View className="absolute inset-0 bg-slate-950/40" />
               <View className="bg-emerald-500 px-3 py-1.5 rounded-lg self-start relative z-10 mb-2">
-                 <Text className="text-slate-950 font-bold text-[10px] uppercase tracking-widest">Crop Tips</Text>
+                 <Text className="text-slate-950 font-bold text-[10px] uppercase tracking-widest">{insight.category}</Text>
               </View>
-              <Text className="font-extrabold text-white text-xl relative z-10 leading-7">
-                Best Crops for Summer Season
-              </Text>
+              {isInsightLoading ? (
+                <ActivityIndicator color="#ffffff" className="mb-4" />
+              ) : (
+                <Text className="font-extrabold text-white text-xl relative z-10 leading-7">
+                  {insight.title}
+                </Text>
+              )}
             </View>
             <View className="p-5 bg-slate-900">
               <Text className="text-slate-400 text-sm leading-6 font-medium">
-                Learn which crops provide maximum yield during the summer heat and how to protect them from heat stress.
+                {insight.description}
               </Text>
             </View>
           </Pressable>
+
         </View>
 
       </ScrollView>
