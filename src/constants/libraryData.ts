@@ -421,7 +421,7 @@ export const CROP_LIBRARY_DATA = {
       description: 'The happy flower! It literally turns its face toward the sun throughout the day.',
       pests: 'Head borer (a worm that eats the center of the flower).',
       protection: 'Watch for holes in the center and spray organic repellent.',
-      fertilizer: 'Needs basic NPK 60:40:40.',
+      fertilizer: 'Needs basic NPK.',
       simple_tip: 'They grow quite tall, so provide support or plant them along a fence.'
     },
     {
@@ -453,7 +453,7 @@ export const FERTILIZER_LIBRARY = [
   { name: 'Urea', source: 'Fast-Acting Nitrogen', content: '46% Nitrogen', usage: 'Helps the plant grow tall and get beautiful green leaves quickly. It is like "energy food" for growth.', caution: 'Do not put it directly on the plant body or roots; it can burn them. Always water the plant after using Urea.', icon: 'flask-outline' },
   { name: 'DAP (D-A-P)', source: 'Root & Stem Power', content: 'Nitrogen + Phosphorus', usage: 'Expertly helps in making the roots strong and the stems thick. Best used when you just planted something.', caution: 'Use only a small amount. Putting too much can stop other nutrients from working.', icon: 'flask-outline' },
   { name: 'MOP (Potash)', source: 'Health & Fruit Shine', content: '60% Potassium', usage: 'It is like an "immunity booster" for plants. It helps fruits get big, sweet, and stay healthy against disease.', caution: 'Avoid using it for ginger or tobacco crops as it can ruin their quality.', icon: 'flask-outline' },
-  { name: 'NPK (19:19:19)', source: 'Balanced Multivitamin', content: 'Equal N, P, K', usage: 'A perfect balanced food for plants of all ages. It gives them everything they need in equal measures.', caution: 'Dissolve it in water first for best results; don’t just throw the grains.', icon: 'flask-outline' },
+  { name: 'NPK', source: 'Balanced Multivitamin', content: 'Equal N, P, K', usage: 'A perfect balanced food for plants of all ages. It gives them everything they need in equal measures.', caution: 'Dissolve it in water first for best results; don’t just throw the grains.', icon: 'flask-outline' },
   { name: 'Vermicompost', source: 'Earthworm Gold', content: 'Full Organic Nutrition', usage: 'Made by earthworms! It makes the soil soft, airy, and full of natural power. The safest food for any plant.', caution: 'Keep it in a cool, shady place; sunlight kills the good bacteria in it.', icon: 'leaf-outline' },
   { name: 'Neem Cake', source: 'Double Action Power', content: 'Nutrition + Pest Guard', usage: 'Not only gives food to the soil but also acts as a "guard" to stop hidden soil pests from eating the roots.', caution: 'Mix it well inside the soil; don’t just leave it on top.', icon: 'leaf-outline' },
   { name: 'Bone Meal', source: 'Slow & Steady Growth', content: 'High Phosphorus', usage: 'Gives power for roots and flowers over a long time. Very good for bulb plants like Onions and Flowers.', caution: 'It has a smell that might attract pet dogs, so bury it deep.', icon: 'leaf-outline' },

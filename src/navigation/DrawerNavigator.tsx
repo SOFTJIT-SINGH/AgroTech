@@ -152,26 +152,8 @@ export default function DrawerNavigator() {
           ),
         }}
       />
-      <Drawer.Screen
-        name="SettingsDrawer"
-        component={NotificationSettingsScreen}
-        options={{
-          drawerLabel: 'Settings',
-          drawerIcon: ({ color }) => (
-            <Ionicons name="settings-outline" size={22} color={color} />
-          ),
-        }}
-      />
-      <Drawer.Screen
-        name="SupportDrawer"
-        component={HelpSupportScreen}
-        options={{
-          drawerLabel: 'Help & Support',
-          drawerIcon: ({ color }) => (
-            <Ionicons name="help-buoy-outline" size={22} color={color} />
-          ),
-        }}
-      />
+      
+      
       <Drawer.Screen
         name="CropLibraryDrawer"
         component={CropLibraryScreen}
@@ -192,6 +174,29 @@ export default function DrawerNavigator() {
           ),
         }}
       />
+      
+      <Drawer.Screen
+        name="SettingsDrawer"
+        component={NotificationSettingsScreen}
+        options={{
+          drawerLabel: 'Settings',
+          drawerIcon: ({ color }) => (
+            <Ionicons name="settings-outline" size={22} color={color} />
+          ),
+        }}
+      />
+      
+      <Drawer.Screen
+        name="SupportDrawer"
+        component={HelpSupportScreen}
+        options={{
+          drawerLabel: 'Help & Support',
+          drawerIcon: ({ color }) => (
+            <Ionicons name="help-buoy-outline" size={22} color={color} />
+          ),
+        }}
+      />
+
       <Drawer.Screen
         name="AboutUsDrawer"
         component={AboutUsScreen}
@@ -202,6 +207,8 @@ export default function DrawerNavigator() {
           ),
         }}
       />
+      
+      
     </Drawer.Navigator>
   );
 }
