@@ -118,20 +118,20 @@ export default function CommunityChatScreen({ navigation }: any) {
     const initials = getInitials(item.user_name || "F");
     
     return (
-      <View className={`mb-6 px-6 ${item.isOptimistic ? 'opacity-70' : 'opacity-100'}`}>
+      <View className={`mb-6 px-6 ${item.isOptimistic ? 'opacity-60' : 'opacity-100'}`}>
         <View className="flex-row">
-          <View className="w-10 h-10 rounded-full bg-emerald-500 items-center justify-center border border-emerald-400/30">
-            <Text className="text-white font-bold text-xs">{initials}</Text>
+          <View className="w-10 h-10 rounded-full bg-agro-green-100 items-center justify-center border border-agro-green-200 shadow-sm">
+            <Text className="text-agro-green-700 font-black text-xs">{initials}</Text>
           </View>
           <View className="ml-3 flex-1">
-            <View className="flex-row items-baseline">
-              <Text className="text-emerald-400 font-bold text-sm">{item.user_name}</Text>
-              <Text className="text-slate-500 text-[10px] ml-2">
+            <View className="flex-row items-baseline mb-1">
+              <Text className="text-agro-green-900 font-extrabold text-sm tracking-tight">{item.user_name}</Text>
+              <Text className="text-agro-earth-400 text-[10px] font-bold ml-2 uppercase">
                 {new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </Text>
             </View>
-            <View className="bg-slate-900 mt-1 p-4 rounded-2xl rounded-tl-none border border-slate-800">
-              <Text className="text-slate-200 text-base leading-6">{item.content}</Text>
+            <View className="bg-white p-4 rounded-2xl rounded-tl-none border border-agro-earth-100 shadow-sm shadow-agro-green-950/5">
+              <Text className="text-agro-green-950 text-[15px] leading-6 font-bold">{item.content}</Text>
             </View>
           </View>
         </View>
@@ -140,25 +140,29 @@ export default function CommunityChatScreen({ navigation }: any) {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-950">
+    <SafeAreaView className="flex-1 bg-agro-earth-50">
       <KeyboardAvoidingView 
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         style={{ flex: 1 }}
       >
         {/* HEADER */}
-        <View className="px-6 py-4 border-b border-slate-900 flex-row items-center">
-          <Pressable onPress={() => navigation.openDrawer()} className="mr-4">
-            <Ionicons name="menu-outline" size={24} color="#34d399" />
+        <View className="px-6 py-4 border-b border-agro-earth-100 flex-row items-center bg-white shadow-sm">
+          <Pressable 
+            onPress={() => navigation.openDrawer()} 
+            className="mr-4 p-2 bg-agro-earth-50 rounded-full border border-agro-earth-100 active:scale-90 transition-all"
+          >
+            <Ionicons name="menu-outline" size={22} color="#3e8e3e" />
           </Pressable>
           <View>
-            <Text className="text-xl font-black text-white">Farmer <Text className="text-emerald-400">Community</Text></Text>
-            <Text className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Global Broadcast</Text>
+            <Text className="text-xl font-black text-agro-green-950 tracking-tight">Farmer <Text className="text-agro-green-600">Community</Text></Text>
+            <Text className="text-agro-earth-500 text-[10px] font-bold uppercase tracking-widest mt-0.5">Global Network</Text>
           </View>
         </View>
 
         {loading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#34d399" />
+            <ActivityIndicator size="large" color="#3e8e3e" />
+            <Text className="text-agro-earth-500 font-bold mt-4 tracking-widest uppercase text-[10px]">Connecting to Network...</Text>
           </View>
         ) : (
           <FlatList
@@ -166,27 +170,28 @@ export default function CommunityChatScreen({ navigation }: any) {
             data={messages}
             renderItem={renderItem}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={{ paddingTop: 20, paddingBottom: 20 }}
+            contentContainerStyle={{ paddingTop: 24, paddingBottom: 24 }}
             onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
             showsVerticalScrollIndicator={false}
           />
         )}
 
         {/* INPUT AREA */}
-        <View className="px-4 py-4 bg-slate-950 border-t border-slate-900 flex-row items-center">
+        <View className="px-4 pt-3 pb-8 bg-white border-t border-agro-earth-100 flex-row items-center shadow-2xl">
           <TextInput
             value={inputText}
             onChangeText={setInputText}
-            placeholder="Share an update or ask a question..."
-            placeholderTextColor="#64748b"
-            className="flex-1 bg-slate-900 border border-slate-800 rounded-2xl px-5 py-4 text-white text-base mr-3"
+            placeholder="Share farming updates..."
+            placeholderTextColor="#bab194"
+            selectionColor="#3e8e3e"
+            className="flex-1 bg-agro-earth-50 border border-agro-earth-100 rounded-2xl px-5 py-4 text-agro-green-950 font-bold text-base mr-3"
             multiline
           />
           <Pressable
             onPress={sendMessage}
-            className="w-14 h-14 rounded-2xl items-center justify-center bg-emerald-500 active:scale-90"
+            className="w-14 h-14 rounded-2xl items-center justify-center bg-agro-green-600 shadow-lg shadow-agro-green-700/20 active:scale-90 transition-all"
           >
-            <Ionicons name="send" size={24} color="#fff" />
+            <Ionicons name="send" size={22} color="#fff" style={{ marginLeft: 3 }} />
           </Pressable>
         </View>
       </KeyboardAvoidingView>

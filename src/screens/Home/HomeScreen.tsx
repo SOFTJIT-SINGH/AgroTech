@@ -119,21 +119,30 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
             </View>
           </View>
 
-          <Pressable 
-            onPress={() => navigation.navigate("Profile")}
-            className="w-12 h-12 bg-white rounded-full border border-agro-earth-200 items-center justify-center overflow-hidden shadow-sm active:scale-90 transition-all"
-          >
-            {useUserStore.getState().profileImage ? (
-              <Image
-                source={{ uri: useUserStore.getState().profileImage! }}
-                style={{ width: '100%', height: '100%' }}
-              />
-            ) : (
-              <Text className="text-agro-green-600 font-black text-lg">
-                {getInitials(name)}
-              </Text>
-            )}
-          </Pressable>
+          <View className="flex-row items-center">
+            <Pressable
+              onPress={() => navigation.navigate("DetectCrop")}
+              className="mr-3 w-11 h-11 bg-white rounded-full border border-agro-earth-200 items-center justify-center shadow-sm active:scale-90 transition-all"
+            >
+              <Ionicons name="scan-outline" size={22} color="#3e8e3e" />
+            </Pressable>
+
+            <Pressable 
+              onPress={() => navigation.navigate("Profile")}
+              className="w-12 h-12 bg-white rounded-full border border-agro-earth-200 items-center justify-center overflow-hidden shadow-sm active:scale-90 transition-all"
+            >
+              {useUserStore.getState().profileImage ? (
+                <Image
+                  source={{ uri: useUserStore.getState().profileImage! }}
+                  style={{ width: '100%', height: '100%' }}
+                />
+              ) : (
+                <Text className="text-agro-green-600 font-black text-lg">
+                  {getInitials(name)}
+                </Text>
+              )}
+            </Pressable>
+          </View>
         </View>
 
         {/* SETTINGS PERMISSION BANNER (Shows only if blocked) */}

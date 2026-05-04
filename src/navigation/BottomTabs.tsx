@@ -5,7 +5,7 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import HomeScreen from "../screens/Home/HomeScreen";
 import BlogsScreen from "../screens/Blogs/BlogsScreen";
 import ChatbotScreen from "../screens/Chatbot/ChatbotScreen";
-import DetectScreen from "../screens/CropDetection/DetectScreen";
+import CommunityScreen from "../screens/CommunityChat/CommunityChatScreen";
 import ProfileScreen from "../screens/Profile/ProfileScreen";
 
 const Tab = createBottomTabNavigator();
@@ -89,12 +89,12 @@ export default function BottomTabs() {
 
 
       <Tab.Screen
-        name="Scanner"
-        component={DetectScreen}
+        name="Community"
+        component={CommunityScreen}
         options={{
           tabBarIcon: ({ focused }) => (
-            <Ionicons
-              name={focused ? "scan-circle" : "scan-circle-outline"}
+            <MaterialCommunityIcons
+              name={focused ? "account-group" : "account-group-outline"}
               size={28}
               color={focused ? "#3e8e3e" : "#8f7e5d"}
             />
