@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { fetchGeminiResponse } from "../../services/gemini";
 import { ActivityIndicator } from "react-native";
+import { Image } from "expo-image";
 
 const crops = [
   "Wheat",
@@ -150,7 +151,7 @@ export default function FertilizerScreen() {
 
   const Selector = ({ title, data, value, setValue }) => (
     <View className="mb-7">
-      <Text className="text-slate-300 font-bold mb-3 px-1 text-sm uppercase tracking-wider">
+      <Text className="text-agro-earth-500 font-bold mb-3 px-1 text-sm uppercase tracking-wider">
         {title}
       </Text>
 
@@ -163,13 +164,13 @@ export default function FertilizerScreen() {
               onPress={() => setValue(item)}
               className={`px-5 py-3 mr-3 mb-3 rounded-2xl border transition-colors ${
                 isSelected
-                  ? "bg-emerald-500/15 border-emerald-500/50 shadow-sm shadow-emerald-500/10"
-                  : "bg-slate-900 border-slate-800 active:bg-slate-800/80"
+                  ? "bg-agro-green-100 border-agro-green-200 shadow-sm shadow-agro-green-900/5"
+                  : "bg-white border-agro-earth-100 active:bg-agro-earth-50"
               }`}
             >
               <Text
                 className={`text-sm font-semibold tracking-wide ${
-                  isSelected ? "text-emerald-400" : "text-slate-400"
+                  isSelected ? "text-agro-green-700" : "text-agro-earth-600"
                 }`}
               >
                 {item}
@@ -182,19 +183,26 @@ export default function FertilizerScreen() {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-950">
+    <SafeAreaView className="flex-1 bg-agro-earth-50">
       {/* HEADER */}
-      <View className="px-6 pt-4 pb-4 border-b border-slate-900 flex-row items-center">
-        <Pressable 
-          onPress={() => navigation.goBack()}
-          className="mr-4 p-2 bg-slate-900 rounded-full border border-slate-800 active:scale-95 transition-all"
-        >
-          <Ionicons name="arrow-back" size={24} color="#34d399" />
-        </Pressable>
-        <View>
-          <Text className="text-xl font-black text-white tracking-tight">Fertilizer <Text className="text-emerald-400">Plan</Text></Text>
-          <Text className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-0.5">Nutrient Guide</Text>
+      <View className="px-6 pt-4 pb-4 border-b border-agro-earth-100 bg-white flex-row items-center justify-between">
+        <View className="flex-row items-center">
+          <Pressable 
+            onPress={() => navigation.goBack()}
+            className="mr-4 p-2 bg-white rounded-full border border-agro-earth-200 active:scale-95 transition-all"
+          >
+            <Ionicons name="arrow-back" size={24} color="#3e8e3e" />
+          </Pressable>
+          <View>
+            <Text className="text-xl font-black text-agro-green-950 tracking-tight">Fertilizer <Text className="text-agro-green-600">Plan</Text></Text>
+            <Text className="text-agro-earth-500 text-[10px] font-bold uppercase tracking-widest mt-0.5">Nutrient Guide</Text>
+          </View>
         </View>
+        <Image
+          source={{ uri: "https://img.icons8.com/fluency/96/sprout.png" }}
+          style={{ width: 40, height: 40 }}
+          className="opacity-90"
+        />
       </View>
 
       <ScrollView 
@@ -205,10 +213,10 @@ export default function FertilizerScreen() {
         
         {/* HERO SECTION */}
         <View className="mb-8">
-          <Text className="text-2xl font-extrabold text-white tracking-tight leading-8">
-            Soil Nutrient <Text className="text-emerald-400">Scheduler</Text>
+          <Text className="text-2xl font-extrabold text-agro-green-950 tracking-tight leading-8">
+            Soil Nutrient <Text className="text-agro-green-600">Scheduler</Text>
           </Text>
-          <Text className="text-slate-400 font-medium mt-1 text-sm">
+          <Text className="text-agro-earth-500 font-medium mt-1 text-sm">
             Generate an optimal nutrient schedule for your crop
           </Text>
         </View>
@@ -219,18 +227,18 @@ export default function FertilizerScreen() {
         <Selector title="Farm Size" data={farmSizes} value={farm} setValue={setFarm} />
 
         {/* DATE SELECTOR */}
-        <Text className="text-slate-300 font-bold mb-3 px-1 text-sm uppercase tracking-wider">
+        <Text className="text-agro-earth-500 font-bold mb-3 px-1 text-sm uppercase tracking-wider">
           Sowing Date
         </Text>
 
         <Pressable
           onPress={() => setShowPicker(true)}
-          className="bg-slate-900 p-4 rounded-2xl border border-slate-800 mb-6 flex-row justify-between items-center active:bg-slate-800/80 transition-colors"
+          className="bg-white p-4 rounded-2xl border border-agro-earth-100 mb-6 flex-row justify-between items-center active:bg-agro-earth-50 transition-colors shadow-sm"
         >
-          <Text className="text-slate-200 font-semibold text-base">
+          <Text className="text-agro-green-950 font-semibold text-base">
             {date.toDateString()}
           </Text>
-          <Text className="text-slate-500 text-xl font-bold">🗓️</Text>
+          <Text className="text-agro-earth-400 text-xl font-bold">🗓️</Text>
         </Pressable>
 
         {showPicker && (
@@ -250,14 +258,14 @@ export default function FertilizerScreen() {
           disabled={!crop || !soil || !farm || isLoading}
           className={`py-4 rounded-2xl items-center mb-6 shadow-lg transition-all ${
             crop && soil && farm && !isLoading
-              ? "bg-emerald-500 shadow-emerald-500/20 active:scale-95 active:bg-emerald-600"
-              : "bg-slate-800 opacity-50"
+              ? "bg-agro-green-600 shadow-agro-green-700/20 active:scale-95 active:bg-agro-green-700"
+              : "bg-agro-earth-200 opacity-50"
           }`}
         >
           {isLoading ? (
-            <ActivityIndicator color="#0f172a" />
+            <ActivityIndicator color="#ffffff" />
           ) : (
-            <Text className={`font-extrabold text-base uppercase tracking-wider ${crop && soil && farm ? "text-slate-950" : "text-slate-500"}`}>
+            <Text className={`font-extrabold text-base uppercase tracking-wider ${crop && soil && farm ? "text-white" : "text-agro-earth-500"}`}>
               Generate Plan
             </Text>
           )}
@@ -265,45 +273,45 @@ export default function FertilizerScreen() {
 
         {/* RESULT CARD / LOADING STATE */}
         {isLoading ? (
-          <View className="bg-slate-900 p-8 rounded-[28px] mb-12 border border-slate-800 items-center justify-center shadow-xl shadow-slate-950">
-            <ActivityIndicator size="large" color="#34d399" />
-            <Text className="text-emerald-400 font-bold mt-4 tracking-widest uppercase text-[10px]">
+          <View className="bg-white p-8 rounded-[28px] mb-12 border border-agro-earth-100 items-center justify-center shadow-xl shadow-agro-green-950/5">
+            <ActivityIndicator size="large" color="#3e8e3e" />
+            <Text className="text-agro-green-600 font-bold mt-4 tracking-widest uppercase text-[10px]">
               AI Generating Nutrient Schedule...
             </Text>
           </View>
         ) : plan && (
-          <View className="bg-slate-900 p-6 rounded-[28px] mb-12 border border-slate-800 relative shadow-xl shadow-slate-950">
+          <View className="bg-white p-6 rounded-[28px] mb-12 border border-agro-earth-100 relative shadow-xl shadow-agro-green-950/5">
             
-            <Text className="text-emerald-400 font-bold text-xs uppercase tracking-widest mb-4">
+            <Text className="text-agro-green-600 font-bold text-xs uppercase tracking-widest mb-4">
               Recommended NPK Profile
             </Text>
 
             {/* NPK Dashboard Layout */}
             <View className="flex-row justify-between mb-8">
               
-              <View className="bg-slate-950 rounded-2xl p-4 flex-1 mr-2 border border-slate-800 items-center justify-center">
-                <Text className="text-slate-500 font-bold text-[10px] uppercase tracking-widest mb-1">Nitrogen (N)</Text>
-                <Text className="text-white font-black text-2xl">{plan.baseDose.nitrogen}</Text>
-                <Text className="text-slate-500 font-medium text-xs mt-1">kg/ha</Text>
+              <View className="bg-agro-earth-50 rounded-2xl p-4 flex-1 mr-2 border border-agro-earth-100 items-center justify-center">
+                <Text className="text-agro-earth-500 font-bold text-[10px] uppercase tracking-widest mb-1">Nitrogen (N)</Text>
+                <Text className="text-agro-green-950 font-black text-2xl">{plan.baseDose.nitrogen}</Text>
+                <Text className="text-agro-earth-500 font-medium text-xs mt-1">kg/ha</Text>
               </View>
 
-              <View className="bg-slate-950 rounded-2xl p-4 flex-1 mr-2 border border-slate-800 items-center justify-center">
-                <Text className="text-slate-500 font-bold text-[10px] uppercase tracking-widest mb-1">Phosphorus (P)</Text>
-                <Text className="text-white font-black text-2xl">{plan.baseDose.phosphorus}</Text>
-                <Text className="text-slate-500 font-medium text-xs mt-1">kg/ha</Text>
+              <View className="bg-agro-earth-50 rounded-2xl p-4 flex-1 mr-2 border border-agro-earth-100 items-center justify-center">
+                <Text className="text-agro-earth-500 font-bold text-[10px] uppercase tracking-widest mb-1">Phosphorus (P)</Text>
+                <Text className="text-agro-green-950 font-black text-2xl">{plan.baseDose.phosphorus}</Text>
+                <Text className="text-agro-earth-500 font-medium text-xs mt-1">kg/ha</Text>
               </View>
 
-              <View className="bg-slate-950 rounded-2xl p-4 flex-1 border border-slate-800 items-center justify-center">
-                <Text className="text-slate-500 font-bold text-[10px] uppercase tracking-widest mb-1">Potassium (K)</Text>
-                <Text className="text-white font-black text-2xl">{plan.baseDose.potassium}</Text>
-                <Text className="text-slate-500 font-medium text-xs mt-1">kg/ha</Text>
+              <View className="bg-agro-earth-50 rounded-2xl p-4 flex-1 border border-agro-earth-100 items-center justify-center">
+                <Text className="text-agro-earth-500 font-bold text-[10px] uppercase tracking-widest mb-1">Potassium (K)</Text>
+                <Text className="text-agro-green-950 font-black text-2xl">{plan.baseDose.potassium}</Text>
+                <Text className="text-agro-earth-500 font-medium text-xs mt-1">kg/ha</Text>
               </View>
 
             </View>
 
-            <View className="h-[1px] w-full bg-slate-800/80 mb-6" />
+            <View className="h-[1px] w-full bg-agro-earth-100 mb-6" />
 
-            <Text className="text-slate-100 font-bold text-lg mb-4">
+            <Text className="text-agro-green-950 font-bold text-lg mb-4">
               Application Schedule
             </Text>
 
@@ -314,27 +322,27 @@ export default function FertilizerScreen() {
               targetDate.setDate(targetDate.getDate() + stage.day);
 
               return (
-                <View key={index} className="bg-slate-950/50 p-4 rounded-2xl border border-slate-800/60 mb-3">
+                <View key={index} className="bg-agro-earth-50/50 p-4 rounded-2xl border border-agro-earth-100 mb-3">
                   
-                  <View className="flex-row justify-between items-center mb-3 border-b border-slate-800/50 pb-3">
-                    <Text className="font-extrabold text-slate-200 text-base">
+                  <View className="flex-row justify-between items-center mb-3 border-b border-agro-earth-100 pb-3">
+                    <Text className="font-extrabold text-agro-green-950 text-base">
                       {stage.stage}
                     </Text>
                     
-                    <View className="bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20">
-                      <Text className="text-emerald-400 text-xs font-bold uppercase tracking-wider">
+                    <View className="bg-agro-green-100 px-3 py-1.5 rounded-lg border border-agro-green-200">
+                      <Text className="text-agro-green-700 text-xs font-bold uppercase tracking-wider">
                         Day {stage.day}
                       </Text>
                     </View>
                   </View>
 
-                  <Text className="text-slate-400 text-sm leading-6 font-medium mb-2">
+                  <Text className="text-agro-earth-600 text-sm leading-6 font-medium mb-2">
                     {stage.tip}
                   </Text>
 
                   <View className="flex-row items-center mt-1">
-                    <Text className="text-slate-500 text-xs font-semibold uppercase tracking-wider mr-2">Target Date:</Text>
-                    <Text className="text-slate-300 text-xs font-bold">
+                    <Text className="text-agro-earth-500 text-xs font-semibold uppercase tracking-wider mr-2">Target Date:</Text>
+                    <Text className="text-agro-green-800 text-xs font-bold">
                       {targetDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </Text>
                   </View>

@@ -89,10 +89,10 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
     { title: "Crop Disease", icon: "https://img.icons8.com/fluency/96/plant-under-sun.png", screen: "DetectCrop" },
     { title: "Weather Advice", icon: "https://img.icons8.com/fluency/96/partly-cloudy-day.png", screen: "WeatherAdvice" },
     { title: "Crop Library", icon: "https://img.icons8.com/fluency/96/book.png", screen: "CropLibrary" },
-    { title: "Fertilizer Library", icon: "https://img.icons8.com/fluency/96/compost.png", screen: "FertilizerLibrary" },
+    { title: "Fertilizer Library", icon: "https://img.icons8.com/fluency/96/organic-food.png", screen: "FertilizerLibrary" },
     { title: "Crop Suggestion", icon: "https://img.icons8.com/fluency/96/idea.png", screen: "CropSuggestion" },
     { title: "Sowing Time", icon: "https://img.icons8.com/fluency/96/calendar.png", screen: "SowingPrediction" },
-    { title: "Fertilizer Plan", icon: "https://img.icons8.com/fluency/96/test-tube.png", screen: "FertilizerPlan" },
+    { title: "Fertilizer Plan", icon: "https://img.icons8.com/fluency/96/sprout.png", screen: "FertilizerPlan" },
   ];
 
 

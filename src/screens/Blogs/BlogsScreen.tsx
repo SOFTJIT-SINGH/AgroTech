@@ -86,49 +86,49 @@ export default function BlogsScreen({ navigation }: any) {
 
   if (loading) {
     return (
-      <SafeAreaView className="flex-1 bg-slate-950 justify-center items-center">
-        <ActivityIndicator size="large" color="#34d399" />
-        <Text className="text-slate-400 mt-4 font-medium">Loading blogs...</Text>
+      <SafeAreaView className="flex-1 bg-agro-earth-50 justify-center items-center">
+        <ActivityIndicator size="large" color="#3e8e3e" />
+        <Text className="text-agro-earth-500 mt-4 font-medium">Loading blogs...</Text>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-950">
+    <SafeAreaView className="flex-1 bg-agro-earth-50">
       
       {/* HEADER */}
       <View className="px-6 pt-5 pb-4 flex-row justify-between items-start">
         <View>
-          <Text className="text-3xl font-extrabold text-white tracking-tight">
-            Agriculture <Text className="text-emerald-400">Blogs</Text>
+          <Text className="text-3xl font-extrabold text-agro-green-950 tracking-tight">
+            Agriculture <Text className="text-agro-green-600">Blogs</Text>
           </Text>
-          <Text className="text-slate-400 font-medium mt-1 text-sm">
+          <Text className="text-agro-earth-500 font-medium mt-1 text-sm">
             Farming tips, guides & community insights
           </Text>
         </View>
         <Pressable
           onPress={() => navigation.navigate("CreateBlog")}
-          className="bg-emerald-500 p-3 rounded-2xl active:scale-95 active:bg-emerald-600 shadow-lg shadow-emerald-500/30"
+          className="bg-agro-green-600 p-3 rounded-2xl active:scale-95 active:bg-agro-green-700 shadow-lg shadow-agro-green-600/30"
         >
-          <Ionicons name="add" size={22} color="#020617" />
+          <Ionicons name="add" size={22} color="#ffffff" />
         </Pressable>
       </View>
 
       {/* SEARCH BAR */}
       <View className="px-6 mt-2 mb-5">
-        <View className="bg-slate-900 flex-row items-center px-4 py-3.5 rounded-2xl border border-slate-800">
-          <Ionicons name="search" size={20} color="#64748b" />
+        <View className="bg-white flex-row items-center px-4 py-3.5 rounded-2xl border border-agro-earth-100 shadow-sm shadow-agro-green-950/5">
+          <Ionicons name="search" size={20} color="#bab194" />
           <TextInput
             placeholder="Search farming tips..."
-            placeholderTextColor="#64748b"
+            placeholderTextColor="#bab194"
             value={search}
             onChangeText={setSearch}
-            className="flex-1 text-slate-100 text-base font-medium ml-3"
-            selectionColor="#34d399"
+            className="flex-1 text-agro-green-950 text-base font-medium ml-3"
+            selectionColor="#3e8e3e"
           />
           {search.length > 0 && (
             <Pressable onPress={() => setSearch("")} className="ml-2">
-              <Ionicons name="close-circle" size={20} color="#64748b" />
+              <Ionicons name="close-circle" size={20} color="#bab194" />
             </Pressable>
           )}
         </View>
@@ -149,13 +149,13 @@ export default function BlogsScreen({ navigation }: any) {
                 onPress={() => setSelectedCategory(item)}
                 className={`px-5 py-2.5 rounded-2xl items-center justify-center border transition-colors ${
                   isSelected
-                    ? "bg-emerald-500/10 border-emerald-500/30"
-                    : "bg-slate-900 border-slate-800"
+                    ? "bg-agro-green-100 border-agro-green-200"
+                    : "bg-white border-agro-earth-100 shadow-sm"
                 }`}
               >
                 <Text
                   className={`text-sm font-semibold tracking-wide ${
-                    isSelected ? "text-emerald-400" : "text-slate-400"
+                    isSelected ? "text-agro-green-700" : "text-agro-earth-500"
                   }`}
                 >
                   {item}
@@ -174,30 +174,30 @@ export default function BlogsScreen({ navigation }: any) {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="#34d399"
-            colors={["#34d399"]}
-            progressBackgroundColor="#0f172a"
+            tintColor="#3e8e3e"
+            colors={["#3e8e3e"]}
+            progressBackgroundColor="#ffffff"
           />
         }
       >
         {filteredBlogs.length === 0 ? (
           /* EMPTY STATE */
           <View className="items-center justify-center mt-12 p-8">
-            <View className="bg-slate-900 w-20 h-20 rounded-full items-center justify-center mb-5 border border-slate-800">
-              <Ionicons name="document-text-outline" size={36} color="#64748b" />
+            <View className="bg-white w-20 h-20 rounded-full items-center justify-center mb-5 border border-agro-earth-100 shadow-sm">
+              <Ionicons name="document-text-outline" size={36} color="#bab194" />
             </View>
-            <Text className="text-slate-300 font-bold text-lg mb-2 text-center">
+            <Text className="text-agro-green-950 font-bold text-lg mb-2 text-center">
               {search ? `No blogs found for "${search}"` : "No blogs yet"}
             </Text>
-            <Text className="text-slate-500 text-sm text-center leading-6 px-4">
+            <Text className="text-agro-earth-500 text-sm text-center leading-6 px-4">
               {search ? "Try a different search term." : "Be the first to share your farming knowledge!"}
             </Text>
             {!search && (
               <Pressable
                 onPress={() => navigation.navigate("CreateBlog")}
-                className="mt-6 bg-emerald-500/15 px-6 py-3 rounded-2xl border border-emerald-500/30 active:scale-95"
+                className="mt-6 bg-agro-green-600 px-6 py-3 rounded-2xl active:scale-95 shadow-md shadow-agro-green-700/20"
               >
-                <Text className="text-emerald-400 font-bold text-sm uppercase tracking-wider">Write a Blog</Text>
+                <Text className="text-white font-bold text-sm uppercase tracking-wider">Write a Blog</Text>
               </Pressable>
             )}
           </View>
@@ -206,33 +206,33 @@ export default function BlogsScreen({ navigation }: any) {
             {/* FEATURED BLOG (first item) */}
             <Pressable
               onPress={() => navigation.navigate("BlogDetails", { blog: filteredBlogs[0] })}
-              className="bg-slate-900 rounded-3xl mb-6 overflow-hidden border border-slate-800 active:scale-[0.98] active:opacity-90 transition-all"
+              className="bg-white rounded-3xl mb-6 overflow-hidden border border-agro-earth-100 active:scale-[0.98] active:opacity-90 transition-all shadow-lg shadow-agro-green-950/5"
             >
               <Image
                 source={{ uri: filteredBlogs[0].image_url }}
                 style={{ width: "100%", height: 220 }}
-                className="bg-slate-800"
+                className="bg-agro-earth-100"
               />
               <View className="p-5">
                 <View className="flex-row justify-between items-center mb-3">
-                  <View className="bg-emerald-500/15 px-3 py-1.5 rounded-xl border border-emerald-500/20">
-                    <Text className="text-emerald-400 text-xs font-bold uppercase tracking-wider">
+                  <View className="bg-agro-green-100 px-3 py-1.5 rounded-xl border border-agro-green-200">
+                    <Text className="text-agro-green-700 text-xs font-bold uppercase tracking-wider">
                       Featured • {filteredBlogs[0].category}
                     </Text>
                   </View>
-                  <Text className="text-slate-500 text-xs font-medium">
+                  <Text className="text-agro-earth-500 text-xs font-medium">
                     {formatDate(filteredBlogs[0].created_at)}
                   </Text>
                 </View>
-                <Text className="font-extrabold text-white text-xl mb-2 leading-7">
+                <Text className="font-extrabold text-agro-green-950 text-xl mb-2 leading-7">
                   {filteredBlogs[0].title}
                 </Text>
-                <Text className="text-slate-400 text-sm leading-6" numberOfLines={2}>
+                <Text className="text-agro-earth-600 text-sm leading-6" numberOfLines={2}>
                   {filteredBlogs[0].content}
                 </Text>
                 <View className="flex-row items-center mt-3">
-                  <Ionicons name="person-circle-outline" size={16} color="#64748b" />
-                  <Text className="text-slate-500 text-xs font-medium ml-1.5">{filteredBlogs[0].author_name}</Text>
+                  <Ionicons name="person-circle-outline" size={16} color="#bab194" />
+                  <Text className="text-agro-earth-500 text-xs font-medium ml-1.5">{filteredBlogs[0].author_name}</Text>
                 </View>
               </View>
             </Pressable>
@@ -242,29 +242,29 @@ export default function BlogsScreen({ navigation }: any) {
               <Pressable
                 key={blog.id}
                 onPress={() => navigation.navigate("BlogDetails", { blog })}
-                className="bg-slate-900 rounded-2xl mb-4 overflow-hidden border border-slate-800 flex-row active:scale-[0.98] active:opacity-90 transition-all"
+                className="bg-white rounded-2xl mb-4 overflow-hidden border border-agro-earth-100 flex-row active:scale-[0.98] active:opacity-90 transition-all shadow-md shadow-agro-green-950/5"
               >
                 <Image
                   source={{ uri: blog.image_url }}
                   style={{ width: 110, height: 130 }}
-                  className="bg-slate-800"
+                  className="bg-agro-earth-100"
                 />
                 <View className="flex-1 p-4 justify-between">
                   <View>
                     <View className="flex-row items-center justify-between mb-1.5">
-                      <Text className="text-emerald-400 text-[10px] font-bold uppercase tracking-widest">{blog.category}</Text>
-                      <Text className="text-slate-600 text-[10px] font-medium">{formatDate(blog.created_at)}</Text>
+                      <Text className="text-agro-green-600 text-[10px] font-bold uppercase tracking-widest">{blog.category}</Text>
+                      <Text className="text-agro-earth-400 text-[10px] font-medium">{formatDate(blog.created_at)}</Text>
                     </View>
-                    <Text className="font-bold text-white text-[15px] leading-[22px] mb-1.5" numberOfLines={2}>
+                    <Text className="font-bold text-agro-green-950 text-[15px] leading-[22px] mb-1.5" numberOfLines={2}>
                       {blog.title}
                     </Text>
-                    <Text className="text-slate-500 text-xs leading-5" numberOfLines={2}>
+                    <Text className="text-agro-earth-500 text-xs leading-5" numberOfLines={2}>
                       {blog.content}
                     </Text>
                   </View>
                   <View className="flex-row items-center">
-                    <Ionicons name="person-circle-outline" size={14} color="#475569" />
-                    <Text className="text-slate-600 text-[10px] font-medium ml-1">{blog.author_name}</Text>
+                    <Ionicons name="person-circle-outline" size={14} color="#bab194" />
+                    <Text className="text-agro-earth-500 text-[10px] font-medium ml-1">{blog.author_name}</Text>
                   </View>
                 </View>
               </Pressable>

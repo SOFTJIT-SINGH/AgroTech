@@ -37,7 +37,7 @@ export const CROP_LIBRARY_DATA = {
       name: 'Bajra (Pearl Millet)', 
       scientific_name: 'Pennisetum glaucum', 
       season: 'Rainy Season (Kharif)', 
-      image_url: 'https://images.unsplash.com/photo-1599839620577-69502b4860cc?q=80&w=600&auto=format&fit=crop', 
+      image_url: 'https://images.unsplash.com/photo-1600117154390-bf337856424e?q=80&w=600&auto=format&fit=crop', 
       description: 'A very "tough" crop that can grow even if there is very little rain. It is very healthy and full of iron.',
       pests: 'Downy mildew (a white powdery disease on leaves).',
       protection: 'Soak seeds in salt water before planting to kill any hidden diseases.',
