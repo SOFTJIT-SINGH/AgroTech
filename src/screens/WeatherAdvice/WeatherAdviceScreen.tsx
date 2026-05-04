@@ -97,25 +97,25 @@ export default function WeatherAdviceScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-950">
+    <SafeAreaView className="flex-1 bg-agro-earth-50">
       {/* HEADER */}
-      <View className="px-6 pt-4 pb-4 border-b border-slate-900 flex-row items-center">
+      <View className="px-6 pt-4 pb-4 border-b border-agro-earth-100 flex-row items-center bg-white/50">
         <Pressable 
           onPress={() => navigation.goBack()}
-          className="mr-4 p-2 bg-slate-900 rounded-full border border-slate-800 active:scale-95 transition-all"
+          className="mr-4 p-2 bg-white rounded-full border border-agro-earth-200 shadow-sm active:scale-95 transition-all"
         >
-          <Ionicons name="arrow-back" size={24} color="#34d399" />
+          <Ionicons name="arrow-back" size={24} color="#3e8e3e" />
         </Pressable>
         <View>
-          <Text className="text-xl font-black text-white tracking-tight">Weather <Text className="text-emerald-400">Advisory</Text></Text>
-          <Text className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-0.5">Live Farm Data</Text>
+          <Text className="text-xl font-black text-agro-green-950 tracking-tight">Weather <Text className="text-agro-green-600">Advisory</Text></Text>
+          <Text className="text-agro-earth-500 text-[10px] font-bold uppercase tracking-widest mt-0.5">Live Farm Data</Text>
         </View>
       </View>
 
       {isWeatherLoading && !weather ? (
-        <View className="flex-1 justify-center items-center bg-slate-950">
-          <ActivityIndicator size="large" color="#34d399" />
-          <Text className="mt-4 text-slate-400 font-medium tracking-wide">
+        <View className="flex-1 justify-center items-center">
+          <ActivityIndicator size="large" color="#3e8e3e" />
+          <Text className="mt-4 text-agro-green-800 font-bold tracking-wide">
             Analyzing local weather...
           </Text>
         </View>
@@ -128,54 +128,54 @@ export default function WeatherAdviceScreen() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              tintColor="#34d399"
-              colors={["#34d399"]}
-              progressBackgroundColor="#0f172a"
+              tintColor="#3e8e3e"
+              colors={["#3e8e3e"]}
+              progressBackgroundColor="#ffffff"
             />
           }
         >
           {/* WELCOME SECTION */}
           <View className="px-6 mb-8">
-            <Text className="text-2xl font-extrabold text-white tracking-tight leading-8">
-              Farm Weather <Text className="text-emerald-400">Insights</Text>
+            <Text className="text-2xl font-extrabold text-agro-green-950 tracking-tight leading-8">
+              Farm Weather <Text className="text-agro-green-600">Insights</Text>
             </Text>
-            <Text className="text-slate-400 font-medium mt-1 text-sm">
+            <Text className="text-agro-earth-600 font-bold mt-1 text-sm">
               Smart irrigation & crop advice based on your location
             </Text>
           </View>
 
           {/* WEATHER CARD */}
-          <View className="mx-6 bg-emerald-500/10 rounded-[28px] p-6 mb-8 border border-emerald-500/20 relative overflow-hidden">
-            <View className="absolute -top-10 -right-10 w-32 h-32 bg-emerald-500/20 rounded-full blur-3xl" />
+          <View className="mx-6 bg-agro-green-600 rounded-[28px] p-6 mb-8 border border-agro-green-500 relative overflow-hidden shadow-xl shadow-agro-green-950/20">
+            <View className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-3xl" />
 
-            <Text className="text-emerald-400 font-bold text-xs tracking-widest uppercase mb-4">
+            <Text className="text-agro-green-100 font-black text-xs tracking-widest uppercase mb-4">
               Current Conditions
             </Text>
 
             <View className="flex-row justify-between items-end">
               <View>
-                <Text className="text-slate-400 text-sm font-medium mb-1">
+                <Text className="text-agro-green-50 text-sm font-bold mb-1">
                   {weather?.condition || "Temperature"}
                 </Text>
                 <View className="flex-row items-start">
                   <Text className="text-5xl font-black text-white tracking-tighter">
                     {weather?.temperature || "--"}
                   </Text>
-                  <Text className="text-2xl font-bold text-emerald-400 mt-1 ml-1">
+                  <Text className="text-2xl font-black text-agro-accent-400 mt-1 ml-1">
                     °C
                   </Text>
                 </View>
               </View>
 
               <View className="items-end">
-                <Text className="text-slate-400 text-sm font-medium mb-1">
+                <Text className="text-agro-green-50 text-sm font-bold mb-1">
                   Wind Speed
                 </Text>
                 <View className="flex-row items-baseline">
-                  <Text className="text-3xl font-bold text-white tracking-tight">
+                  <Text className="text-3xl font-black text-white tracking-tight">
                     {weather?.wind || "--"}
                   </Text>
-                  <Text className="text-sm font-bold text-slate-300 ml-1">
+                  <Text className="text-sm font-black text-agro-accent-400 ml-1">
                     km/h
                   </Text>
                 </View>
@@ -185,21 +185,21 @@ export default function WeatherAdviceScreen() {
 
           <View className="px-6 mb-8">
             <View className="flex-row items-center justify-between mb-4 px-1">
-              <Text className="text-xl font-bold text-slate-100">
+              <Text className="text-xl font-bold text-agro-green-950">
                 Farming Advice
               </Text>
-              {isAdviceLoading && <ActivityIndicator size="small" color="#34d399" />}
+              {isAdviceLoading && <ActivityIndicator size="small" color="#3e8e3e" />}
             </View>
 
             {advice.map((tip, index) => (
               <View
                 key={index}
-                className="bg-slate-900 p-5 rounded-2xl mb-3 border border-slate-800 flex-row items-start shadow-sm shadow-slate-900/50"
+                className="bg-white p-5 rounded-2xl mb-3 border border-agro-earth-100 flex-row items-start shadow-sm shadow-agro-green-950/5"
               >
-                <View className="bg-emerald-500/10 p-2 rounded-full mr-4 mt-0.5 border border-emerald-500/20">
-                  <Ionicons name="leaf" size={16} color="#34d399" />
+                <View className="bg-agro-green-100 p-2 rounded-full mr-4 mt-0.5 border border-agro-green-200">
+                  <Ionicons name="leaf" size={16} color="#3e8e3e" />
                 </View>
-                <Text className="text-slate-200 text-base leading-6 font-medium flex-1">
+                <Text className="text-agro-green-950 text-base leading-6 font-bold flex-1">
                   {tip}
                 </Text>
               </View>
@@ -208,7 +208,7 @@ export default function WeatherAdviceScreen() {
 
           {/* SUGGESTED CROPS */}
           <View className="px-6 mb-12">
-            <Text className="text-xl font-bold text-slate-100 mb-4 px-1">
+            <Text className="text-xl font-bold text-agro-green-950 mb-4 px-1">
               Suggested Crops
             </Text>
 
@@ -216,9 +216,9 @@ export default function WeatherAdviceScreen() {
               {suggestedCrops.map((crop, index) => (
                 <View 
                   key={index} 
-                  className="bg-slate-900 px-5 py-3 rounded-xl border border-slate-800"
+                  className="bg-white px-5 py-3 rounded-xl border border-agro-earth-100 shadow-sm shadow-agro-green-950/5"
                 >
-                  <Text className="text-emerald-400 font-bold tracking-wide">
+                  <Text className="text-agro-green-700 font-black tracking-wide">
                     {crop}
                   </Text>
                 </View>

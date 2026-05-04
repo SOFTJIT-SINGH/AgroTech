@@ -44,16 +44,16 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-950">
+    <SafeAreaView className="flex-1 bg-agro-earth-50">
       <ScrollView showsVerticalScrollIndicator={false} className="pb-10">
 
         {/* HEADER */}
         <View className="items-center mt-6">
           <View className="relative">
             {/* Subtle background glow effect */}
-            <View className="absolute inset-0 bg-emerald-500/30 rounded-full blur-xl scale-110" />
+            <View className="absolute inset-0 bg-agro-green-500/10 rounded-full blur-xl scale-110" />
             <View 
-              className="w-[110px] h-[110px] rounded-full border-[4px] border-slate-950 bg-slate-800 relative z-10 items-center justify-center overflow-hidden"
+              className="w-[110px] h-[110px] rounded-full border-[4px] border-white bg-agro-green-50 relative z-10 items-center justify-center overflow-hidden shadow-lg shadow-agro-green-950/10"
             >
               {user.profileImage ? (
                 <Image
@@ -61,23 +61,23 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
                   style={{ width: '100%', height: '100%' }}
                 />
               ) : (
-                <Text className="text-white text-4xl font-black tracking-tighter">
+                <Text className="text-agro-green-700 text-4xl font-black tracking-tighter">
                   {getInitials(user.name)}
                 </Text>
               )}
             </View>
           </View>
 
-          <Text className="text-white text-3xl font-extrabold mt-5 tracking-tight">
+          <Text className="text-agro-green-950 text-3xl font-extrabold mt-5 tracking-tight">
             {user.name}
           </Text>
 
           {email ? (
-            <Text className="text-slate-500 text-sm mt-1 font-medium">{email}</Text>
+            <Text className="text-agro-earth-500 text-sm mt-1 font-bold">{email}</Text>
           ) : null}
 
-          <View className="bg-emerald-500/10 px-4 py-1.5 rounded-full mt-2.5 border border-emerald-500/20">
-            <Text className="text-emerald-400 font-bold text-xs uppercase tracking-widest">
+          <View className="bg-agro-green-100 px-4 py-1.5 rounded-full mt-2.5 border border-agro-green-200">
+            <Text className="text-agro-green-800 font-black text-xs uppercase tracking-widest">
               Farmer
             </Text>
           </View>
@@ -85,113 +85,113 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
 
         {/* PERSONAL DETAILS */}
         <View className="px-6 mt-10">
-          <Text className="text-lg font-bold text-slate-100 mb-4 px-1">
+          <Text className="text-lg font-bold text-agro-green-950 mb-4 px-1">
             Personal Details
           </Text>
 
-          <View className="bg-slate-900 rounded-3xl p-6 border border-slate-800">
-            <View className="flex-row justify-between items-center border-b border-slate-800/80 pb-4 mb-4">
-              <Text className="text-slate-400 font-medium text-sm">Phone</Text>
-              <Text className="text-slate-100 font-bold text-base">{user.phone || '—'}</Text>
+          <View className="bg-white rounded-3xl p-6 border border-agro-earth-200 shadow-sm">
+            <View className="flex-row justify-between items-center border-b border-agro-earth-50 pb-4 mb-4">
+              <Text className="text-agro-earth-500 font-bold text-sm">Phone</Text>
+              <Text className="text-agro-green-950 font-bold text-base">{user.phone || '—'}</Text>
             </View>
 
-            <View className="flex-row justify-between items-center border-b border-slate-800/80 pb-4 mb-4">
-              <Text className="text-slate-400 font-medium text-sm">Location</Text>
-              <Text className="text-slate-100 font-bold text-base">{user.location || '—'}</Text>
+            <View className="flex-row justify-between items-center border-b border-agro-earth-50 pb-4 mb-4">
+              <Text className="text-agro-earth-500 font-bold text-sm">Location</Text>
+              <Text className="text-agro-green-950 font-bold text-base">{user.location || '—'}</Text>
             </View>
 
-            <View className="flex-row justify-between items-center border-b border-slate-800/80 pb-4 mb-4">
-              <Text className="text-slate-400 font-medium text-sm">Farm Size</Text>
-              <Text className="text-slate-100 font-bold text-base">{user.farmSize || '—'}</Text>
+            <View className="flex-row justify-between items-center border-b border-agro-earth-50 pb-4 mb-4">
+              <Text className="text-agro-earth-500 font-bold text-sm">Farm Size</Text>
+              <Text className="text-agro-green-950 font-bold text-base">{user.farmSize || '—'}</Text>
             </View>
 
-            <View className="flex-row justify-between items-center border-b border-slate-800/80 pb-4 mb-4">
-              <Text className="text-slate-400 font-medium text-sm">Main Crop</Text>
-              <Text className="text-emerald-400 font-extrabold text-base">{user.mainCrop || '—'}</Text>
+            <View className="flex-row justify-between items-center border-b border-agro-earth-50 pb-4 mb-4">
+              <Text className="text-agro-earth-500 font-bold text-sm">Main Crop</Text>
+              <Text className="text-agro-green-600 font-black text-base">{user.mainCrop || '—'}</Text>
             </View>
 
-            <View className="flex-row justify-between items-center border-b border-slate-800/80 pb-4 mb-4">
-              <Text className="text-slate-400 font-medium text-sm">Experience</Text>
-              <Text className="text-slate-100 font-bold text-base">{user.farmingExperience ? `${user.farmingExperience} Yrs` : '—'}</Text>
+            <View className="flex-row justify-between items-center border-b border-agro-earth-50 pb-4 mb-4">
+              <Text className="text-agro-earth-500 font-bold text-sm">Experience</Text>
+              <Text className="text-agro-green-950 font-bold text-base">{user.farmingExperience ? `${user.farmingExperience} Yrs` : '—'}</Text>
             </View>
 
             <View className="flex-row justify-between items-center">
-              <Text className="text-slate-400 font-medium text-sm">Language</Text>
-              <Text className="text-slate-100 font-bold text-base">{user.preferredLanguage || '—'}</Text>
+              <Text className="text-agro-earth-500 font-bold text-sm">Language</Text>
+              <Text className="text-agro-green-950 font-bold text-base">{user.preferredLanguage || '—'}</Text>
             </View>
           </View>
         </View>
 
         {/* ACCOUNT OPTIONS */}
         <View className="px-6 mt-8">
-          <Text className="text-lg font-bold text-slate-100 mb-4 px-1">
+          <Text className="text-lg font-bold text-agro-green-950 mb-4 px-1">
             Account
           </Text>
 
-          <View className="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden">
-            <Pressable onPress={() => navigation.navigate("EditProfile")} className="flex-row justify-between items-center p-5 border-b border-slate-800/80 active:bg-slate-800/60 transition-colors">
+          <View className="bg-white rounded-3xl border border-agro-earth-100 overflow-hidden shadow-sm">
+            <Pressable onPress={() => navigation.navigate("EditProfile")} className="flex-row justify-between items-center p-5 border-b border-agro-earth-50 active:bg-agro-green-50 transition-colors">
               <View className="flex-row items-center">
-                <Ionicons name="create-outline" size={20} color="#94a3b8" style={{ marginRight: 12 }} />
-                <Text className="text-slate-200 font-semibold text-base">Edit Profile</Text>
+                <Ionicons name="create-outline" size={20} color="#3e8e3e" style={{ marginRight: 12 }} />
+                <Text className="text-agro-green-950 font-bold text-base">Edit Profile</Text>
               </View>
-              <Ionicons name="chevron-forward" size={18} color="#64748b" />
+              <Ionicons name="chevron-forward" size={18} color="#8f7e5d" />
             </Pressable>
 
-            <Pressable onPress={() => navigation.navigate("History")} className="flex-row justify-between items-center p-5 border-b border-slate-800/80 active:bg-slate-800/60 transition-colors">
+            <Pressable onPress={() => navigation.navigate("History")} className="flex-row justify-between items-center p-5 border-b border-agro-earth-50 active:bg-agro-green-50 transition-colors">
               <View className="flex-row items-center">
-                <Ionicons name="leaf-outline" size={20} color="#94a3b8" style={{ marginRight: 12 }} />
-                <Text className="text-slate-200 font-semibold text-base">My Crops & Scans</Text>
+                <Ionicons name="leaf-outline" size={20} color="#3e8e3e" style={{ marginRight: 12 }} />
+                <Text className="text-agro-green-950 font-bold text-base">My Crops & Scans</Text>
               </View>
-              <Ionicons name="chevron-forward" size={18} color="#64748b" />
+              <Ionicons name="chevron-forward" size={18} color="#8f7e5d" />
             </Pressable>
 
-            <Pressable onPress={() => navigation.navigate("ChangePassword")} className="flex-row justify-between items-center p-5 border-b border-slate-800/80 active:bg-slate-800/60 transition-colors">
+            <Pressable onPress={() => navigation.navigate("ChangePassword")} className="flex-row justify-between items-center p-5 border-b border-agro-earth-50 active:bg-agro-green-50 transition-colors">
               <View className="flex-row items-center">
-                <Ionicons name="lock-closed-outline" size={20} color="#94a3b8" style={{ marginRight: 12 }} />
-                <Text className="text-slate-200 font-semibold text-base">Change Password</Text>
+                <Ionicons name="lock-closed-outline" size={20} color="#3e8e3e" style={{ marginRight: 12 }} />
+                <Text className="text-agro-green-950 font-bold text-base">Change Password</Text>
               </View>
-              <Ionicons name="chevron-forward" size={18} color="#64748b" />
+              <Ionicons name="chevron-forward" size={18} color="#8f7e5d" />
             </Pressable>
 
-            <Pressable onPress={() => navigation.navigate("HelpSupport")} className="flex-row justify-between items-center p-5 active:bg-slate-800/60 transition-colors">
+            <Pressable onPress={() => navigation.navigate("HelpSupport")} className="flex-row justify-between items-center p-5 active:bg-agro-green-50 transition-colors">
               <View className="flex-row items-center">
-                <Ionicons name="help-buoy-outline" size={20} color="#94a3b8" style={{ marginRight: 12 }} />
-                <Text className="text-slate-200 font-semibold text-base">Help & Support</Text>
+                <Ionicons name="help-buoy-outline" size={20} color="#3e8e3e" style={{ marginRight: 12 }} />
+                <Text className="text-agro-green-950 font-bold text-base">Help & Support</Text>
               </View>
-              <Ionicons name="chevron-forward" size={18} color="#64748b" />
+              <Ionicons name="chevron-forward" size={18} color="#8f7e5d" />
             </Pressable>
           </View>
         </View>
 
         {/* APP SETTINGS */}
         <View className="px-6 mt-8">
-          <Text className="text-lg font-bold text-slate-100 mb-4 px-1">
+          <Text className="text-lg font-bold text-agro-green-950 mb-4 px-1">
             App Settings
           </Text>
 
-          <View className="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden">
-            <Pressable onPress={() => navigation.navigate("NotificationSettings")} className="flex-row justify-between items-center p-5 border-b border-slate-800/80 active:bg-slate-800/60 transition-colors">
+          <View className="bg-white rounded-3xl border border-agro-earth-100 overflow-hidden shadow-sm">
+            <Pressable onPress={() => navigation.navigate("NotificationSettings")} className="flex-row justify-between items-center p-5 border-b border-agro-earth-50 active:bg-agro-green-50 transition-colors">
               <View className="flex-row items-center">
-                <Ionicons name="notifications-outline" size={20} color="#94a3b8" style={{ marginRight: 12 }} />
-                <Text className="text-slate-200 font-semibold text-base">Notifications</Text>
+                <Ionicons name="notifications-outline" size={20} color="#3e8e3e" style={{ marginRight: 12 }} />
+                <Text className="text-agro-green-950 font-bold text-base">Notifications</Text>
               </View>
-              <Ionicons name="chevron-forward" size={18} color="#64748b" />
+              <Ionicons name="chevron-forward" size={18} color="#8f7e5d" />
             </Pressable>
 
-            <Pressable onPress={() => navigation.navigate("PrivacyPolicy")} className="flex-row justify-between items-center p-5 border-b border-slate-800/80 active:bg-slate-800/60 transition-colors">
+            <Pressable onPress={() => navigation.navigate("PrivacyPolicy")} className="flex-row justify-between items-center p-5 border-b border-agro-earth-50 active:bg-agro-green-50 transition-colors">
               <View className="flex-row items-center">
-                <Ionicons name="shield-checkmark-outline" size={20} color="#94a3b8" style={{ marginRight: 12 }} />
-                <Text className="text-slate-200 font-semibold text-base">Privacy Policy</Text>
+                <Ionicons name="shield-checkmark-outline" size={20} color="#3e8e3e" style={{ marginRight: 12 }} />
+                <Text className="text-agro-green-950 font-bold text-base">Privacy Policy</Text>
               </View>
-              <Ionicons name="chevron-forward" size={18} color="#64748b" />
+              <Ionicons name="chevron-forward" size={18} color="#8f7e5d" />
             </Pressable>
 
-            <Pressable onPress={() => navigation.navigate("AboutUs")} className="flex-row justify-between items-center p-5 active:bg-slate-800/60 transition-colors">
+            <Pressable onPress={() => navigation.navigate("AboutUs")} className="flex-row justify-between items-center p-5 active:bg-agro-green-50 transition-colors">
               <View className="flex-row items-center">
-                <Ionicons name="information-circle-outline" size={20} color="#94a3b8" style={{ marginRight: 12 }} />
-                <Text className="text-slate-200 font-semibold text-base">About AgroTech</Text>
+                <Ionicons name="information-circle-outline" size={20} color="#3e8e3e" style={{ marginRight: 12 }} />
+                <Text className="text-agro-green-950 font-bold text-base">About AgroTech</Text>
               </View>
-              <Ionicons name="chevron-forward" size={18} color="#64748b" />
+              <Ionicons name="chevron-forward" size={18} color="#8f7e5d" />
             </Pressable>
           </View>
         </View>
@@ -203,8 +203,8 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
             onPress={handleLogout}
             loading={loggingOut}
             variant="outline"
-            className="border-red-500/50 bg-red-500/10"
-            textClassName="text-red-400"
+            className="border-red-200 bg-red-50"
+            textClassName="text-red-600 font-black"
           />
         </View>
 

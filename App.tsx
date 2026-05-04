@@ -9,7 +9,7 @@ export default function App() {
   return (
     <>
         <SafeAreaProvider>
-          <StatusBar barStyle="light-content" backgroundColor="#020617" />
+          <StatusBar barStyle="dark-content" backgroundColor="#f7f6f2" />
           <NavigationContainer>
             <AppNavigator />
           </NavigationContainer>

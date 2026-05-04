@@ -24,22 +24,22 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
   const [isPosting, setIsPosting] = useState(false);
 
   if (!permission) {
-    return <View className="flex-1 bg-slate-950" />;
+    return <View className="flex-1 bg-agro-earth-50" />;
   }
 
   if (!permission.granted) {
     return (
-      <SafeAreaView className="flex-1 bg-slate-950 justify-center items-center px-6">
-        <View className="w-24 h-24 bg-slate-900 rounded-full items-center justify-center mb-6 border border-slate-800 shadow-lg">
-          <Ionicons name="camera-outline" size={40} color="#34d399" />
+      <SafeAreaView className="flex-1 bg-agro-earth-50 justify-center items-center px-6">
+        <View className="w-24 h-24 bg-white rounded-full items-center justify-center mb-6 border border-agro-earth-100 shadow-lg shadow-agro-green-950/5">
+          <Ionicons name="camera-outline" size={40} color="#3e8e3e" />
         </View>
-        <Text className="text-2xl font-bold text-white mb-3 text-center">Camera Access</Text>
-        <Text className="text-slate-400 text-center mb-8 px-4">We need camera access to detect diseases on your crop leaves.</Text>
+        <Text className="text-2xl font-black text-agro-green-950 mb-3 text-center">Camera Access</Text>
+        <Text className="text-agro-earth-600 font-bold text-center mb-8 px-4">We need camera access to detect diseases on your crop leaves.</Text>
         <Pressable
           onPress={requestPermission}
-          className="bg-emerald-500 px-8 py-4 rounded-2xl active:bg-emerald-600 active:scale-95 transition-all w-full items-center"
+          className="bg-agro-green-600 px-8 py-4 rounded-2xl active:bg-agro-green-700 active:scale-95 transition-all w-full items-center shadow-lg shadow-agro-green-600/20"
         >
-          <Text className="text-slate-950 font-extrabold text-base uppercase tracking-wider">Grant Permission</Text>
+          <Text className="text-white font-black text-base uppercase tracking-wider">Grant Permission</Text>
         </Pressable>
       </SafeAreaView>
     );
@@ -261,20 +261,20 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-950">
-      <View className="px-6 pt-4 pb-4 border-b border-slate-900 flex-row items-center justify-between bg-slate-950 z-20">
+    <SafeAreaView className="flex-1 bg-agro-earth-50">
+      <View className="px-6 pt-4 pb-4 border-b border-agro-earth-100 flex-row items-center justify-between bg-white/50 z-20">
         <View className="flex-row items-center">
           <Pressable
             onPress={() => navigation.goBack()}
-            className="mr-4 p-2 bg-slate-900 rounded-full border border-slate-800 active:scale-95 transition-all"
+            className="mr-4 p-2 bg-white rounded-full border border-agro-earth-200 shadow-sm active:scale-95 transition-all"
           >
-            <Ionicons name="arrow-back" size={24} color="#34d399" />
+            <Ionicons name="arrow-back" size={24} color="#3e8e3e" />
           </Pressable>
           <View>
-            <Text className="text-xl font-black text-white tracking-tight">
-              Disease <Text className="text-emerald-400">Scanner</Text>
+            <Text className="text-xl font-black text-agro-green-950 tracking-tight">
+              Disease <Text className="text-agro-green-600">Scanner</Text>
             </Text>
-            <Text className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-0.5">
+            <Text className="text-agro-earth-500 text-[10px] font-bold uppercase tracking-widest mt-0.5">
               AI Analysis
             </Text>
           </View>
@@ -282,14 +282,14 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
 
         {/* LANGUAGE TOGGLE */}
         {Boolean(preferredLanguage && preferredLanguage.toLowerCase() !== 'english') && (
-          <View className="items-center bg-slate-900 py-1 px-3 rounded-xl border border-slate-800">
-            <Text className="text-[8px] text-slate-500 font-bold mb-0.5 uppercase tracking-widest">
+          <View className="items-center bg-white py-1 px-3 rounded-xl border border-agro-earth-100 shadow-sm">
+            <Text className="text-[8px] text-agro-earth-500 font-bold mb-0.5 uppercase tracking-widest">
               {useEnglish ? 'English' : preferredLanguage}
             </Text>
             <Switch
               value={useEnglish}
               onValueChange={setUseEnglish}
-              trackColor={{ false: '#34d399', true: '#334155' }}
+              trackColor={{ false: '#3e8e3e', true: '#e5e2d9' }}
               thumbColor="#f8fafc"
               style={{ transform: [{ scaleX: 0.6 }, { scaleY: 0.6 }], height: 16 }}
             />
@@ -305,27 +305,27 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
           <View className="flex-1 justify-end items-center pb-12 px-6">
 
             {/* Guide frame overlaid on camera */}
-            <View className="absolute top-1/4 bottom-1/3 left-10 right-10 border-2 border-emerald-500/50 rounded-3xl items-center justify-center pointer-events-none">
-              <View className="w-8 h-8 border-t-4 border-l-4 border-emerald-400 absolute top-0 left-0 rounded-tl-xl" />
-              <View className="w-8 h-8 border-t-4 border-r-4 border-emerald-400 absolute top-0 right-0 rounded-tr-xl" />
-              <View className="w-8 h-8 border-b-4 border-l-4 border-emerald-400 absolute bottom-0 left-0 rounded-bl-xl" />
-              <View className="w-8 h-8 border-b-4 border-r-4 border-emerald-400 absolute bottom-0 right-0 rounded-br-xl" />
+            <View className="absolute top-1/4 bottom-1/3 left-10 right-10 border-2 border-agro-green-500/30 rounded-3xl items-center justify-center pointer-events-none">
+              <View className="w-8 h-8 border-t-4 border-l-4 border-agro-green-400 absolute top-0 left-0 rounded-tl-xl" />
+              <View className="w-8 h-8 border-t-4 border-r-4 border-agro-green-400 absolute top-0 right-0 rounded-tr-xl" />
+              <View className="w-8 h-8 border-b-4 border-l-4 border-agro-green-400 absolute bottom-0 left-0 rounded-bl-xl" />
+              <View className="w-8 h-8 border-b-4 border-r-4 border-agro-green-400 absolute bottom-0 right-0 rounded-tr-xl" />
             </View>
 
-            <View className="bg-slate-950/80 w-full p-6 rounded-[32px] border border-slate-800/80 backdrop-blur-lg flex-col shadow-2xl items-center">
-              <Text className="text-slate-300 font-medium mb-6 text-center text-sm">Position the crop leaf within the frame</Text>
+            <View className="bg-white/90 w-full p-6 rounded-[32px] border border-agro-earth-100 backdrop-blur-lg flex-col shadow-2xl shadow-agro-green-950/20 items-center">
+              <Text className="text-agro-earth-600 font-bold mb-6 text-center text-sm">Position the crop leaf within the frame</Text>
               <View className="flex-row w-full justify-between items-center gap-4">
                 <Pressable
                   onPress={pickImage}
-                  className="bg-slate-800/80 h-16 w-16 rounded-2xl items-center justify-center border border-slate-700 active:bg-slate-700 transition-colors"
+                  className="bg-agro-earth-50 h-16 w-16 rounded-2xl items-center justify-center border border-agro-earth-200 active:bg-agro-earth-100 transition-colors"
                 >
-                  <Ionicons name="images-outline" size={24} color="#94a3b8" />
+                  <Ionicons name="images-outline" size={24} color="#3e8e3e" />
                 </Pressable>
                 <Pressable
                   onPress={takePhoto}
-                  className="w-20 h-20 rounded-full bg-slate-800 border-4 border-slate-700 items-center justify-center active:scale-95 transition-transform"
+                  className="w-20 h-20 rounded-full bg-white border-4 border-agro-earth-100 items-center justify-center active:scale-95 transition-transform"
                 >
-                  <View className="w-14 h-14 bg-emerald-500 rounded-full border-2 border-slate-950" />
+                  <View className="w-14 h-14 bg-agro-green-600 rounded-full border-2 border-white" />
                 </Pressable>
                 <View className="w-16 h-16" />
               </View>
@@ -336,66 +336,66 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
       ) : (
         <ScrollView className="flex-1 px-6 pt-24" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 60 }}>
 
-          <View className="rounded-[32px] overflow-hidden border border-slate-800 bg-slate-900 shadow-2xl mb-6">
+          <View className="rounded-[32px] overflow-hidden border border-agro-earth-100 bg-white shadow-2xl shadow-agro-green-950/10 mb-6">
             <Image
               source={{ uri: image }}
               style={{ width: "100%", height: 320 }}
-              className="opacity-90"
+              className="opacity-95"
             />
             {isAnalyzing && (
-              <View className="absolute inset-0 bg-slate-950/80 justify-center items-center">
-                <ActivityIndicator size="large" color="#34d399" />
-                <Text className="text-emerald-400 font-bold mt-4 tracking-widest uppercase text-xs">Analyzing Extensive Plant Data...</Text>
+              <View className="absolute inset-0 bg-white/80 justify-center items-center">
+                <ActivityIndicator size="large" color="#3e8e3e" />
+                <Text className="text-agro-green-700 font-black mt-4 tracking-widest uppercase text-xs">Analyzing Extensive Plant Data...</Text>
               </View>
             )}
           </View>
 
           {!isAnalyzing && result && (
-            <View className="bg-slate-900 p-6 rounded-[32px] border border-slate-800 shadow-xl mb-6">
+            <View className="bg-white p-6 rounded-[32px] border border-agro-earth-100 shadow-xl shadow-agro-green-950/5 mb-6">
 
               <View className="flex-row justify-between items-start mb-6">
                 <View className="flex-1 pr-4">
-                  <Text className="text-slate-400 font-bold text-[10px] uppercase tracking-widest mb-1">Detected Issue</Text>
-                  <Text className="text-white font-extrabold text-2xl leading-8">{result.disease}</Text>
+                  <Text className="text-agro-earth-500 font-bold text-[10px] uppercase tracking-widest mb-1">Detected Issue</Text>
+                  <Text className="text-agro-green-950 font-black text-2xl leading-8">{result.disease}</Text>
                 </View>
-                <View className="bg-emerald-500/10 px-3 py-1.5 rounded-xl border border-emerald-500/20 mt-1">
-                  <Text className="text-emerald-400 font-bold text-xs uppercase">{result.confidence}</Text>
+                <View className="bg-agro-green-50 px-3 py-1.5 rounded-xl border border-agro-green-100 mt-1">
+                  <Text className="text-agro-green-700 font-black text-xs uppercase">{result.confidence}</Text>
                 </View>
               </View>
 
-              <View className="bg-slate-950/50 p-4 rounded-2xl border border-slate-800/50 mb-4">
-                <Text className="font-bold text-emerald-400 mb-2 text-xs uppercase tracking-wider">Recommended Treatment</Text>
-                <Text className="text-slate-300 text-sm leading-6">{result.treatment}</Text>
+              <View className="bg-agro-green-50 p-4 rounded-2xl border border-agro-green-100 mb-4">
+                <Text className="font-black text-agro-green-800 mb-2 text-xs uppercase tracking-wider">Recommended Treatment</Text>
+                <Text className="text-agro-green-950 text-sm leading-6 font-bold">{result.treatment}</Text>
               </View>
 
               {result.plantDetails !== "N/A" && (
                 <>
-                  <View className="bg-slate-950/50 p-4 rounded-2xl border border-slate-800/50 mb-4">
-                    <Text className="font-bold text-emerald-400 mb-2 text-xs uppercase tracking-wider">Plant Details & Requirements</Text>
-                    <Text className="text-slate-300 text-sm leading-6">{result.plantDetails}</Text>
+                  <View className="bg-agro-earth-50 p-4 rounded-2xl border border-agro-earth-100 mb-4">
+                    <Text className="font-black text-agro-earth-500 mb-2 text-xs uppercase tracking-wider">Plant Details & Requirements</Text>
+                    <Text className="text-agro-green-950 text-sm leading-6 font-bold">{result.plantDetails}</Text>
                   </View>
 
-                  <View className="bg-slate-950/50 p-4 rounded-2xl border border-slate-800/50 mb-4">
-                    <Text className="font-bold text-emerald-400 mb-2 text-xs uppercase tracking-wider">Improvement Tips</Text>
-                    <Text className="text-slate-300 text-sm leading-6">{result.improvementTips}</Text>
+                  <View className="bg-agro-earth-50 p-4 rounded-2xl border border-agro-earth-100 mb-4">
+                    <Text className="font-black text-agro-earth-500 mb-2 text-xs uppercase tracking-wider">Improvement Tips</Text>
+                    <Text className="text-agro-green-950 text-sm leading-6 font-bold">{result.improvementTips}</Text>
                   </View>
 
-                  <View className="bg-slate-950/50 p-4 rounded-2xl border border-slate-800/50 mb-6">
-                    <Text className="font-bold text-emerald-400 mb-2 text-xs uppercase tracking-wider">Pest & Disease Outlook</Text>
-                    <Text className="text-slate-300 text-sm leading-6">{result.pestAndDiseaseInfo}</Text>
+                  <View className="bg-agro-earth-50 p-4 rounded-2xl border border-agro-earth-100 mb-6">
+                    <Text className="font-black text-agro-earth-500 mb-2 text-xs uppercase tracking-wider">Pest & Disease Outlook</Text>
+                    <Text className="text-agro-green-950 text-sm leading-6 font-bold">{result.pestAndDiseaseInfo}</Text>
                   </View>
 
                   <Pressable
                     onPress={handlePostBlog}
                     disabled={isPosting}
-                    className="bg-emerald-600/20 py-4 rounded-2xl items-center border border-emerald-500/30 active:scale-95 transition-all mb-3 flex-row justify-center"
+                    className="bg-agro-green-100 py-4 rounded-2xl items-center border border-agro-green-200 active:scale-95 transition-all mb-3 flex-row justify-center"
                   >
                     {isPosting ? (
-                      <ActivityIndicator size="small" color="#34d399" />
+                      <ActivityIndicator size="small" color="#3e8e3e" />
                     ) : (
                       <View className="flex-row items-center justify-center">
-                        <Ionicons name="share-social" size={18} color="#34d399" style={{ marginRight: 8 }} />
-                        <Text className="text-emerald-400 font-extrabold text-sm uppercase tracking-wider">
+                        <Ionicons name="share-social" size={18} color="#3e8e3e" style={{ marginRight: 8 }} />
+                        <Text className="text-agro-green-800 font-black text-sm uppercase tracking-wider">
                           Post as Public Blog
                         </Text>
                       </View>
@@ -406,9 +406,9 @@ export default function DetectScreen({ navigation }: { navigation: any }) {
 
               <Pressable
                 onPress={resetScanner}
-                className="bg-emerald-500 py-4 rounded-2xl items-center shadow-lg shadow-emerald-500/20 active:scale-95 active:bg-emerald-600 transition-all w-full"
+                className="bg-agro-green-600 py-4 rounded-2xl items-center shadow-lg shadow-agro-green-600/20 active:scale-95 active:bg-agro-green-700 transition-all w-full"
               >
-                <Text className="text-slate-950 font-extrabold text-base uppercase tracking-wider">
+                <Text className="text-white font-black text-base uppercase tracking-wider">
                   Scan Another Leaf
                 </Text>
               </Pressable>

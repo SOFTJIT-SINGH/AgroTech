@@ -99,7 +99,7 @@ export default function CropSuggestionScreen() {
 
   const Selector = ({ title, field }) => (
     <View className="mb-7">
-      <Text className="text-slate-300 font-bold mb-3 px-1 text-sm uppercase tracking-wider">
+      <Text className="text-agro-earth-500 font-bold mb-3 px-1 text-sm uppercase tracking-wider">
         {title}
       </Text>
 
@@ -111,15 +111,15 @@ export default function CropSuggestionScreen() {
             <Pressable
               key={item}
               onPress={() => updateField(field, item)}
-              className={`px-5 py-3 mr-3 mb-3 rounded-2xl border transition-colors ${
+              className={`px-5 py-3 mr-3 mb-3 rounded-2xl border transition-colors shadow-sm ${
                 isSelected
-                  ? "bg-emerald-500/15 border-emerald-500/50 shadow-sm shadow-emerald-500/10"
-                  : "bg-slate-900 border-slate-800 active:bg-slate-800/80"
+                  ? "bg-agro-green-600 border-agro-green-500"
+                  : "bg-white border-agro-earth-100 active:bg-agro-earth-50"
               }`}
             >
               <Text
-                className={`text-sm font-semibold tracking-wide ${
-                  isSelected ? "text-emerald-400" : "text-slate-400"
+                className={`text-sm font-bold tracking-wide ${
+                  isSelected ? "text-white" : "text-agro-earth-600"
                 }`}
               >
                 {item}
@@ -132,18 +132,18 @@ export default function CropSuggestionScreen() {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-950">
+    <SafeAreaView className="flex-1 bg-agro-earth-50">
       {/* HEADER */}
-      <View className="px-6 pt-4 pb-4 border-b border-slate-900 flex-row items-center">
+      <View className="px-6 pt-4 pb-4 border-b border-agro-earth-100 flex-row items-center bg-white/50">
         <Pressable 
           onPress={() => navigation.goBack()}
-          className="mr-4 p-2 bg-slate-900 rounded-full border border-slate-800 active:scale-95 transition-all"
+          className="mr-4 p-2 bg-white rounded-full border border-agro-earth-200 shadow-sm active:scale-95 transition-all"
         >
-          <Ionicons name="arrow-back" size={24} color="#34d399" />
+          <Ionicons name="arrow-back" size={24} color="#3e8e3e" />
         </Pressable>
         <View>
-          <Text className="text-xl font-black text-white tracking-tight">Best <Text className="text-emerald-400">Crop</Text></Text>
-          <Text className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-0.5">AI Suggestion</Text>
+          <Text className="text-xl font-black text-agro-green-950 tracking-tight">Best <Text className="text-agro-green-600">Crop</Text></Text>
+          <Text className="text-agro-earth-500 text-[10px] font-bold uppercase tracking-widest mt-0.5">AI Suggestion</Text>
         </View>
       </View>
 
@@ -153,10 +153,10 @@ export default function CropSuggestionScreen() {
         contentContainerStyle={{ paddingTop: 20 }}
       >
         <View className="mb-8">
-          <Text className="text-2xl font-extrabold text-white tracking-tight leading-8">
-            Smart Crop <Text className="text-emerald-400">Finder</Text>
+          <Text className="text-2xl font-extrabold text-agro-green-950 tracking-tight leading-8">
+            Smart Crop <Text className="text-agro-green-600">Finder</Text>
           </Text>
-          <Text className="text-slate-400 font-medium mt-1 text-sm">
+          <Text className="text-agro-earth-600 font-bold mt-1 text-sm">
             Select your farm conditions below and our AI will recommend the most profitable crop.
           </Text>
         </View>
@@ -179,13 +179,13 @@ export default function CropSuggestionScreen() {
           onPress={calculateBestCrop}
           disabled={isLoading}
           className={`py-4 rounded-2xl mt-4 mb-6 items-center shadow-lg transition-all ${
-            isLoading ? "bg-emerald-800" : "bg-emerald-500 shadow-emerald-500/20 active:scale-95 active:bg-emerald-600"
+            isLoading ? "bg-agro-green-800" : "bg-agro-green-600 shadow-agro-green-600/20 active:scale-95 active:bg-agro-green-700"
           }`}
         >
           {isLoading ? (
-            <ActivityIndicator color="#0f172a" />
+            <ActivityIndicator color="#ffffff" />
           ) : (
-            <Text className="text-slate-950 font-extrabold text-base uppercase tracking-wider">
+            <Text className="text-white font-black text-base uppercase tracking-wider">
               Analyze Conditions
             </Text>
           )}
@@ -193,29 +193,29 @@ export default function CropSuggestionScreen() {
 
         {/* RESULT CARD / LOADING STATE */}
         {isLoading ? (
-          <View className="bg-slate-900 p-8 rounded-[28px] mt-2 mb-12 border border-slate-800 items-center justify-center shadow-xl shadow-slate-950">
-            <ActivityIndicator size="large" color="#34d399" />
-            <Text className="text-emerald-400 font-bold mt-4 tracking-widest uppercase text-[10px]">
+          <View className="bg-white p-8 rounded-[28px] mt-2 mb-12 border border-agro-earth-100 items-center justify-center shadow-lg shadow-agro-green-950/5">
+            <ActivityIndicator size="large" color="#3e8e3e" />
+            <Text className="text-agro-green-700 font-black mt-4 tracking-widest uppercase text-[10px]">
               AI Analyzing Farm Profile...
             </Text>
           </View>
         ) : result && (
-          <View className="bg-slate-900 p-6 rounded-[28px] mt-2 mb-12 border border-emerald-500/30 relative overflow-hidden shadow-xl shadow-slate-950">
+          <View className="bg-white p-6 rounded-[28px] mt-2 mb-12 border border-agro-green-500 relative overflow-hidden shadow-xl shadow-agro-green-950/5">
             {/* Subtle background glow effect */}
-            <View className="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500/20 rounded-full blur-3xl" />
+            <View className="absolute -top-12 -right-12 w-32 h-32 bg-agro-green-500/10 rounded-full blur-3xl" />
             
             <View className="flex-row items-center mb-3">
-              <View className="w-2 h-2 rounded-full bg-emerald-400 mr-2 shadow-sm shadow-emerald-400" />
-              <Text className="text-emerald-400 font-bold text-xs uppercase tracking-widest">
+              <View className="w-2 h-2 rounded-full bg-agro-green-500 mr-2 shadow-sm shadow-agro-green-500" />
+              <Text className="text-agro-green-700 font-black text-xs uppercase tracking-widest">
                 Top Recommendation
               </Text>
             </View>
 
-            <Text className="text-white text-5xl font-black tracking-tighter mb-3">
+            <Text className="text-agro-green-950 text-5xl font-black tracking-tighter mb-3">
               {result.crop}
             </Text>
 
-            <Text className="text-slate-400 leading-6 text-sm font-medium">
+            <Text className="text-agro-earth-600 leading-6 text-sm font-bold">
               {result.reason || `Based on your specific farm profile, ${result.crop} is the most suitable crop choice, offering the highest yield potential for your environment.`}
             </Text>
           </View>

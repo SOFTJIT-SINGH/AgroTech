@@ -55,7 +55,7 @@ export default function OtpScreen({ navigation, route }: any) {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-950">
+    <SafeAreaView className="flex-1 bg-agro-earth-50">
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="flex-1"
@@ -64,21 +64,21 @@ export default function OtpScreen({ navigation, route }: any) {
           <View className="flex-1 justify-center px-8 pb-12 pt-10 relative">
             
             {/* Ambient Background Glow */}
-            <View className="absolute top-10 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl" />
-            <View className="absolute bottom-10 -left-10 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl" />
+            <View className="absolute top-10 right-0 w-64 h-64 bg-agro-green-500/10 rounded-full blur-3xl" />
+            <View className="absolute bottom-10 -left-10 w-48 h-48 bg-agro-accent-500/10 rounded-full blur-3xl" />
 
             <View className="mb-10 items-center drop-shadow-2xl z-10">
-              <Text className="text-4xl font-black text-white tracking-widest text-center shadow-sm">
+              <Text className="text-4xl font-black text-agro-green-950 tracking-widest text-center shadow-sm">
                 Verification
               </Text>
-              <Text className="text-slate-400 text-base mt-2 font-medium tracking-wide text-center px-6 leading-7">
+              <Text className="text-agro-earth-500 text-base mt-2 font-bold tracking-wide text-center px-6 leading-7">
                 We've sent a 6-digit code to{'\n'}
-                <Text className="text-emerald-400 font-bold">{email || 'your email'}</Text>
+                <Text className="text-agro-green-600 font-black">{email || 'your email'}</Text>
               </Text>
             </View>
 
-            <View className="bg-slate-900/80 rounded-[32px] p-8 shadow-2xl border border-slate-800 z-10">
-              <Text className="text-2xl font-bold text-white mb-6 antialiased text-center">
+            <View className="bg-white rounded-[32px] p-8 shadow-xl shadow-agro-green-950/5 border border-agro-earth-100 z-10">
+              <Text className="text-2xl font-bold text-agro-green-950 mb-6 antialiased text-center">
                 Enter OTP
               </Text>
 
@@ -89,11 +89,11 @@ export default function OtpScreen({ navigation, route }: any) {
                   maxLength={6}
                   value={otp}
                   onChangeText={setOtp}
-                  placeholderTextColor="#64748b"
-                  className="bg-slate-950 border border-slate-800 text-white p-4 rounded-2xl text-2xl tracking-[0.5em] text-center w-full shadow-sm focus:border-emerald-500 transition-colors"
+                  placeholderTextColor="#bab194"
+                  className="bg-agro-earth-50 border border-agro-earth-100 text-agro-green-950 p-4 rounded-2xl text-2xl tracking-[0.5em] text-center w-full shadow-sm focus:border-agro-green-500 transition-colors"
                 />
                 <Pressable onPress={handleResend} className="mt-4 active:opacity-70">
-                  <Text className="text-emerald-400 font-semibold text-sm">Resend OTP</Text>
+                  <Text className="text-agro-green-600 font-bold text-sm">Resend OTP</Text>
                 </Pressable>
               </View>
 
@@ -101,13 +101,13 @@ export default function OtpScreen({ navigation, route }: any) {
                 title="Verify & Proceed"
                 onPress={handleVerify}
                 loading={loading}
-                className="w-full mb-4 py-5 rounded-2xl bg-emerald-600"
-                textClassName="text-white"
+                className="w-full mb-4 py-5 rounded-2xl bg-agro-green-600 shadow-lg shadow-agro-green-700/20"
+                textClassName="text-white font-black"
               />
 
               <View className="flex-row items-center justify-center mt-2">
                 <Pressable onPress={() => navigation.goBack()} className="p-1 active:opacity-70">
-                  <Text className="text-slate-400 font-bold text-base">Back to Login</Text>
+                  <Text className="text-agro-earth-500 font-bold text-base">Back to Login</Text>
                 </Pressable>
               </View>
             </View>

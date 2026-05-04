@@ -131,24 +131,24 @@ export default function SowingPredictionScreen() {
 
   // Helper to dynamically color the risk badge
   const getRiskColors = (riskLevel) => {
-    if (riskLevel === "High") return "bg-red-500/10 border-red-500/20 text-red-400";
-    if (riskLevel === "Very Low") return "bg-emerald-500/10 border-emerald-500/20 text-emerald-400";
-    return "bg-blue-500/10 border-blue-500/20 text-blue-400"; // Low risk
+    if (riskLevel === "High") return "bg-red-50 border-red-100 text-red-600";
+    if (riskLevel === "Very Low") return "bg-agro-green-50 border-agro-green-100 text-agro-green-700";
+    return "bg-blue-50 border-blue-100 text-blue-600"; // Low risk
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-950">
+    <SafeAreaView className="flex-1 bg-agro-earth-50">
       {/* HEADER */}
-      <View className="px-6 pt-4 pb-4 border-b border-slate-900 flex-row items-center">
+      <View className="px-6 pt-4 pb-4 border-b border-agro-earth-100 flex-row items-center bg-white/50">
         <Pressable 
           onPress={() => navigation.goBack()}
-          className="mr-4 p-2 bg-slate-900 rounded-full border border-slate-800 active:scale-95 transition-all"
+          className="mr-4 p-2 bg-white rounded-full border border-agro-earth-200 shadow-sm active:scale-95 transition-all"
         >
-          <Ionicons name="arrow-back" size={24} color="#34d399" />
+          <Ionicons name="arrow-back" size={24} color="#3e8e3e" />
         </Pressable>
         <View>
-          <Text className="text-xl font-black text-white tracking-tight">Sowing <Text className="text-emerald-400">Time</Text></Text>
-          <Text className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-0.5">Sow Assistant</Text>
+          <Text className="text-xl font-black text-agro-green-950 tracking-tight">Sowing <Text className="text-agro-green-600">Time</Text></Text>
+          <Text className="text-agro-earth-500 text-[10px] font-bold uppercase tracking-widest mt-0.5">Sow Assistant</Text>
         </View>
       </View>
 
@@ -160,16 +160,16 @@ export default function SowingPredictionScreen() {
         
         {/* HERO SECTION */}
         <View className="mb-8">
-          <Text className="text-2xl font-extrabold text-white tracking-tight leading-8">
-            Smart Sowing <Text className="text-emerald-400">Window</Text>
+          <Text className="text-2xl font-extrabold text-agro-green-950 tracking-tight leading-8">
+            Smart Sowing <Text className="text-agro-green-600">Window</Text>
           </Text>
-          <Text className="text-slate-400 font-medium mt-1 text-sm">
+          <Text className="text-agro-earth-600 font-bold mt-1 text-sm">
             Predict the optimal window to sow your crop
           </Text>
         </View>
 
         {/* CROP SELECTOR */}
-        <Text className="text-slate-300 font-bold mb-3 px-1 text-sm uppercase tracking-wider mt-2">
+        <Text className="text-agro-earth-500 font-bold mb-3 px-1 text-sm uppercase tracking-wider mt-2">
           Select Crop
         </Text>
 
@@ -180,15 +180,15 @@ export default function SowingPredictionScreen() {
               <Pressable
                 key={item}
                 onPress={() => setCrop(item)}
-                className={`px-5 py-3 mr-3 mb-3 rounded-2xl border transition-colors ${
+                className={`px-5 py-3 mr-3 mb-3 rounded-2xl border transition-colors shadow-sm ${
                   isSelected
-                    ? "bg-emerald-500/15 border-emerald-500/50 shadow-sm shadow-emerald-500/10"
-                    : "bg-slate-900 border-slate-800 active:bg-slate-800/80"
+                    ? "bg-agro-green-600 border-agro-green-500"
+                    : "bg-white border-agro-earth-100 active:bg-agro-earth-50"
                 }`}
               >
                 <Text
-                  className={`text-sm font-semibold tracking-wide ${
-                    isSelected ? "text-emerald-400" : "text-slate-400"
+                  className={`text-sm font-bold tracking-wide ${
+                    isSelected ? "text-white" : "text-agro-earth-600"
                   }`}
                 >
                   {item}
@@ -199,18 +199,18 @@ export default function SowingPredictionScreen() {
         </View>
 
         {/* DATE SELECTOR */}
-        <Text className="text-slate-300 font-bold mb-3 px-1 text-sm uppercase tracking-wider">
+        <Text className="text-agro-earth-500 font-bold mb-3 px-1 text-sm uppercase tracking-wider">
           Plot Preparation Date
         </Text>
 
         <Pressable
           onPress={() => setShowPicker(true)}
-          className="bg-slate-900 p-4 rounded-2xl border border-slate-800 mb-6 flex-row justify-between items-center active:bg-slate-800/80 transition-colors"
+          className="bg-white p-4 rounded-2xl border border-agro-earth-100 mb-6 flex-row justify-between items-center shadow-sm active:bg-agro-earth-50 transition-colors"
         >
-          <Text className="text-slate-200 font-semibold text-base">
+          <Text className="text-agro-green-950 font-bold text-base">
             {date.toDateString()}
           </Text>
-          <Text className="text-slate-500 text-xl font-bold">
+          <Text className="text-agro-earth-500 text-xl font-bold">
             🗓️
           </Text>
         </Pressable>
@@ -231,13 +231,13 @@ export default function SowingPredictionScreen() {
           onPress={calculatePrediction}
           disabled={isLoading}
           className={`py-4 rounded-2xl mb-6 items-center shadow-lg transition-all ${
-            isLoading ? "bg-emerald-800" : "bg-emerald-500 shadow-emerald-500/20 active:scale-95 active:bg-emerald-600"
+            isLoading ? "bg-agro-green-800" : "bg-agro-green-600 shadow-agro-green-600/20 active:scale-95 active:bg-agro-green-700"
           }`}
         >
           {isLoading ? (
-            <ActivityIndicator color="#0f172a" />
+            <ActivityIndicator color="#ffffff" />
           ) : (
-            <Text className="text-slate-950 font-extrabold text-base uppercase tracking-wider">
+            <Text className="text-white font-black text-base uppercase tracking-wider">
               Predict Sowing Time
             </Text>
           )}
@@ -245,47 +245,47 @@ export default function SowingPredictionScreen() {
 
         {/* RESULT CARD / LOADING STATE */}
         {isLoading ? (
-          <View className="bg-slate-900 p-8 rounded-[28px] mb-12 border border-slate-800 items-center justify-center shadow-xl shadow-slate-950">
-            <ActivityIndicator size="large" color="#34d399" />
-            <Text className="text-emerald-400 font-bold mt-4 tracking-widest uppercase text-[10px]">
+          <View className="bg-white p-8 rounded-[28px] mb-12 border border-agro-earth-100 items-center justify-center shadow-lg shadow-agro-green-950/5">
+            <ActivityIndicator size="large" color="#3e8e3e" />
+            <Text className="text-agro-green-700 font-black mt-4 tracking-widest uppercase text-[10px]">
               AI Calculating Sowing Window...
             </Text>
           </View>
         ) : result && (
-          <View className="bg-slate-900 p-6 rounded-[28px] mb-12 border border-slate-800 relative overflow-hidden shadow-xl shadow-slate-950">
+          <View className="bg-white p-6 rounded-[28px] mb-12 border border-agro-earth-100 relative overflow-hidden shadow-xl shadow-agro-green-950/5">
             
-            <View className="flex-row justify-between items-start mb-5 border-b border-slate-800/80 pb-5">
+            <View className="flex-row justify-between items-start mb-5 border-b border-agro-earth-50 pb-5">
               <View>
-                <Text className="text-slate-400 font-bold text-xs uppercase tracking-widest mb-1">
+                <Text className="text-agro-earth-500 font-bold text-xs uppercase tracking-widest mb-1">
                   Recommended Window
                 </Text>
-                <Text className="text-white font-extrabold text-lg">
+                <Text className="text-agro-green-950 font-black text-lg">
                   {result.start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} — {result.end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                 </Text>
               </View>
 
               {/* Dynamic Risk Badge */}
-              <View className={`px-3 py-1.5 rounded-xl border ${getRiskColors(result.risk).split(' ').slice(0, 2).join(' ')}`}>
-                <Text className={`font-bold text-xs uppercase tracking-wider ${getRiskColors(result.risk).split(' ')[2]}`}>
+              <View className={`px-3 py-1.5 rounded-xl border ${getRiskColors(result.risk).replace('emerald', 'agro-green').replace('red', 'red').replace('blue', 'blue').split(' ').slice(0, 2).join(' ')}`}>
+                <Text className={`font-black text-xs uppercase tracking-wider ${getRiskColors(result.risk).replace('emerald', 'agro-green').replace('red', 'red').replace('blue', 'blue').split(' ')[2]}`}>
                   {result.risk} Risk
                 </Text>
               </View>
             </View>
 
-            <Text className="text-slate-300 text-base leading-6 font-medium mb-6">
+            <Text className="text-agro-earth-700 text-base leading-6 font-bold mb-6">
               {result.message}
             </Text>
 
             {/* Farming Tips Section */}
-            <View className="bg-slate-950/50 p-4 rounded-2xl border border-slate-800/50">
-              <Text className="font-bold text-emerald-400 mb-3 text-sm uppercase tracking-wider">
+            <View className="bg-agro-green-50 p-4 rounded-2xl border border-agro-green-100">
+              <Text className="font-black text-agro-green-800 mb-3 text-sm uppercase tracking-wider">
                 Farming Tips
               </Text>
 
               {tips.map((tip, index) => (
                 <View key={index} className="flex-row items-start mb-2">
-                  <Text className="text-emerald-500 mr-2 font-bold">•</Text>
-                  <Text className="text-slate-400 font-medium text-sm flex-1 leading-5">
+                  <Text className="text-agro-green-600 mr-2 font-black">•</Text>
+                  <Text className="text-agro-green-900 font-bold text-sm flex-1 leading-5">
                     {tip}
                   </Text>
                 </View>

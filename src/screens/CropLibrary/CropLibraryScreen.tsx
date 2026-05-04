@@ -26,16 +26,16 @@ export default function CropLibraryScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-950">
+    <SafeAreaView className="flex-1 bg-agro-earth-50">
       {/* Header */}
-      <View className="px-6 pt-6 pb-4 border-b border-slate-800 flex-row items-center justify-between">
+      <View className="px-6 pt-6 pb-4 border-b border-agro-earth-200 flex-row items-center justify-between bg-white/80">
         <View className="flex-row items-center">
-          <Pressable onPress={() => navigation.goBack()} className="mr-4 p-2 bg-slate-900 rounded-full border border-slate-800">
-            <Ionicons name="arrow-back" size={24} color="#34d399" />
+          <Pressable onPress={() => navigation.goBack()} className="mr-4 p-2 bg-white rounded-full border border-agro-earth-200 shadow-sm">
+            <Ionicons name="arrow-back" size={24} color="#3e8e3e" />
           </Pressable>
           <View>
-            <Text className="text-2xl font-black text-white tracking-tight">Crop <Text className="text-emerald-400">Library</Text></Text>
-            <Text className="text-slate-400 text-xs font-semibold uppercase tracking-widest mt-1">Indian Plants & Veggies</Text>
+            <Text className="text-2xl font-black text-agro-green-900 tracking-tight">Crop <Text className="text-agro-green-600">Library</Text></Text>
+            <Text className="text-agro-earth-600 text-xs font-bold uppercase tracking-widest mt-1">Indian Plants & Veggies</Text>
           </View>
         </View>
       </View>
@@ -47,13 +47,13 @@ export default function CropLibraryScreen() {
             <Pressable
               key={cat}
               onPress={() => handleCategoryChange(cat)}
-              className={`mr-3 px-6 py-3 rounded-2xl border transition-all ${
+              className={`mr-3 px-6 py-3 rounded-2xl border transition-all shadow-sm ${
                 selectedCategory === cat 
-                ? 'bg-emerald-600 border-emerald-500' 
-                : 'bg-slate-900 border-slate-800'
+                ? 'bg-agro-green-600 border-agro-green-500' 
+                : 'bg-white border-agro-earth-200'
               }`}
             >
-              <Text className={`font-bold ${selectedCategory === cat ? 'text-white' : 'text-slate-400'}`}>
+              <Text className={`font-bold ${selectedCategory === cat ? 'text-white' : 'text-agro-earth-500'}`}>
                 {cat}
               </Text>
             </Pressable>
@@ -66,8 +66,8 @@ export default function CropLibraryScreen() {
         contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
       >
-        <Text className="text-slate-400 text-sm mb-6 leading-relaxed">
-          Showing <Text className="text-emerald-400 font-bold">{currentCrops.length} items</Text> in {selectedCategory}. Explore optimal seasons and protection methods.
+        <Text className="text-agro-earth-600 text-sm mb-6 font-medium leading-relaxed">
+          Showing <Text className="text-agro-green-700 font-black">{currentCrops.length} items</Text> in {selectedCategory}. Explore optimal seasons and protection methods.
         </Text>
 
         {currentCrops.map((crop, index) => {
@@ -76,8 +76,8 @@ export default function CropLibraryScreen() {
           return (
             <View 
               key={index} 
-              style={{ borderColor: isExpanded ? '#10b981' : '#1e293b' }}
-              className="mb-6 rounded-[24px] bg-slate-900 border overflow-hidden"
+              style={{ borderColor: isExpanded ? '#3e8e3e' : '#e5e7eb' }}
+              className="mb-6 rounded-[24px] bg-white border overflow-hidden shadow-md shadow-agro-green-950/5"
             >
               <Pressable 
                 onPress={() => toggleExpand(index)}
@@ -90,11 +90,11 @@ export default function CropLibraryScreen() {
                   contentFit="cover"
                 />
                 <View className="flex-1 ml-4 justify-center">
-                  <Text className="text-lg font-bold text-white mb-1">{crop.name}</Text>
-                  <Text className="text-xs text-emerald-400 italic font-medium mb-2">{crop.scientific_name}</Text>
+                  <Text className="text-lg font-bold text-agro-green-950 mb-1">{crop.name}</Text>
+                  <Text className="text-xs text-agro-green-600 italic font-bold mb-2">{crop.scientific_name}</Text>
                   <View className="flex-row items-center">
-                    <View className="bg-slate-800 px-2 py-1 rounded-md mr-2">
-                      <Text className="text-[10px] uppercase text-slate-300 font-bold">{selectedCategory}</Text>
+                    <View className="bg-agro-green-50 px-2 py-1 rounded-md mr-2 border border-agro-green-100">
+                      <Text className="text-[10px] uppercase text-agro-green-700 font-black">{selectedCategory}</Text>
                     </View>
                   </View>
                 </View>
@@ -102,52 +102,52 @@ export default function CropLibraryScreen() {
                   <Ionicons 
                     name={isExpanded ? "chevron-up-circle" : "chevron-down-circle"} 
                     size={28} 
-                    color={isExpanded ? "#34d399" : "#64748b"} 
+                    color={isExpanded ? "#3e8e3e" : "#9ca3af"} 
                   />
                 </View>
               </Pressable>
 
               {isExpanded && (
-                <View className="p-5 bg-slate-950/50 border-t border-slate-800 space-y-4">
+                <View className="p-5 bg-agro-green-50/30 border-t border-agro-earth-100 space-y-4">
                   <View>
                     <View className="flex-row items-center mb-1">
-                      <Ionicons name="partly-sunny" size={16} color="#34d399" />
-                      <Text className="text-sm font-bold text-white ml-2 uppercase tracking-tight">Season & Growth</Text>
+                      <Ionicons name="partly-sunny" size={16} color="#3e8e3e" />
+                      <Text className="text-sm font-bold text-agro-green-900 ml-2 uppercase tracking-tight">Season & Growth</Text>
                     </View>
-                    <Text className="text-slate-400 text-sm leading-relaxed">{crop.season}</Text>
-                    <Text className="text-slate-400 text-sm mt-1 leading-relaxed">{crop.description}</Text>
+                    <Text className="text-agro-earth-700 text-sm font-medium leading-relaxed">{crop.season}</Text>
+                    <Text className="text-agro-earth-600 text-sm mt-1 leading-relaxed">{crop.description}</Text>
                   </View>
 
                   <View>
                     <View className="flex-row items-center mb-1">
                       <MaterialCommunityIcons name="bug" size={18} color="#ef4444" />
-                      <Text className="text-sm font-bold text-red-400 ml-2 uppercase tracking-tight">Pests</Text>
+                      <Text className="text-sm font-bold text-red-600 ml-2 uppercase tracking-tight">Pests</Text>
                     </View>
-                    <Text className="text-slate-400 text-sm leading-relaxed">{crop.pests}</Text>
+                    <Text className="text-agro-earth-700 text-sm font-medium leading-relaxed">{crop.pests}</Text>
                   </View>
 
                   <View>
                     <View className="flex-row items-center mb-1">
-                      <MaterialCommunityIcons name="shield-check" size={18} color="#3b82f6" />
-                      <Text className="text-sm font-bold text-blue-400 ml-2 uppercase tracking-tight">Protection</Text>
+                      <MaterialCommunityIcons name="shield-check" size={18} color="#2563eb" />
+                      <Text className="text-sm font-bold text-blue-600 ml-2 uppercase tracking-tight">Protection</Text>
                     </View>
-                    <Text className="text-slate-400 text-sm leading-relaxed">{crop.protection}</Text>
+                    <Text className="text-agro-earth-700 text-sm font-medium leading-relaxed">{crop.protection}</Text>
                   </View>
 
                   <View>
                     <View className="flex-row items-center mb-1">
-                      <MaterialCommunityIcons name="flask" size={18} color="#eab308" />
-                      <Text className="text-sm font-bold text-yellow-400 ml-2 uppercase tracking-tight">Fertilizers</Text>
+                      <MaterialCommunityIcons name="flask" size={18} color="#ca8a04" />
+                      <Text className="text-sm font-bold text-yellow-700 ml-2 uppercase tracking-tight">Fertilizers</Text>
                     </View>
-                    <Text className="text-slate-400 text-sm leading-relaxed">{crop.fertilizer}</Text>
+                    <Text className="text-agro-earth-700 text-sm font-medium leading-relaxed">{crop.fertilizer}</Text>
                   </View>
 
-                  <View className="bg-emerald-500/10 p-4 rounded-2xl border border-emerald-500/20">
+                  <View className="bg-agro-green-100 p-4 rounded-2xl border border-agro-green-200">
                     <View className="flex-row items-center mb-1">
-                      <Ionicons name="bulb" size={16} color="#34d399" />
-                      <Text className="text-emerald-400 text-[10px] font-black uppercase tracking-widest ml-2">Farmer's Pro Tip</Text>
+                      <Ionicons name="bulb" size={16} color="#3e8e3e" />
+                      <Text className="text-agro-green-800 text-[10px] font-black uppercase tracking-widest ml-2">Farmer's Pro Tip</Text>
                     </View>
-                    <Text className="text-slate-300 text-sm italic font-medium">"{crop.simple_tip}"</Text>
+                    <Text className="text-agro-green-900 text-sm italic font-bold">"{crop.simple_tip}"</Text>
                   </View>
                 </View>
               )}

@@ -18,7 +18,7 @@ function ChatbotButton({ children, onPress }) {
       className="-top-6 justify-center items-center"
     >
       <View 
-        className="w-[68px] h-[68px] rounded-full bg-emerald-500 justify-center items-center shadow-lg shadow-emerald-500/50 border-[4px] border-slate-950"
+        className="w-[68px] h-[68px] rounded-full bg-agro-green-600 justify-center items-center shadow-lg shadow-agro-green-500/30 border-[4px] border-agro-earth-50"
       >
         {children}
       </View>
@@ -36,10 +36,13 @@ export default function BottomTabs() {
         tabBarStyle: {
           height: 75,
           borderTopWidth: 1,
-          borderTopColor: "#1e293b", // Tailwind slate-800
-          backgroundColor: "#020617", // Tailwind slate-950
-          elevation: 0, // Removed to keep the flat dark UI look clean
-          shadowOpacity: 0,
+          borderTopColor: "#ebe9df",
+          backgroundColor: "#ffffff",
+          elevation: 10,
+          shadowOpacity: 0.1,
+          shadowRadius: 10,
+          shadowColor: "#1a3c1a",
+          shadowOffset: { width: 0, height: -4 }
         }
       }}
     >
@@ -51,7 +54,7 @@ export default function BottomTabs() {
             <Ionicons
               name={focused ? "home" : "home-outline"}
               size={26}
-              color={focused ? "#34d399" : "#64748b"} // emerald-400 : slate-500
+              color={focused ? "#2d722d" : "#8f7e5d"}
             />
           )
         }}
@@ -65,7 +68,7 @@ export default function BottomTabs() {
             <MaterialCommunityIcons
               name={focused ? "newspaper-variant" : "newspaper-variant-outline"}
               size={26}
-              color={focused ? "#34d399" : "#64748b"}
+              color={focused ? "#2d722d" : "#8f7e5d"}
             />
           )
         }}
@@ -76,7 +79,7 @@ export default function BottomTabs() {
         component={ChatbotScreen}
         options={{
           tabBarIcon: () => (
-            <MaterialCommunityIcons name="robot" size={30} color="#020617" /> // slate-950 to contrast with emerald button
+            <MaterialCommunityIcons name="robot" size={30} color="#ffffff" />
           ),
           tabBarButton: props => (
             <ChatbotButton {...props} />
@@ -93,7 +96,7 @@ export default function BottomTabs() {
             <Ionicons
               name={focused ? "people" : "people-outline"}
               size={26}
-              color={focused ? "#34d399" : "#64748b"}
+              color={focused ? "#2d722d" : "#8f7e5d"}
             />
           )
         }}
@@ -107,7 +110,7 @@ export default function BottomTabs() {
             <Ionicons
               name={focused ? "person" : "person-outline"}
               size={26}
-              color={focused ? "#34d399" : "#64748b"}
+              color={focused ? "#2d722d" : "#8f7e5d"}
             />
           )
         }}

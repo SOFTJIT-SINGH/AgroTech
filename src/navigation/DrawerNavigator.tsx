@@ -36,18 +36,19 @@ function CustomDrawerContent(props: any) {
         }
       ]
     );
+    
   };
 
   return (
-    <View className="flex-1 bg-slate-950">
+    <View className="flex-1 bg-agro-earth-50">
       <DrawerContentScrollView {...props} contentContainerStyle={{ paddingTop: 0 }}>
         {/* Drawer Header */}
-        <View className="px-6 pt-16 pb-8 bg-slate-900 border-b border-slate-800 relative overflow-hidden">
+        <View className="px-6 pt-16 pb-8 bg-white border-b border-agro-earth-100 relative overflow-hidden">
           {/* Ambient Glow */}
-          <View className="absolute -top-10 -right-10 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl" />
+          <View className="absolute -top-10 -right-10 w-40 h-40 bg-agro-green-500/10 rounded-full blur-3xl" />
           
           <View 
-            className="w-[68px] h-[68px] rounded-full mb-4 border-2 border-emerald-500 bg-slate-800 items-center justify-center overflow-hidden"
+            className="w-[68px] h-[68px] rounded-full mb-4 border-2 border-agro-green-500 bg-agro-green-50 items-center justify-center overflow-hidden"
           >
             {useUserStore.getState().profileImage ? (
               <Image
@@ -55,13 +56,13 @@ function CustomDrawerContent(props: any) {
                 style={{ width: '100%', height: '100%' }}
               />
             ) : (
-              <Text className="text-white text-2xl font-black tracking-tighter">
+              <Text className="text-agro-green-700 text-2xl font-black tracking-tighter">
                 {getInitials(name)}
               </Text>
             )}
           </View>
-          <Text className="text-2xl font-extrabold text-white tracking-tight">{name}</Text>
-          <Text className="text-emerald-400 font-bold text-xs uppercase tracking-widest mt-1">
+          <Text className="text-2xl font-extrabold text-agro-green-950 tracking-tight">{name}</Text>
+          <Text className="text-agro-green-600 font-bold text-xs uppercase tracking-widest mt-1">
             Premium Farmer
           </Text>
         </View>
@@ -73,13 +74,13 @@ function CustomDrawerContent(props: any) {
       </DrawerContentScrollView>
       
       {/* Drawer Footer */}
-      <View className="p-6 border-t border-slate-800 bg-slate-950">
+      <View className="p-6 border-t border-agro-earth-100 bg-white">
         <Pressable 
           onPress={handleSignOut}
-          className="flex-row items-center p-3 rounded-2xl bg-red-500/10 border border-red-500/20 active:bg-red-500/20 transition-colors"
+          className="flex-row items-center p-3 rounded-2xl bg-red-50 border border-red-100 active:bg-red-100 transition-colors"
         >
-          <Ionicons name="log-out-outline" size={24} color="#ef4444" />
-          <Text className="text-red-400 font-bold text-base ml-3 tracking-wide">Sign Out</Text>
+          <Ionicons name="log-out-outline" size={24} color="#dc2626" />
+          <Text className="text-red-600 font-bold text-base ml-3 tracking-wide">Sign Out</Text>
         </Pressable>
       </View>
     </View>
@@ -93,12 +94,12 @@ export default function DrawerNavigator() {
       screenOptions={{
         headerShown: false,
         drawerStyle: {
-          backgroundColor: '#020617', // slate-950
+          backgroundColor: '#f7f6f2',
           width: 300,
         },
-        drawerActiveBackgroundColor: '#0f172a', // slate-900
-        drawerActiveTintColor: '#34d399', // emerald-400
-        drawerInactiveTintColor: '#94a3b8', // slate-400
+        drawerActiveBackgroundColor: '#dcf0dc',
+        drawerActiveTintColor: '#2d722d',
+        drawerInactiveTintColor: '#695a43',
         drawerLabelStyle: {
           marginLeft: -8,
           fontWeight: 'bold',
