@@ -28,28 +28,35 @@ export default function CommunityChatScreen({ navigation }: any) {
 
     // REAL-TIME SUBSCRIPTION
     const channel = supabase
-      .channel('community_chat')
+      .channel('community_chat_room')
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'community_messages' },
         (payload) => {
+          if (!payload.new || !payload.new.id) return;
+
           setMessages((prev) => {
             // 1. Remove any optimistic message from this user with same content
-            // (This prevents double-showing when the real message arrives)
             const filtered = prev.filter(m => 
               !(m.isOptimistic && m.content === payload.new.content && m.user_id === payload.new.user_id)
             );
             
             // 2. Add real message if not already present
-            if (filtered.find(m => m.id === payload.new.id)) return filtered;
+            if (filtered.some(m => m.id === payload.new.id)) return filtered;
             return [...filtered, payload.new];
           });
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status !== 'SUBSCRIBED') {
+          console.warn('Realtime subscription status:', status);
+        }
+      });
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
     };
   }, []);
 
@@ -115,7 +122,12 @@ export default function CommunityChatScreen({ navigation }: any) {
   };
 
   const renderItem = ({ item }: { item: any }) => {
+    if (!item || !item.content) return null;
+    
     const initials = getInitials(item.user_name || "F");
+    const timeString = item.created_at 
+      ? new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      : "Just now";
     
     return (
       <View className={`mb-6 px-6 ${item.isOptimistic ? 'opacity-60' : 'opacity-100'}`}>
@@ -125,9 +137,9 @@ export default function CommunityChatScreen({ navigation }: any) {
           </View>
           <View className="ml-3 flex-1">
             <View className="flex-row items-baseline mb-1">
-              <Text className="text-agro-green-900 font-extrabold text-sm tracking-tight">{item.user_name}</Text>
+              <Text className="text-agro-green-900 font-extrabold text-sm tracking-tight">{item.user_name || "Farmer"}</Text>
               <Text className="text-agro-earth-400 text-[10px] font-bold ml-2 uppercase">
-                {new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                {timeString}
               </Text>
             </View>
             <View className="bg-white p-4 rounded-2xl rounded-tl-none border border-agro-earth-100 shadow-sm shadow-agro-green-950/5">

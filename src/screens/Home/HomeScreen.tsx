@@ -101,7 +101,8 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
       <ScrollView showsVerticalScrollIndicator={false} className="pb-12">
 
         {/* HEADER */}
-        <View className="px-6 pt-5 pb-4 flex-row justify-between items-center bg-white/50 border-b border-agro-earth-100">
+        <View className="px-6 pt-5 pb-4 flex-row justify-between items-center bg-white/50 border-b border-agro-earth-100 mb-5">
+        {/* <View className="px-6 pt-5 pb-4 flex-row justify-between items-center bg-agro-green-200 border-b border-agro-green-200 mb-5 shadow-md"> */}
           <View className="flex-row items-center">
             <Pressable 
               onPress={() => navigation.openDrawer()}

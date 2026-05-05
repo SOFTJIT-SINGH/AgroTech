@@ -152,9 +152,7 @@ export default function AppNavigator() {
           <Stack.Screen name="BlogDetails" component={BlogDetailsScreen} />
           <Stack.Screen name="CreateBlog" component={CreateBlogScreen} />
           <Stack.Screen name="EditProfile" component={EditProfileScreen} />
-          <Stack.Screen name="History" component={HistoryScreen} />
           <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
-          <Stack.Screen name="HelpSupport" component={HelpSupportScreen} />
           <Stack.Screen name="NotificationSettings" component={NotificationSettingsScreen} />
           <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
           <Stack.Screen name="CropLibrary" component={CropLibraryScreen} />

@@ -63,133 +63,154 @@ export default function HelpSupportScreen({ navigation }: any) {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-950">
-      <ScrollView ref={scrollRef} className="px-6 pt-4" showsVerticalScrollIndicator={false}>
-        
-        {/* Header */}
-        <View className="flex-row items-center mb-6">
-          <Pressable onPress={() => navigation.goBack()} className="mr-4 p-2 bg-slate-900 rounded-2xl border border-slate-800 active:scale-95">
-            <Ionicons name="arrow-back" size={22} color="#34d399" />
-          </Pressable>
-          <Text className="text-2xl font-extrabold text-white tracking-tight">
-            Help & <Text className="text-emerald-400">Support</Text>
-          </Text>
+    <SafeAreaView className="flex-1 bg-agro-earth-50">
+      {/* Header */}
+      <View className="px-6 py-5 border-b border-agro-earth-100 flex-row items-center bg-white shadow-sm">
+        <Pressable 
+          onPress={() => navigation.canGoBack() ? navigation.goBack() : navigation.openDrawer()} 
+          className="mr-4 p-2 bg-agro-earth-50 rounded-full border border-agro-earth-100 active:scale-90 transition-all"
+        >
+          <Ionicons name={navigation.canGoBack() ? "arrow-back" : "menu-outline"} size={22} color="#3e8e3e" />
+        </Pressable>
+        <View>
+          <Text className="text-2xl font-extrabold text-agro-green-950 tracking-tight">Help & <Text className="text-agro-green-600">Support</Text></Text>
+          <Text className="text-agro-earth-500 text-[10px] font-bold uppercase tracking-widest mt-0.5">24/7 Assistance</Text>
         </View>
+      </View>
 
+      <ScrollView ref={scrollRef} className="flex-1 px-6 pt-6" showsVerticalScrollIndicator={false}>
+        
         {/* AI Help Section */}
-        <View className="bg-emerald-500/10 rounded-[28px] p-5 mb-8 border border-emerald-500/20 relative overflow-hidden">
-          <View className="absolute -top-10 -right-10 w-32 h-32 bg-emerald-500/20 rounded-full blur-3xl" />
+        <View className="bg-white rounded-[32px] p-6 mb-10 border border-agro-earth-100 relative overflow-hidden shadow-xl shadow-agro-green-950/5">
+          <View className="absolute -top-16 -right-16 w-48 h-48 bg-agro-green-500/5 rounded-full blur-3xl" />
           
-          <View className="flex-row items-center mb-3 z-10">
-            <Ionicons name="sparkles" size={18} color="#34d399" />
-            <Text className="text-emerald-400 font-bold text-xs uppercase tracking-widest ml-2">
-              AI Support
+          <View className="flex-row items-center mb-4 z-10">
+            <View className="bg-agro-green-100 p-2 rounded-xl border border-agro-green-200">
+              <Ionicons name="sparkles" size={18} color="#2d722d" />
+            </View>
+            <Text className="text-agro-green-700 font-black text-xs uppercase tracking-widest ml-3">
+              AI Support Bot
             </Text>
           </View>
-          <Text className="text-slate-300 text-sm leading-6 mb-4 font-medium z-10">
-            Can't find what you need? Ask our AI assistant anything about AgroTech.
+          
+          <Text className="text-agro-green-950 text-xl font-black mb-3 z-10">
+            How can we help you today?
+          </Text>
+          <Text className="text-agro-earth-600 text-[13px] leading-5 font-bold mb-6 z-10">
+            Ask our intelligent assistant anything about AgroTech features or troubleshooting.
           </Text>
 
           <View className="flex-row items-center z-10">
             <TextInput
               value={query}
               onChangeText={setQuery}
-              placeholder="Ask a question..."
-              placeholderTextColor="#64748b"
-              className="flex-1 bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3.5 text-white text-base mr-3"
+              placeholder="Type your question..."
+              placeholderTextColor="#bab194"
+              className="flex-1 bg-agro-earth-50 border border-agro-earth-100 rounded-2xl px-5 py-4 text-agro-green-950 font-bold text-base mr-3"
               onSubmitEditing={askAI}
             />
             <Pressable 
               onPress={askAI} 
               disabled={isAsking}
-              className="bg-emerald-500 w-12 h-12 rounded-2xl items-center justify-center active:scale-95 active:bg-emerald-600"
+              className="bg-agro-green-600 w-14 h-14 rounded-2xl items-center justify-center shadow-lg shadow-agro-green-700/20 active:scale-90"
             >
               {isAsking ? (
-                <ActivityIndicator size="small" color="#020617" />
+                <ActivityIndicator size="small" color="#ffffff" />
               ) : (
-                <Ionicons name="send" size={18} color="#020617" />
+                <Ionicons name="send" size={20} color="#ffffff" style={{ marginLeft: 3 }} />
               )}
             </Pressable>
           </View>
 
-          {/* AI Response */}
+          {/* AI Response Area */}
           {aiResponse ? (
-            <View className="bg-slate-950/80 p-4 rounded-2xl border border-slate-800/50 mt-4 z-10">
-              <View className="flex-row items-center mb-2">
-                <Ionicons name="chatbubble-ellipses" size={14} color="#34d399" />
-                <Text className="text-emerald-400 font-bold text-[10px] uppercase tracking-widest ml-2">AI Response</Text>
+            <View className="bg-agro-green-50/80 p-5 rounded-2xl border border-agro-green-100 mt-6 z-10 animate-fade-in">
+              <View className="flex-row items-center mb-3">
+                <Ionicons name="chatbubble-ellipses" size={14} color="#3e8e3e" />
+                <Text className="text-agro-green-700 font-black text-[10px] uppercase tracking-widest ml-2">AI Expert Response</Text>
               </View>
-              <Text className="text-slate-300 text-sm leading-6 font-medium">{aiResponse}</Text>
+              <Text className="text-agro-green-950 text-[15px] leading-6 font-bold">{aiResponse}</Text>
             </View>
           ) : null}
         </View>
 
         {/* FAQ Section */}
-        <Text className="text-lg font-bold text-slate-100 mb-4 px-1">
-          Frequently Asked Questions
-        </Text>
+        <View className="mb-10">
+          <View className="flex-row items-center mb-6 px-1">
+            <Text className="text-xl font-extrabold text-agro-green-950 tracking-tight">
+              Common Questions
+            </Text>
+          </View>
 
-        <View className="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden mb-8">
-          {FAQ_DATA.map((faq, index) => (
-            <Pressable 
-              key={index}
-              onPress={() => setExpandedFaq(expandedFaq === index ? null : index)}
-              className={`p-5 ${index < FAQ_DATA.length - 1 ? 'border-b border-slate-800/80' : ''} active:bg-slate-800/60`}
-            >
-              <View className="flex-row justify-between items-center">
-                <Text className="text-slate-200 font-semibold text-[15px] flex-1 pr-4">
-                  {faq.question}
-                </Text>
-                <Ionicons 
-                  name={expandedFaq === index ? "chevron-up" : "chevron-down"} 
-                  size={18} 
-                  color="#64748b" 
-                />
-              </View>
-              {expandedFaq === index && (
-                <Text className="text-slate-400 text-sm leading-6 mt-3 font-medium">
-                  {faq.answer}
-                </Text>
-              )}
-            </Pressable>
-          ))}
+          <View className="bg-white rounded-[32px] border border-agro-earth-100 overflow-hidden shadow-sm">
+            {FAQ_DATA.map((faq, index) => (
+              <Pressable 
+                key={index}
+                onPress={() => setExpandedFaq(expandedFaq === index ? null : index)}
+                className={`p-6 ${index < FAQ_DATA.length - 1 ? 'border-b border-agro-earth-50' : ''} active:bg-agro-earth-50/50`}
+              >
+                <View className="flex-row justify-between items-center">
+                  <Text className="text-agro-green-950 font-black text-[15px] flex-1 pr-4 tracking-tight leading-6">
+                    {faq.question}
+                  </Text>
+                  <View className={`w-8 h-8 rounded-full items-center justify-center ${expandedFaq === index ? 'bg-agro-green-100' : 'bg-agro-earth-50'}`}>
+                    <Ionicons 
+                      name={expandedFaq === index ? "chevron-up" : "chevron-down"} 
+                      size={16} 
+                      color={expandedFaq === index ? "#2d722d" : "#8f7e5d"} 
+                    />
+                  </View>
+                </View>
+                {expandedFaq === index && (
+                  <View className="mt-4 pt-4 border-t border-agro-earth-50">
+                    <Text className="text-agro-earth-700 text-sm leading-6 font-bold">
+                      {faq.answer}
+                    </Text>
+                  </View>
+                )}
+              </Pressable>
+            ))}
+          </View>
         </View>
 
         {/* Contact Section */}
-        <Text className="text-lg font-bold text-slate-100 mb-4 px-1">
-          Contact Us
-        </Text>
+        <View className="mb-12">
+          <Text className="text-xl font-extrabold text-agro-green-950 mb-6 tracking-tight px-1">
+            Need More Help?
+          </Text>
 
-        <View className="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden mb-12">
-          <Pressable 
-            onPress={() => Linking.openURL('mailto:support@agrotech.com')}
-            className="flex-row items-center p-5 border-b border-slate-800/80 active:bg-slate-800/60"
-          >
-            <View className="bg-emerald-500/10 p-3 rounded-2xl border border-emerald-500/20 mr-4">
-              <Ionicons name="mail-outline" size={22} color="#34d399" />
-            </View>
-            <View className="flex-1">
-              <Text className="text-slate-200 font-semibold text-base">Email Support</Text>
-              <Text className="text-slate-500 text-sm mt-0.5">support@agrotech.com</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={18} color="#64748b" />
-          </Pressable>
+          <View className="bg-white rounded-[32px] border border-agro-earth-100 overflow-hidden shadow-sm">
+            <Pressable 
+              onPress={() => Linking.openURL('mailto:support@agrotech.com')}
+              className="flex-row items-center p-6 border-b border-agro-earth-50 active:bg-agro-earth-50/50"
+            >
+              <View className="bg-agro-accent-100 p-4 rounded-[20px] border border-agro-accent-200 mr-5">
+                <Ionicons name="mail" size={22} color="#b88a11" />
+              </View>
+              <View className="flex-1">
+                <Text className="text-agro-green-950 font-black text-base tracking-tight">Email Support</Text>
+                <Text className="text-agro-earth-500 text-xs font-bold mt-0.5">support@agrotech.com</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color="#bab194" />
+            </Pressable>
 
-          <Pressable 
-            onPress={() => Linking.openURL('tel:+911800123456')}
-            className="flex-row items-center p-5 active:bg-slate-800/60"
-          >
-            <View className="bg-emerald-500/10 p-3 rounded-2xl border border-emerald-500/20 mr-4">
-              <Ionicons name="call-outline" size={22} color="#34d399" />
-            </View>
-            <View className="flex-1">
-              <Text className="text-slate-200 font-semibold text-base">Phone Support</Text>
-              <Text className="text-slate-500 text-sm mt-0.5">1800-123-456 (Toll Free)</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={18} color="#64748b" />
-          </Pressable>
+            <Pressable 
+              onPress={() => Linking.openURL('tel:+911800123456')}
+              className="flex-row items-center p-6 active:bg-agro-earth-50/50"
+            >
+              <View className="bg-agro-green-100 p-4 rounded-[20px] border border-agro-green-200 mr-5">
+                <Ionicons name="call" size={22} color="#2d722d" />
+              </View>
+              <View className="flex-1">
+                <Text className="text-agro-green-950 font-black text-base tracking-tight">Phone Support</Text>
+                <Text className="text-agro-earth-500 text-xs font-bold mt-0.5">1800-123-456 (Toll Free)</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color="#bab194" />
+            </Pressable>
+          </View>
         </View>
 
+        <View className="h-10" />
       </ScrollView>
     </SafeAreaView>
   );

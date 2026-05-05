@@ -144,7 +144,7 @@ export default function DrawerNavigator() {
         }}
       />
       <Drawer.Screen
-        name="CropsArchive"
+        name="History"
         component={HistoryScreen}
         options={{
           drawerLabel: 'My Crops',
@@ -188,7 +188,7 @@ export default function DrawerNavigator() {
       />
 
       <Drawer.Screen
-        name="SupportDrawer"
+        name="HelpSupport"
         component={HelpSupportScreen}
         options={{
           drawerLabel: 'Help & Support',
