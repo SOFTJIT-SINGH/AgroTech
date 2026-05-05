@@ -29,8 +29,6 @@ export default function LoginScreen({ navigation }: any) {
     if (error) {
       Alert.alert("Login Failed", error.message);
     }
-    // Session change is detected by AppNavigator's onAuthStateChange listener.
-    // No manual navigation needed — the conditional navigator swaps automatically.
   };
 
   return (

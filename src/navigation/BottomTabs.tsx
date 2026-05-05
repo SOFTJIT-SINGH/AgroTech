@@ -17,7 +17,7 @@ function ChatbotButton({ children, onPress }) {
       activeOpacity={0.8}
       className="-top-6 justify-center items-center"
     >
-      <View 
+      <View
         className="w-[68px] h-[68px] rounded-full bg-agro-green-600 justify-center items-center shadow-lg shadow-agro-green-700/30 border-[4px] border-agro-earth-50"
       >
         {children}
@@ -117,4 +117,4 @@ export default function BottomTabs() {
       />
     </Tab.Navigator>
   );
-}
+}

@@ -35,8 +35,7 @@ export default function OtpScreen({ navigation, route }: any) {
         [{ text: "Get Started" }]
       );
     }
-    // On success, session is set automatically →
-    // AppNavigator's onAuthStateChange detects it and swaps to Main
+   
   };
 
   const handleResend = async () => {

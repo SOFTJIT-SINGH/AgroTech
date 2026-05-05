@@ -36,7 +36,7 @@ function CustomDrawerContent(props: any) {
         }
       ]
     );
-    
+
   };
 
   return (
@@ -46,8 +46,8 @@ function CustomDrawerContent(props: any) {
         <View className="px-6 pt-16 pb-8 bg-white border-b border-agro-earth-100 relative overflow-hidden">
           {/* Ambient Glow */}
           <View className="absolute -top-10 -right-10 w-40 h-40 bg-agro-green-500/10 rounded-full blur-3xl" />
-          
-          <View 
+
+          <View
             className="w-[68px] h-[68px] rounded-full mb-4 border-2 border-agro-green-500 bg-agro-green-50 items-center justify-center overflow-hidden"
           >
             {useUserStore.getState().profileImage ? (
@@ -72,10 +72,10 @@ function CustomDrawerContent(props: any) {
           <DrawerItemList {...props} />
         </View>
       </DrawerContentScrollView>
-      
+
       {/* Drawer Footer */}
       <View className="p-6 border-t border-agro-earth-100 bg-white">
-        <Pressable 
+        <Pressable
           onPress={handleSignOut}
           className="flex-row items-center p-3 rounded-2xl bg-red-50 border border-red-100 active:bg-red-100 transition-colors"
         >
@@ -153,8 +153,8 @@ export default function DrawerNavigator() {
           ),
         }}
       />
-      
-      
+
+
       <Drawer.Screen
         name="CropLibraryDrawer"
         component={CropLibraryScreen}
@@ -175,7 +175,7 @@ export default function DrawerNavigator() {
           ),
         }}
       />
-      
+
       <Drawer.Screen
         name="SettingsDrawer"
         component={NotificationSettingsScreen}
@@ -186,7 +186,7 @@ export default function DrawerNavigator() {
           ),
         }}
       />
-      
+
       <Drawer.Screen
         name="SupportDrawer"
         component={HelpSupportScreen}
@@ -208,8 +208,8 @@ export default function DrawerNavigator() {
           ),
         }}
       />
-      
-      
+
+
     </Drawer.Navigator>
   );
 }
