@@ -69,7 +69,7 @@ export default function NotificationSettingsScreen({ navigation }: any) {
       title: "Updates",
       description: "Stay informed about market and app changes",
       items: [
-        { key: 'marketUpdates' as keyof NotifPrefs, label: 'Market Prices', desc: 'Daily MSP and mandi price updates', icon: 'trending-up-outline' },
+        // { key: 'marketUpdates' as keyof NotifPrefs, label: 'Market Prices', desc: 'Daily MSP and mandi price updates', icon: 'trending-up-outline' },
         { key: 'appUpdates' as keyof NotifPrefs, label: 'App Updates', desc: 'New features and improvements', icon: 'rocket-outline' },
         { key: 'promotions' as keyof NotifPrefs, label: 'Tips & Offers', desc: 'Seasonal farming tips and promotions', icon: 'gift-outline' },
       ]
@@ -77,63 +77,69 @@ export default function NotificationSettingsScreen({ navigation }: any) {
   ];
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-950">
-      <ScrollView className="px-6 pt-4" showsVerticalScrollIndicator={false}>
-        
-        {/* Header */}
-        <View className="flex-row items-center mb-6">
-          <Pressable onPress={() => navigation.goBack()} className="mr-4 p-2 bg-slate-900 rounded-2xl border border-slate-800 active:scale-95">
-            <Ionicons name="arrow-back" size={22} color="#34d399" />
-          </Pressable>
-          <Text className="text-2xl font-extrabold text-white tracking-tight">
-            Notification <Text className="text-emerald-400">Settings</Text>
-          </Text>
+    <SafeAreaView className="flex-1 bg-agro-earth-50">
+      {/* Header */}
+      <View className="px-6 py-5 border-b border-agro-earth-100 flex-row items-center bg-white shadow-sm">
+        <Pressable 
+          onPress={() => navigation.goBack()} 
+          className="mr-4 p-2 bg-agro-earth-50 rounded-full border border-agro-earth-100 active:scale-90 transition-all"
+        >
+          <Ionicons name="arrow-back" size={22} color="#3e8e3e" />
+        </Pressable>
+        <View>
+          <Text className="text-2xl font-extrabold text-agro-green-950 tracking-tight">Notification <Text className="text-agro-green-600">Settings</Text></Text>
+          <Text className="text-agro-earth-500 text-[10px] font-bold uppercase tracking-widest mt-0.5">Control your alerts</Text>
         </View>
+      </View>
 
+      <ScrollView className="flex-1 px-6 pt-6" showsVerticalScrollIndicator={false}>
+        
         {/* System Permission Banner */}
         <Pressable 
           onPress={() => Linking.openSettings()}
-          className="bg-slate-900/80 rounded-[24px] p-5 mb-8 border border-slate-800 flex-row items-center active:bg-slate-800/60"
+          className="bg-white rounded-[32px] p-6 mb-10 border border-agro-earth-100 flex-row items-center shadow-lg shadow-agro-green-950/5 active:bg-agro-earth-50/50"
         >
-          <View className="bg-emerald-500/10 p-3 rounded-2xl border border-emerald-500/20 mr-4">
-            <Ionicons name="phone-portrait-outline" size={22} color="#34d399" />
+          <View className="bg-agro-green-100 p-4 rounded-[20px] border border-agro-green-200 mr-5">
+            <Ionicons name="notifications-circle-outline" size={26} color="#2d722d" />
           </View>
           <View className="flex-1">
-            <Text className="text-slate-200 font-semibold text-base">System Notifications</Text>
-            <Text className="text-slate-500 text-sm mt-0.5">Manage in device settings</Text>
+            <Text className="text-agro-green-950 font-black text-base tracking-tight">System Notifications</Text>
+            <Text className="text-agro-earth-500 text-xs font-bold mt-0.5">Manage in device settings</Text>
           </View>
-          <Ionicons name="open-outline" size={18} color="#64748b" />
+          <Ionicons name="open-outline" size={18} color="#bab194" />
         </Pressable>
 
         {/* Notification Sections */}
         {notifSections.map((section, sIndex) => (
-          <View key={sIndex} className="mb-8">
-            <Text className="text-lg font-bold text-slate-100 mb-1 px-1">
-              {section.title}
-            </Text>
-            <Text className="text-slate-500 text-xs font-medium mb-4 px-1">
-              {section.description}
-            </Text>
+          <View key={sIndex} className="mb-10">
+            <View className="px-1 mb-4">
+              <Text className="text-xl font-extrabold text-agro-green-950 tracking-tight">
+                {section.title}
+              </Text>
+              <Text className="text-agro-earth-500 text-[11px] font-bold uppercase tracking-widest mt-1">
+                {section.description}
+              </Text>
+            </View>
 
-            <View className="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden">
+            <View className="bg-white rounded-[32px] border border-agro-earth-100 overflow-hidden shadow-sm">
               {section.items.map((item, index) => (
                 <View 
                   key={item.key}
-                  className={`flex-row items-center p-5 ${index < section.items.length - 1 ? 'border-b border-slate-800/80' : ''}`}
+                  className={`flex-row items-center p-6 ${index < section.items.length - 1 ? 'border-b border-agro-earth-50' : ''}`}
                 >
-                  <View className="bg-slate-950 p-2.5 rounded-xl border border-slate-800/50 mr-4">
-                    <Ionicons name={item.icon as any} size={20} color={prefs[item.key] ? "#34d399" : "#64748b"} />
+                  <View className={`p-3 rounded-2xl mr-5 border ${prefs[item.key] ? 'bg-agro-green-100 border-agro-green-200' : 'bg-agro-earth-50 border-agro-earth-100'}`}>
+                    <Ionicons name={item.icon as any} size={20} color={prefs[item.key] ? "#2d722d" : "#8f7e5d"} />
                   </View>
                   <View className="flex-1">
-                    <Text className="text-slate-200 font-semibold text-[15px]">{item.label}</Text>
-                    <Text className="text-slate-500 text-xs mt-0.5 font-medium">{item.desc}</Text>
+                    <Text className="text-agro-green-950 font-black text-[15px] tracking-tight">{item.label}</Text>
+                    <Text className="text-agro-earth-500 text-xs mt-1 font-bold leading-5 pr-2">{item.desc}</Text>
                   </View>
                   <Switch
                     value={prefs[item.key]}
                     onValueChange={() => togglePref(item.key)}
-                    trackColor={{ false: '#1e293b', true: '#065f46' }}
-                    thumbColor={prefs[item.key] ? '#34d399' : '#64748b'}
-                    ios_backgroundColor="#1e293b"
+                    trackColor={{ false: '#e5e2d9', true: '#3e8e3e' }}
+                    thumbColor="#ffffff"
+                    ios_backgroundColor="#e5e2d9"
                   />
                 </View>
               ))}
@@ -141,7 +147,7 @@ export default function NotificationSettingsScreen({ navigation }: any) {
           </View>
         ))}
 
-        <View className="h-12" />
+        <View className="h-10" />
       </ScrollView>
     </SafeAreaView>
   );

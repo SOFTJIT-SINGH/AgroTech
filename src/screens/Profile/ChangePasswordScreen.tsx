@@ -6,6 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 import DynamicButton from '../../components/DynamicButton';
 import { supabase } from '../../services/supabase';
 
+import { KeyboardAvoidingView, Platform } from 'react-native';
+
 export default function ChangePasswordScreen({ navigation }: any) {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -68,142 +70,158 @@ export default function ChangePasswordScreen({ navigation }: any) {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-950">
-      <ScrollView className="px-6 pt-4" showsVerticalScrollIndicator={false}>
-        
+    <SafeAreaView className="flex-1 bg-agro-earth-50">
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+      >
         {/* Header */}
-        <View className="flex-row items-center mb-8">
-          <Pressable onPress={() => navigation.goBack()} className="mr-4 p-2 bg-slate-900 rounded-2xl border border-slate-800 active:scale-95">
-            <Ionicons name="arrow-back" size={22} color="#34d399" />
+        <View className="px-6 py-5 border-b border-agro-earth-100 flex-row items-center bg-white shadow-sm">
+          <Pressable 
+            onPress={() => navigation.goBack()} 
+            className="mr-4 p-2 bg-agro-earth-50 rounded-full border border-agro-earth-100 active:scale-90 transition-all"
+          >
+            <Ionicons name="arrow-back" size={22} color="#3e8e3e" />
           </Pressable>
-          <Text className="text-2xl font-extrabold text-white tracking-tight">
-            Change <Text className="text-emerald-400">Password</Text>
-          </Text>
-        </View>
-
-        {/* Info Card */}
-        <View className="bg-slate-900/80 rounded-[28px] p-5 mb-6 border border-slate-800 flex-row items-start">
-          <Ionicons name="shield-checkmark-outline" size={22} color="#34d399" style={{ marginTop: 2, marginRight: 12 }} />
-          <Text className="text-slate-400 text-sm leading-6 flex-1 font-medium">
-            For security, please enter your current password first, then create a new one with at least 6 characters.
-          </Text>
-        </View>
-
-        {/* Current Password */}
-        <View className="mb-5">
-          <Text className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2 ml-1">Current Password</Text>
-          <View className="relative">
-            <TextInput
-              value={currentPassword}
-              onChangeText={setCurrentPassword}
-              secureTextEntry={!showCurrent}
-              placeholder="Enter current password"
-              placeholderTextColor="#64748b"
-              className="bg-slate-900 border border-slate-800 rounded-2xl p-4 text-white font-medium pr-14"
-            />
-            <Pressable 
-              onPress={() => setShowCurrent(!showCurrent)} 
-              className="absolute right-4 top-4"
-            >
-              <Ionicons name={showCurrent ? "eye-off-outline" : "eye-outline"} size={22} color="#64748b" />
-            </Pressable>
+          <View>
+            <Text className="text-2xl font-extrabold text-agro-green-950 tracking-tight">Change <Text className="text-agro-green-600">Password</Text></Text>
+            <Text className="text-agro-earth-500 text-[10px] font-bold uppercase tracking-widest mt-0.5">Secure your account</Text>
           </View>
         </View>
 
-        {/* Divider */}
-        <View className="h-px bg-slate-800 mx-4 mb-5" />
-
-        {/* New Password */}
-        <View className="mb-5">
-          <Text className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2 ml-1">New Password</Text>
-          <View className="relative">
-            <TextInput
-              value={newPassword}
-              onChangeText={setNewPassword}
-              secureTextEntry={!showNew}
-              placeholder="Min 6 characters"
-              placeholderTextColor="#64748b"
-              className="bg-slate-900 border border-slate-800 rounded-2xl p-4 text-white font-medium pr-14"
-            />
-            <Pressable 
-              onPress={() => setShowNew(!showNew)} 
-              className="absolute right-4 top-4"
-            >
-              <Ionicons name={showNew ? "eye-off-outline" : "eye-outline"} size={22} color="#64748b" />
-            </Pressable>
+        <ScrollView className="flex-1 px-6 pt-8" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+          
+          {/* Info Card */}
+          <View className="bg-agro-green-50 rounded-[32px] p-6 mb-8 border border-agro-green-100 flex-row items-center shadow-sm">
+            <View className="w-10 h-10 bg-white rounded-full items-center justify-center border border-agro-green-200 mr-4">
+              <Ionicons name="shield-checkmark" size={20} color="#2d722d" />
+            </View>
+            <Text className="text-agro-green-800 text-[11px] leading-5 flex-1 font-bold">
+              For security, enter your current password first, then create a new one with at least 6 characters.
+            </Text>
           </View>
-        </View>
 
-        {/* Confirm New Password */}
-        <View className="mb-8">
-          <Text className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2 ml-1">Confirm New Password</Text>
-          <TextInput
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            secureTextEntry
-            placeholder="Re-enter new password"
-            placeholderTextColor="#64748b"
-            className="bg-slate-900 border border-slate-800 rounded-2xl p-4 text-white font-medium"
-          />
-        </View>
-
-        {/* Password Strength Indicator */}
-        {newPassword.length > 0 && (
-          <View className="bg-slate-900 rounded-2xl p-4 border border-slate-800 mb-8">
-            <Text className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-3">Password Strength</Text>
-            <View className="space-y-2">
-              <View className="flex-row items-center">
-                <Ionicons 
-                  name={newPassword.length >= 6 ? "checkmark-circle" : "close-circle"} 
-                  size={18} 
-                  color={newPassword.length >= 6 ? "#34d399" : "#64748b"} 
-                />
-                <Text className={`ml-2 text-sm font-medium ${newPassword.length >= 6 ? 'text-emerald-400' : 'text-slate-500'}`}>
-                  At least 6 characters
-                </Text>
-              </View>
-              <View className="flex-row items-center">
-                <Ionicons 
-                  name={/[A-Z]/.test(newPassword) ? "checkmark-circle" : "close-circle"} 
-                  size={18} 
-                  color={/[A-Z]/.test(newPassword) ? "#34d399" : "#64748b"} 
-                />
-                <Text className={`ml-2 text-sm font-medium ${/[A-Z]/.test(newPassword) ? 'text-emerald-400' : 'text-slate-500'}`}>
-                  Contains uppercase letter
-                </Text>
-              </View>
-              <View className="flex-row items-center">
-                <Ionicons 
-                  name={/[0-9]/.test(newPassword) ? "checkmark-circle" : "close-circle"} 
-                  size={18} 
-                  color={/[0-9]/.test(newPassword) ? "#34d399" : "#64748b"} 
-                />
-                <Text className={`ml-2 text-sm font-medium ${/[0-9]/.test(newPassword) ? 'text-emerald-400' : 'text-slate-500'}`}>
-                  Contains a number
-                </Text>
-              </View>
-              <View className="flex-row items-center">
-                <Ionicons 
-                  name={newPassword === confirmPassword && confirmPassword.length > 0 ? "checkmark-circle" : "close-circle"} 
-                  size={18} 
-                  color={newPassword === confirmPassword && confirmPassword.length > 0 ? "#34d399" : "#64748b"} 
-                />
-                <Text className={`ml-2 text-sm font-medium ${newPassword === confirmPassword && confirmPassword.length > 0 ? 'text-emerald-400' : 'text-slate-500'}`}>
-                  Passwords match
-                </Text>
-              </View>
+          {/* Current Password */}
+          <View className="mb-6">
+            <Text className="text-agro-earth-500 text-[10px] font-black uppercase tracking-widest mb-2 ml-1">Current Password</Text>
+            <View className="relative">
+              <TextInput
+                value={currentPassword}
+                onChangeText={setCurrentPassword}
+                secureTextEntry={!showCurrent}
+                placeholder="Enter current password"
+                placeholderTextColor="#bab194"
+                className="bg-white border border-agro-earth-100 rounded-[20px] px-5 py-4 text-agro-green-950 font-bold text-base shadow-sm pr-14"
+              />
+              <Pressable 
+                onPress={() => setShowCurrent(!showCurrent)} 
+                className="absolute right-5 top-4"
+              >
+                <Ionicons name={showCurrent ? "eye-off" : "eye"} size={22} color="#bab194" />
+              </Pressable>
             </View>
           </View>
-        )}
 
-        <DynamicButton
-          title="UPDATE PASSWORD"
-          onPress={handleChangePassword}
-          loading={loading}
-          className="mb-12 rounded-2xl bg-emerald-600"
-          textClassName="text-white"
-        />
-      </ScrollView>
+          {/* Divider */}
+          <View className="flex-row items-center mb-6 px-4">
+            <View className="flex-1 h-px bg-agro-earth-100" />
+            <Text className="mx-4 text-[10px] font-black text-agro-earth-400 uppercase tracking-widest">New Password</Text>
+            <View className="flex-1 h-px bg-agro-earth-100" />
+          </View>
+
+          {/* New Password */}
+          <View className="mb-6">
+            <Text className="text-agro-earth-500 text-[10px] font-black uppercase tracking-widest mb-2 ml-1">New Password</Text>
+            <View className="relative">
+              <TextInput
+                value={newPassword}
+                onChangeText={setNewPassword}
+                secureTextEntry={!showNew}
+                placeholder="Min 6 characters"
+                placeholderTextColor="#bab194"
+                className="bg-white border border-agro-earth-100 rounded-[20px] px-5 py-4 text-agro-green-950 font-bold text-base shadow-sm pr-14"
+              />
+              <Pressable 
+                onPress={() => setShowNew(!showNew)} 
+                className="absolute right-5 top-4"
+              >
+                <Ionicons name={showNew ? "eye-off" : "eye"} size={22} color="#bab194" />
+              </Pressable>
+            </View>
+          </View>
+
+          {/* Confirm New Password */}
+          <View className="mb-10">
+            <Text className="text-agro-earth-500 text-[10px] font-black uppercase tracking-widest mb-2 ml-1">Confirm New Password</Text>
+            <TextInput
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              secureTextEntry
+              placeholder="Re-enter new password"
+              placeholderTextColor="#bab194"
+              className="bg-white border border-agro-earth-100 rounded-[20px] px-5 py-4 text-agro-green-950 font-bold text-base shadow-sm"
+            />
+          </View>
+
+          {/* Password Strength Indicator */}
+          {newPassword.length > 0 && (
+            <View className="bg-white rounded-[32px] p-6 border border-agro-earth-100 mb-10 shadow-sm">
+              <Text className="text-agro-earth-500 text-[10px] font-black uppercase tracking-widest mb-4 ml-1">Password Strength</Text>
+              <View className="space-y-3">
+                <View className="flex-row items-center">
+                  <Ionicons 
+                    name={newPassword.length >= 6 ? "checkmark-circle" : "close-circle"} 
+                    size={18} 
+                    color={newPassword.length >= 6 ? "#3e8e3e" : "#bab194"} 
+                  />
+                  <Text className={`ml-3 text-sm font-bold ${newPassword.length >= 6 ? 'text-agro-green-700' : 'text-agro-earth-400'}`}>
+                    At least 6 characters
+                  </Text>
+                </View>
+                <View className="flex-row items-center">
+                  <Ionicons 
+                    name={/[A-Z]/.test(newPassword) ? "checkmark-circle" : "close-circle"} 
+                    size={18} 
+                    color={/[A-Z]/.test(newPassword) ? "#3e8e3e" : "#bab194"} 
+                  />
+                  <Text className={`ml-3 text-sm font-bold ${/[A-Z]/.test(newPassword) ? 'text-agro-green-700' : 'text-agro-earth-400'}`}>
+                    Contains uppercase letter
+                  </Text>
+                </View>
+                <View className="flex-row items-center">
+                  <Ionicons 
+                    name={/[0-9]/.test(newPassword) ? "checkmark-circle" : "close-circle"} 
+                    size={18} 
+                    color={/[0-9]/.test(newPassword) ? "#3e8e3e" : "#bab194"} 
+                  />
+                  <Text className={`ml-3 text-sm font-bold ${/[0-9]/.test(newPassword) ? 'text-agro-green-700' : 'text-agro-earth-400'}`}>
+                    Contains a number
+                  </Text>
+                </View>
+                <View className="flex-row items-center">
+                  <Ionicons 
+                    name={newPassword === confirmPassword && confirmPassword.length > 0 ? "checkmark-circle" : "close-circle"} 
+                    size={18} 
+                    color={newPassword === confirmPassword && confirmPassword.length > 0 ? "#3e8e3e" : "#bab194"} 
+                  />
+                  <Text className={`ml-3 text-sm font-bold ${newPassword === confirmPassword && confirmPassword.length > 0 ? 'text-agro-green-700' : 'text-agro-earth-400'}`}>
+                    Passwords match
+                  </Text>
+                </View>
+              </View>
+            </View>
+          )}
+
+          <DynamicButton
+            title="UPDATE PASSWORD"
+            onPress={handleChangePassword}
+            loading={loading}
+            className="mb-16 rounded-[20px] bg-agro-green-600 h-16 shadow-lg shadow-agro-green-700/20"
+            textClassName="text-white font-black tracking-widest"
+          />
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

@@ -27,11 +27,12 @@ export default function AboutUsScreen() {
       >
         <View className="items-center mb-10 mt-6 relative">
           <View className="absolute w-48 h-48 bg-agro-green-500/10 rounded-full blur-3xl" />
-          <Image 
+          {/* <Image 
             source={{ uri: "https://images.unsplash.com/photo-1592982537447-6f2a6a0c0a37?q=80&w=400&auto=format&fit=crop" }}
             style={{ width: 120, height: 120 }}
             className="rounded-full border-4 border-agro-green-500 shadow-xl shadow-agro-green-500/20"
-          />
+          /> */}
+          <MaterialCommunityIcons name="leaf" size={140} color="#3e8e3e" />
           <Text className="text-3xl font-black text-agro-green-950 mt-6 tracking-wide">
             Agro<Text className="text-agro-green-600">Tech</Text>
           </Text>
@@ -65,9 +66,9 @@ export default function AboutUsScreen() {
              <Text className="text-agro-earth-500 text-xs font-bold text-center mt-1">Precise forecasts</Text>
           </View>
           <View className="w-[48%] bg-white rounded-2xl p-4 border border-agro-earth-200 items-center shadow-sm">
-             <MaterialCommunityIcons name="currency-inr" size={32} color="#ea580c" />
-             <Text className="text-agro-green-950 font-bold mt-2 text-center">Market Prices</Text>
-             <Text className="text-agro-earth-500 text-xs font-bold text-center mt-1">Find best rates</Text>
+             <MaterialCommunityIcons name="tree-outline" size={32} color="#3e8e3e" />
+             <Text className="text-agro-green-950 font-bold mt-2 text-center">Plant Disease</Text>
+             <Text className="text-agro-earth-500 text-xs font-bold text-center mt-1">Find Diseases to plants and get solutions</Text>
           </View>
         </View>
 
@@ -83,7 +84,7 @@ export default function AboutUsScreen() {
             </View>
             <View>
               <Text className="text-agro-green-950 font-bold">Email Us</Text>
-              <Text className="text-agro-earth-500 text-xs font-bold mt-1">support@agrotech.com</Text>
+              <Text className="text-agro-earth-500 text-xs font-bold mt-1">surinderbhullar307@gmail.com</Text>
             </View>
           </Pressable>
 
@@ -96,7 +97,7 @@ export default function AboutUsScreen() {
             </View>
             <View>
               <Text className="text-agro-green-950 font-bold">Call Support</Text>
-              <Text className="text-agro-earth-500 text-xs font-bold mt-1">+91 98765 43210</Text>
+              <Text className="text-agro-earth-500 text-xs font-bold mt-1">+91 81980 58974</Text>
             </View>
           </Pressable>
         </View>

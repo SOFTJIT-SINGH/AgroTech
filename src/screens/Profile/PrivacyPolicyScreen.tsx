@@ -92,54 +92,65 @@ const POLICY_SECTIONS = [
     title: "9. Contact Us",
     content: `If you have questions about this Privacy Policy, contact us at:
 
-• Email: support@agrotech.com
-• Phone: 1800-123-456 (Toll Free)
-• Address: AgroTech Solutions, Chandigarh, Punjab, India`
+• Email: surinderbhullar307@gmail.com
+• Phone: 8198058974
+• Address: Guru Nanak Dev University, Amritsar, Punjab, India`
   },
 ];
 
 export default function PrivacyPolicyScreen({ navigation }: any) {
   return (
-    <SafeAreaView className="flex-1 bg-slate-950">
-      <ScrollView className="px-6 pt-4" showsVerticalScrollIndicator={false}>
-        
-        {/* Header */}
-        <View className="flex-row items-center mb-2">
-          <Pressable onPress={() => navigation.goBack()} className="mr-4 p-2 bg-slate-900 rounded-2xl border border-slate-800 active:scale-95">
-            <Ionicons name="arrow-back" size={22} color="#34d399" />
-          </Pressable>
-          <Text className="text-2xl font-extrabold text-white tracking-tight">
-            Privacy <Text className="text-emerald-400">Policy</Text>
-          </Text>
+    <SafeAreaView className="flex-1 bg-agro-earth-50">
+      {/* Header */}
+      <View className="px-6 py-5 border-b border-agro-earth-100 flex-row items-center bg-white shadow-sm">
+        <Pressable 
+          onPress={() => navigation.goBack()} 
+          className="mr-4 p-2 bg-agro-earth-50 rounded-full border border-agro-earth-100 active:scale-90 transition-all"
+        >
+          <Ionicons name="arrow-back" size={22} color="#3e8e3e" />
+        </Pressable>
+        <View>
+          <Text className="text-2xl font-extrabold text-agro-green-950 tracking-tight">Privacy <Text className="text-agro-green-600">Policy</Text></Text>
+          <Text className="text-agro-earth-500 text-[10px] font-bold uppercase tracking-widest mt-0.5">Your data protection</Text>
         </View>
+      </View>
 
+      <ScrollView className="flex-1 px-6 pt-6" showsVerticalScrollIndicator={false}>
+        
         {/* Last Updated */}
-        <View className="flex-row items-center mb-6 ml-1 mt-2">
-          <Ionicons name="time-outline" size={14} color="#64748b" />
-          <Text className="text-slate-500 text-xs font-medium ml-1.5">
+        <View className="flex-row items-center mb-6 ml-1">
+          <View className="bg-agro-green-100 p-1.5 rounded-full mr-2">
+            <Ionicons name="time-outline" size={14} color="#2d722d" />
+          </View>
+          <Text className="text-agro-earth-500 text-xs font-black uppercase tracking-widest">
             Last updated: April 12, 2026
           </Text>
         </View>
 
         {/* Intro */}
-        <View className="bg-emerald-500/10 rounded-[24px] p-5 mb-8 border border-emerald-500/20">
-          <View className="flex-row items-center mb-2">
-            <Ionicons name="shield-checkmark" size={18} color="#34d399" />
-            <Text className="text-emerald-400 font-bold text-xs uppercase tracking-widest ml-2">Your Privacy Matters</Text>
+        <View className="bg-white rounded-[32px] p-6 mb-10 border border-agro-earth-100 shadow-lg shadow-agro-green-950/5">
+          <View className="flex-row items-center mb-3">
+            <View className="w-8 h-8 bg-agro-green-50 rounded-full items-center justify-center border border-agro-green-100 mr-3">
+              <Ionicons name="shield-checkmark" size={16} color="#3e8e3e" />
+            </View>
+            <Text className="text-agro-green-600 font-black text-xs uppercase tracking-widest">Your Privacy Matters</Text>
           </View>
-          <Text className="text-slate-300 text-sm leading-6 font-medium">
+          <Text className="text-agro-green-950 text-sm leading-7 font-bold">
             AgroTech is committed to protecting your personal information. This policy explains what data we collect, how we use it, and the controls you have.
           </Text>
         </View>
 
         {/* Policy Sections */}
         {POLICY_SECTIONS.map((section, index) => (
-          <View key={index} className="mb-6">
-            <Text className="text-emerald-400 font-bold text-base mb-3 px-1">
-              {section.title}
-            </Text>
-            <View className="bg-slate-900 rounded-2xl p-5 border border-slate-800">
-              <Text className="text-slate-300 text-sm leading-7 font-medium">
+          <View key={index} className="mb-10">
+            <View className="flex-row items-center mb-4 px-1">
+              <View className="w-1 h-6 bg-agro-green-500 rounded-full mr-3" />
+              <Text className="text-agro-green-950 font-black text-lg tracking-tight">
+                {section.title}
+              </Text>
+            </View>
+            <View className="bg-white rounded-[28px] p-6 border border-agro-earth-100 shadow-sm">
+              <Text className="text-agro-earth-600 text-sm leading-8 font-bold">
                 {section.content}
               </Text>
             </View>
