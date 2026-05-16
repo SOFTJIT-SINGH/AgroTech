@@ -157,6 +157,7 @@ export default function AppNavigator() {
           <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
           <Stack.Screen name="CropLibrary" component={CropLibraryScreen} />
           <Stack.Screen name="FertilizerLibrary" component={FertilizerLibraryScreen} />
+          <Stack.Screen name="History" component={HistoryScreen} />
           <Stack.Screen name="AboutUs" component={AboutUsScreen} />
         </>
       ) : (

@@ -184,21 +184,21 @@ export default function CreateBlogScreen({ route, navigation }: any) {
           <View className="mb-5">
             <Text className="text-agro-earth-500 text-xs font-bold uppercase tracking-widest mb-3 ml-1">Category</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10 }}>
-              {CATEGORIES.map((cat) => (
-                <Pressable
-                  key={cat}
-                  onPress={() => setCategory(cat)}
-                  className={`px-5 py-2.5 rounded-2xl border transition-all ${
-                    category === cat
-                      ? 'bg-agro-green-100 border-agro-green-200'
-                      : 'bg-white border-agro-earth-100 shadow-sm shadow-agro-green-950/5'
-                  }`}
-                >
-                  <Text className={`text-sm font-bold tracking-wide ${category === cat ? 'text-agro-green-700' : 'text-agro-earth-500'}`}>
-                    {cat}
-                  </Text>
-                </Pressable>
-              ))}
+              {CATEGORIES.map((cat) => {
+                const isSelected = category === cat;
+                return (
+                  <Pressable
+                    key={cat}
+                    onPress={() => setCategory(cat)}
+                    className="px-5 py-2.5 rounded-2xl border"
+                    style={isSelected ? { backgroundColor: '#dcf0dc', borderColor: '#b8d8b8' } : { backgroundColor: '#ffffff', borderColor: '#ebe9df', shadowColor: '#1a3c1a', shadowOpacity: 0.05, shadowRadius: 2, shadowOffset: { width: 0, height: 1 }, elevation: 1 }}
+                  >
+                    <Text style={{ fontSize: 14, fontWeight: '700', letterSpacing: 0.5, color: isSelected ? '#2d722d' : '#695a43' }}>
+                      {cat}
+                    </Text>
+                  </Pressable>
+                );
+              })}
             </ScrollView>
           </View>
 

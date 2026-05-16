@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { supabase } from "../../services/supabase";
 
@@ -25,6 +25,9 @@ interface Blog {
 }
 
 export default function BlogsScreen({ navigation }: any) {
+  const navRef = useRef(navigation);
+  navRef.current = navigation;
+
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -57,15 +60,26 @@ export default function BlogsScreen({ navigation }: any) {
       setLoading(false);
     };
     loadBlogs();
-  }, []);
 
-  // Re-fetch when navigating back from CreateBlog
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
+    const unsubscribeFocus = navigation.addListener('focus', () => {
       fetchBlogs();
     });
-    return unsubscribe;
+
+    return unsubscribeFocus;
   }, [navigation, fetchBlogs]);
+
+  const navigate = (screen: string, params?: any) => {
+    try {
+      const stackNav = navRef.current?.getParent()?.getParent();
+      if (stackNav) {
+        stackNav.navigate(screen, params);
+      } else {
+        navRef.current?.navigate(screen, params);
+      }
+    } catch (e) {
+      console.log("Navigation error:", e);
+    }
+  };
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -97,17 +111,25 @@ export default function BlogsScreen({ navigation }: any) {
     <SafeAreaView className="flex-1 bg-agro-earth-50">
       
       {/* HEADER */}
-      <View className="px-6 pt-5 pb-4 flex-row justify-between items-start">
-        <View>
-          <Text className="text-3xl font-extrabold text-agro-green-950 tracking-tight">
-            Agriculture <Text className="text-agro-green-600">Blogs</Text>
-          </Text>
-          <Text className="text-agro-earth-500 font-medium mt-1 text-sm">
-            Farming tips, guides & community insights
-          </Text>
+      <View className="px-6 pt-5 pb-4 flex-row justify-between items-center bg-white shadow-sm border-b border-agro-earth-100">
+        <View className="flex-row items-center">
+          <Pressable 
+            onPress={() => navRef.current?.getParent()?.openDrawer()} 
+            className="mr-4 p-2 bg-agro-earth-50 rounded-full border border-agro-earth-100 active:scale-90 transition-all"
+          >
+            <Ionicons name="menu-outline" size={22} color="#3e8e3e" />
+          </Pressable>
+          <View>
+            <Text className="text-2xl font-extrabold text-agro-green-950 tracking-tight">
+              Agri <Text className="text-agro-green-600">Blogs</Text>
+            </Text>
+            <Text className="text-agro-earth-500 font-bold text-[10px] uppercase tracking-widest mt-0.5">
+              Knowledge Sharing
+            </Text>
+          </View>
         </View>
         <Pressable
-          onPress={() => navigation.navigate("CreateBlog")}
+          onPress={() => navigate("CreateBlog")}
           className="bg-agro-green-600 p-3 rounded-2xl active:scale-95 active:bg-agro-green-700 shadow-lg shadow-agro-green-600/30"
         >
           <Ionicons name="add" size={22} color="#ffffff" />
@@ -147,16 +169,11 @@ export default function BlogsScreen({ navigation }: any) {
               <Pressable
                 key={index}
                 onPress={() => setSelectedCategory(item)}
-                className={`px-5 py-2.5 rounded-2xl items-center justify-center border transition-colors ${
-                  isSelected
-                    ? "bg-agro-green-100 border-agro-green-200"
-                    : "bg-white border-agro-earth-100 shadow-sm"
-                }`}
+                className="px-5 py-2.5 rounded-2xl items-center justify-center border"
+                style={isSelected ? { backgroundColor: '#dcf0dc', borderColor: '#b8d8b8' } : { backgroundColor: '#ffffff', borderColor: '#ebe9df', shadowColor: '#1a3c1a', shadowOpacity: 0.05, shadowRadius: 2, shadowOffset: { width: 0, height: 1 }, elevation: 1 }}
               >
                 <Text
-                  className={`text-sm font-semibold tracking-wide ${
-                    isSelected ? "text-agro-green-700" : "text-agro-earth-500"
-                  }`}
+                  style={{ fontSize: 14, fontWeight: '600', letterSpacing: 0.5, color: isSelected ? '#2d722d' : '#695a43' }}
                 >
                   {item}
                 </Text>
@@ -194,7 +211,7 @@ export default function BlogsScreen({ navigation }: any) {
             </Text>
             {!search && (
               <Pressable
-                onPress={() => navigation.navigate("CreateBlog")}
+                onPress={() => navigate("CreateBlog")}
                 className="mt-6 bg-agro-green-600 px-6 py-3 rounded-2xl active:scale-95 shadow-md shadow-agro-green-700/20"
               >
                 <Text className="text-white font-bold text-sm uppercase tracking-wider">Write a Blog</Text>
@@ -205,7 +222,7 @@ export default function BlogsScreen({ navigation }: any) {
           <>
             {/* FEATURED BLOG (first item) */}
             <Pressable
-              onPress={() => navigation.navigate("BlogDetails", { blog: filteredBlogs[0] })}
+              onPress={() => navigate("BlogDetails", { blog: filteredBlogs[0] })}
               className="bg-white rounded-3xl mb-6 overflow-hidden border border-agro-earth-100 active:scale-[0.98] active:opacity-90 transition-all shadow-lg shadow-agro-green-950/5"
             >
               <Image
@@ -238,10 +255,10 @@ export default function BlogsScreen({ navigation }: any) {
             </Pressable>
 
             {/* REMAINING BLOG CARDS */}
-            {filteredBlogs.slice(1).map(blog => (
+            {filteredBlogs.slice(1).map((blog, index) => (
               <Pressable
-                key={blog.id}
-                onPress={() => navigation.navigate("BlogDetails", { blog })}
+                key={blog.id ? `${blog.id}-${index}` : index}
+                onPress={() => navigate("BlogDetails", { blog })}
                 className="bg-white rounded-2xl mb-4 overflow-hidden border border-agro-earth-100 flex-row active:scale-[0.98] active:opacity-90 transition-all shadow-md shadow-agro-green-950/5"
               >
                 <Image

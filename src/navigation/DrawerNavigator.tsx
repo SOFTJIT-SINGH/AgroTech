@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Pressable, Alert } from 'react-native';
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 import BottomTabs from './BottomTabs';
 import ProfileScreen from '../screens/Profile/ProfileScreen';
 import HistoryScreen from '../screens/Profile/HistoryScreen';
@@ -20,6 +20,7 @@ const Drawer = createDrawerNavigator();
 
 function CustomDrawerContent(props: any) {
   const { name } = useUserStore();
+  const { navigation } = props;
 
   const handleSignOut = () => {
     Alert.alert(
@@ -36,7 +37,11 @@ function CustomDrawerContent(props: any) {
         }
       ]
     );
+  };
 
+  const navigateToTab = (tabName: string) => {
+    navigation.navigate('MainDrawerHome', { screen: tabName });
+    navigation.closeDrawer();
   };
 
   return (
@@ -67,8 +72,37 @@ function CustomDrawerContent(props: any) {
           </Text>
         </View>
 
-        {/* Drawer Items */}
-        <View className="flex-1 px-4 pt-2 space-y-2">
+        {/* Custom Drawer Items for Tabs */}
+        <View className="pt-4">
+          <DrawerItem
+            label="Dashboard"
+            icon={({ color, size }) => <Ionicons name="grid-outline" size={size} color={color} />}
+            onPress={() => navigateToTab('Home')}
+            labelStyle={{ marginLeft: -16, fontWeight: 'bold', fontSize: 15 }}
+            style={{ borderRadius: 16, marginHorizontal: 12 }}
+          />
+
+          <DrawerItem
+            label="Community Chat"
+            icon={({ color, size }) => <Ionicons name="people-outline" size={size} color={color} />}
+            onPress={() => navigateToTab('Community')}
+            labelStyle={{ marginLeft: -16, fontWeight: 'bold', fontSize: 15 }}
+            style={{ borderRadius: 16, marginHorizontal: 12 }}
+          />
+
+          <DrawerItem
+            label="My Profile"
+            icon={({ color, size }) => <Ionicons name="person-circle-outline" size={size + 2} color={color} />}
+            onPress={() => navigateToTab('Profile')}
+            labelStyle={{ marginLeft: -16, fontWeight: 'bold', fontSize: 15 }}
+            style={{ borderRadius: 16, marginHorizontal: 12 }}
+          />
+
+          <View className="h-[1px] bg-agro-earth-100 my-2 mx-6" />
+        </View>
+
+        {/* Remaining Drawer Items */}
+        <View className="flex-1">
           <DrawerItemList {...props} />
         </View>
       </DrawerContentScrollView>
@@ -113,38 +147,18 @@ export default function DrawerNavigator() {
         }
       }}
     >
+      {/* Hidden default dashboard to allow manual link handling if needed, 
+          but we keep it as the base screen */}
       <Drawer.Screen
         name="MainDrawerHome"
         component={BottomTabs}
         options={{
-          drawerLabel: 'Dashboard',
-          drawerIcon: ({ color }) => (
-            <Ionicons name="grid-outline" size={22} color={color} />
-          ),
+          drawerItemStyle: { display: 'none' }, // Hide from ItemList as we handle it manually
         }}
       />
+      
       <Drawer.Screen
-        name="CommunityChatDrawer"
-        component={CommunityChatScreen}
-        options={{
-          drawerLabel: 'Community Chat',
-          drawerIcon: ({ color }) => (
-            <Ionicons name="people-outline" size={22} color={color} />
-          ),
-        }}
-      />
-      <Drawer.Screen
-        name="ProfileDrawer"
-        component={ProfileScreen}
-        options={{
-          drawerLabel: 'My Profile',
-          drawerIcon: ({ color }) => (
-            <Ionicons name="person-circle-outline" size={24} color={color} />
-          ),
-        }}
-      />
-      <Drawer.Screen
-        name="History"
+        name="HistoryDrawer"
         component={HistoryScreen}
         options={{
           drawerLabel: 'My Crops',
@@ -153,7 +167,6 @@ export default function DrawerNavigator() {
           ),
         }}
       />
-
 
       <Drawer.Screen
         name="CropLibraryDrawer"
@@ -177,7 +190,7 @@ export default function DrawerNavigator() {
       />
 
       <Drawer.Screen
-        name="SettingsDrawer"
+        name="NotificationSettingsDrawer"
         component={NotificationSettingsScreen}
         options={{
           drawerLabel: 'Settings',
@@ -188,7 +201,7 @@ export default function DrawerNavigator() {
       />
 
       <Drawer.Screen
-        name="HelpSupport"
+        name="HelpSupportDrawer"
         component={HelpSupportScreen}
         options={{
           drawerLabel: 'Help & Support',
@@ -208,7 +221,6 @@ export default function DrawerNavigator() {
           ),
         }}
       />
-
 
     </Drawer.Navigator>
   );

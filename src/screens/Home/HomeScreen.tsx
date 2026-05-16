@@ -115,7 +115,7 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
                 Welcome
               </Text>
               <Text className="text-3xl font-extrabold text-agro-green-950 tracking-tight">
-                {name.split(' ')[0]}
+                {name.split(' ')[0]} 🌾 
               </Text>
             </View>
           </View>

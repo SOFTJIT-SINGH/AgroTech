@@ -12,11 +12,13 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import { supabase } from "../../services/supabase";
 import { useUserStore } from "../../store/userStore";
 import { getInitials } from "../../utils/stringUtils";
 
-export default function CommunityChatScreen({ navigation }: any) {
+export default function CommunityChatScreen() {
+  const navigation = useNavigation<any>();
   const [messages, setMessages] = useState<any[]>([]);
   const [inputText, setInputText] = useState("");
   const [loading, setLoading] = useState(true);
@@ -27,8 +29,14 @@ export default function CommunityChatScreen({ navigation }: any) {
     fetchMessages();
 
     // REAL-TIME SUBSCRIPTION
+    // Ensure we don't have multiple subscriptions for the same channel name in this client instance
+    const channelName = 'community_chat_room';
+    
+    // First, try to remove any existing channel with this name to avoid "already subscribed" errors
+    supabase.removeChannel(supabase.channel(channelName));
+
     const channel = supabase
-      .channel('community_chat_room')
+      .channel(channelName)
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'community_messages' },
@@ -49,14 +57,12 @@ export default function CommunityChatScreen({ navigation }: any) {
       )
       .subscribe((status) => {
         if (status !== 'SUBSCRIBED') {
-          console.warn('Realtime subscription status:', status);
+          console.log('Realtime subscription status:', status);
         }
       });
 
     return () => {
-      if (channel) {
-        supabase.removeChannel(channel);
-      }
+      supabase.removeChannel(channel);
     };
   }, []);
 
@@ -160,7 +166,7 @@ export default function CommunityChatScreen({ navigation }: any) {
         {/* HEADER */}
         <View className="px-6 py-4 border-b border-agro-earth-100 flex-row items-center bg-white shadow-sm">
           <Pressable 
-            onPress={() => navigation.openDrawer()} 
+            onPress={() => navigation.getParent()?.openDrawer() || navigation.openDrawer()} 
             className="mr-4 p-2 bg-agro-earth-50 rounded-full border border-agro-earth-100 active:scale-90 transition-all"
           >
             <Ionicons name="menu-outline" size={22} color="#3e8e3e" />

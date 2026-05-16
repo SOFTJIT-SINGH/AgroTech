@@ -38,7 +38,7 @@ export default function HistoryScreen({ navigation }: any) {
       {/* Header */}
       <View className="px-6 py-5 border-b border-agro-earth-100 flex-row items-center bg-white shadow-sm">
         <Pressable 
-          onPress={() => navigation.canGoBack() ? navigation.goBack() : navigation.openDrawer()} 
+          onPress={() => navigation.canGoBack() ? navigation.goBack() : (navigation.getParent()?.openDrawer() || navigation.openDrawer())} 
           className="mr-4 p-2 bg-agro-earth-50 rounded-full border border-agro-earth-100 active:scale-90 transition-all"
         >
           <Ionicons name={navigation.canGoBack() ? "arrow-back" : "menu-outline"} size={22} color="#3e8e3e" />
@@ -64,8 +64,8 @@ export default function HistoryScreen({ navigation }: any) {
             <Text className="text-agro-earth-500 text-center mt-2 font-bold leading-5">Your scanned crops and plant diseases will appear here for easy tracking.</Text>
           </View>
         ) : (
-          dbHistory.map((item) => (
-            <View key={item.report_id} className="bg-white rounded-[32px] overflow-hidden border border-agro-earth-100 mb-8 shadow-lg shadow-agro-green-950/5">
+          dbHistory.map((item, index) => (
+            <View key={item.id ? `${item.id}-${index}` : index} className="bg-white rounded-[32px] overflow-hidden border border-agro-earth-100 mb-8 shadow-lg shadow-agro-green-950/5">
               <Image source={{ uri: item.image_url }} style={{ width: '100%', height: 220 }} contentFit="cover" className="bg-agro-earth-50" />
               
               <View className="p-6 relative">
