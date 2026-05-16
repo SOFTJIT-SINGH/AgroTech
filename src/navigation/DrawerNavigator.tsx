@@ -73,32 +73,30 @@ function CustomDrawerContent(props: any) {
         </View>
 
         {/* Custom Drawer Items for Tabs */}
-        <View className="pt-4">
+        <View className="pt-2">
           <DrawerItem
             label="Dashboard"
-            icon={({ color, size }) => <Ionicons name="grid-outline" size={size} color={color} />}
+            icon={({ color }) => <Ionicons name="grid-outline" size={22} color={color} />}
             onPress={() => navigateToTab('Home')}
-            labelStyle={{ marginLeft: -16, fontWeight: 'bold', fontSize: 15 }}
-            style={{ borderRadius: 16, marginHorizontal: 12 }}
+            labelStyle={{ marginLeft: -8, fontWeight: 'bold', fontSize: 15, letterSpacing: 0.5 }}
+            style={{ borderRadius: 16, paddingHorizontal: 8, marginBottom: 8, marginHorizontal: 10 }}
           />
 
           <DrawerItem
             label="Community Chat"
-            icon={({ color, size }) => <Ionicons name="people-outline" size={size} color={color} />}
+            icon={({ color }) => <Ionicons name="people-outline" size={22} color={color} />}
             onPress={() => navigateToTab('Community')}
-            labelStyle={{ marginLeft: -16, fontWeight: 'bold', fontSize: 15 }}
-            style={{ borderRadius: 16, marginHorizontal: 12 }}
+            labelStyle={{ marginLeft: -8, fontWeight: 'bold', fontSize: 15, letterSpacing: 0.5 }}
+            style={{ borderRadius: 16, paddingHorizontal: 8, marginBottom: 8, marginHorizontal: 10 }}
           />
 
           <DrawerItem
             label="My Profile"
-            icon={({ color, size }) => <Ionicons name="person-circle-outline" size={size + 2} color={color} />}
+            icon={({ color }) => <Ionicons name="person-circle-outline" size={22} color={color} />}
             onPress={() => navigateToTab('Profile')}
-            labelStyle={{ marginLeft: -16, fontWeight: 'bold', fontSize: 15 }}
-            style={{ borderRadius: 16, marginHorizontal: 12 }}
+            labelStyle={{ marginLeft: -8, fontWeight: 'bold', fontSize: 15, letterSpacing: 0.5 }}
+            style={{ borderRadius: 16, paddingHorizontal: 8, marginBottom: 8, marginHorizontal: 10 }}
           />
-
-          <View className="h-[1px] bg-agro-earth-100 my-2 mx-6" />
         </View>
 
         {/* Remaining Drawer Items */}
@@ -144,6 +142,7 @@ export default function DrawerNavigator() {
           borderRadius: 16,
           paddingHorizontal: 8,
           marginBottom: 8,
+          marginHorizontal: 10,
         }
       }}
     >

@@ -58,7 +58,7 @@ const initialState = {
   farmSize: "5 Acres",
   mainCrop: "",
   farmingExperience: "Yes (3 years)",
-  preferredLanguage: "Punjabi",
+  preferredLanguage: "",
   history: [] as CropHistory[],
   weather: null as WeatherData | null,
   isWeatherLoading: false,

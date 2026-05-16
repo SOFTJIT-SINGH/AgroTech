@@ -136,7 +136,7 @@ export default function CommunityChatScreen() {
       : "Just now";
     
     return (
-      <View className={`mb-6 px-6 ${item.isOptimistic ? 'opacity-60' : 'opacity-100'}`}>
+      <View className="mb-6 px-6" style={{ opacity: item.isOptimistic ? 0.6 : 1 }}>
         <View className="flex-row">
           <View className="w-10 h-10 rounded-full bg-agro-green-100 items-center justify-center border border-agro-green-200 shadow-sm">
             <Text className="text-agro-green-700 font-black text-xs">{initials}</Text>

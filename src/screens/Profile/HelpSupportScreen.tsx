@@ -147,13 +147,14 @@ export default function HelpSupportScreen({ navigation }: any) {
               <Pressable 
                 key={index}
                 onPress={() => setExpandedFaq(expandedFaq === index ? null : index)}
-                className={`p-6 ${index < FAQ_DATA.length - 1 ? 'border-b border-agro-earth-50' : ''} active:bg-agro-earth-50/50`}
+                className="p-6 active:bg-agro-earth-50/50"
+                style={index < FAQ_DATA.length - 1 ? { borderBottomWidth: 1, borderBottomColor: '#f7f6f2' } : undefined}
               >
                 <View className="flex-row justify-between items-center">
                   <Text className="text-agro-green-950 font-black text-[15px] flex-1 pr-4 tracking-tight leading-6">
                     {faq.question}
                   </Text>
-                  <View className={`w-8 h-8 rounded-full items-center justify-center ${expandedFaq === index ? 'bg-agro-green-100' : 'bg-agro-earth-50'}`}>
+                  <View className="w-8 h-8 rounded-full items-center justify-center" style={expandedFaq === index ? { backgroundColor: '#dcf0dc' } : { backgroundColor: '#f7f6f2' }}>
                     <Ionicons 
                       name={expandedFaq === index ? "chevron-up" : "chevron-down"} 
                       size={16} 

@@ -130,10 +130,10 @@ export default function SowingPredictionScreen() {
 
 
   // Helper to dynamically color the risk badge
-  const getRiskColors = (riskLevel) => {
-    if (riskLevel === "High") return "bg-red-50 border-red-100 text-red-600";
-    if (riskLevel === "Very Low") return "bg-agro-green-50 border-agro-green-100 text-agro-green-700";
-    return "bg-blue-50 border-blue-100 text-blue-600"; // Low risk
+  const getRiskColors = (riskLevel: string) => {
+    if (riskLevel === "High") return { bg: '#fef2f2', border: '#fee2e2', text: '#dc2626' };
+    if (riskLevel === "Very Low") return { bg: '#f0fdf0', border: '#dcfce7', text: '#2d722d' };
+    return { bg: '#eff6ff', border: '#dbeafe', text: '#2563eb' };
   };
 
   return (
@@ -180,16 +180,11 @@ export default function SowingPredictionScreen() {
               <Pressable
                 key={item}
                 onPress={() => setCrop(item)}
-                className={`px-5 py-3 mr-3 mb-3 rounded-2xl border transition-colors shadow-sm ${
-                  isSelected
-                    ? "bg-agro-green-600 border-agro-green-500"
-                    : "bg-white border-agro-earth-100 active:bg-agro-earth-50"
-                }`}
+                className="px-5 py-3 mr-3 mb-3 rounded-2xl border shadow-sm"
+                style={isSelected ? { backgroundColor: '#3e8e3e', borderColor: '#2d722d' } : { backgroundColor: '#ffffff', borderColor: '#ebe9df' }}
               >
                 <Text
-                  className={`text-sm font-bold tracking-wide ${
-                    isSelected ? "text-white" : "text-agro-earth-600"
-                  }`}
+                  style={{ fontSize: 14, fontWeight: '700', letterSpacing: 0.5, color: isSelected ? '#ffffff' : '#695a43' }}
                 >
                   {item}
                 </Text>
@@ -230,9 +225,8 @@ export default function SowingPredictionScreen() {
         <Pressable
           onPress={calculatePrediction}
           disabled={isLoading}
-          className={`py-4 rounded-2xl mb-6 items-center shadow-lg transition-all ${
-            isLoading ? "bg-agro-green-800" : "bg-agro-green-600 shadow-agro-green-600/20 active:scale-95 active:bg-agro-green-700"
-          }`}
+          className="py-4 rounded-2xl mb-6 items-center shadow-lg transition-all"
+          style={isLoading ? { backgroundColor: '#2d5a2d' } : { backgroundColor: '#3e8e3e', shadowColor: '#3e8e3e', shadowOpacity: 0.2, shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, elevation: 4 }}
         >
           {isLoading ? (
             <ActivityIndicator color="#ffffff" />
@@ -265,8 +259,8 @@ export default function SowingPredictionScreen() {
               </View>
 
               {/* Dynamic Risk Badge */}
-              <View className={`px-3 py-1.5 rounded-xl border ${getRiskColors(result.risk).replace('emerald', 'agro-green').replace('red', 'red').replace('blue', 'blue').split(' ').slice(0, 2).join(' ')}`}>
-                <Text className={`font-black text-xs uppercase tracking-wider ${getRiskColors(result.risk).replace('emerald', 'agro-green').replace('red', 'red').replace('blue', 'blue').split(' ')[2]}`}>
+              <View className="px-3 py-1.5 rounded-xl border" style={{ backgroundColor: getRiskColors(result.risk).bg, borderColor: getRiskColors(result.risk).border }}>
+                <Text style={{ fontWeight: '900', fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', color: getRiskColors(result.risk).text }}>
                   {result.risk} Risk
                 </Text>
               </View>

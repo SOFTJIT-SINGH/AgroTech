@@ -47,13 +47,10 @@ export default function CropLibraryScreen() {
             <Pressable
               key={cat}
               onPress={() => handleCategoryChange(cat)}
-              className={`mr-3 px-6 py-3 rounded-2xl border transition-all shadow-sm ${
-                selectedCategory === cat 
-                ? 'bg-agro-green-600 border-agro-green-500' 
-                : 'bg-white border-agro-earth-200'
-              }`}
+              className="mr-3 px-6 py-3 rounded-2xl border shadow-sm"
+              style={selectedCategory === cat ? { backgroundColor: '#3e8e3e', borderColor: '#2d722d' } : { backgroundColor: '#ffffff', borderColor: '#e5e7eb' }}
             >
-              <Text className={`font-bold ${selectedCategory === cat ? 'text-white' : 'text-agro-earth-500'}`}>
+              <Text style={{ fontWeight: '700', color: selectedCategory === cat ? '#ffffff' : '#695a43' }}>
                 {cat}
               </Text>
             </Pressable>

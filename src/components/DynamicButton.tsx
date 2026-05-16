@@ -38,23 +38,26 @@ export default function DynamicButton({
     }).start();
   };
 
-  let bgClass = 'bg-emerald-600'; // Theme primary emerald
-  let textClass = 'text-white';
-  
-  if (variant === 'secondary') {
-    bgClass = 'bg-slate-800 border border-slate-700'; // Premium dark secondary
-    textClass = 'text-slate-200';
-  } else if (variant === 'outline') {
-    bgClass = 'bg-transparent border border-emerald-500';
-    textClass = 'text-emerald-400';
-  }
+  const getVariantStyle = () => {
+    if (disabled) {
+      return { backgroundColor: '#1e293b', borderColor: '#1e293b', opacity: 0.5 };
+    }
+    if (variant === 'secondary') {
+      return { backgroundColor: '#1e293b', borderWidth: 1, borderColor: '#334155' };
+    }
+    if (variant === 'outline') {
+      return { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#34d399' };
+    }
+    return { backgroundColor: '#059669' };
+  };
 
-  if (disabled) {
-    bgClass = 'bg-slate-800 border-slate-800 opacity-50';
-    textClass = 'text-slate-500';
-  }
+  const getTextColor = () => {
+    if (disabled) return '#64748b';
+    if (variant === 'secondary') return '#e2e8f0';
+    if (variant === 'outline') return '#34d399';
+    return '#ffffff';
+  };
 
-  // Use a wrapper to prevent tailwind from clobbering the transform
   return (
     <Animated.View style={[{ transform: [{ scale: scaleAnim }] }]} className="w-full relative">
       <Pressable
@@ -62,12 +65,13 @@ export default function DynamicButton({
         onPressOut={handlePressOut}
         onPress={onPress}
         disabled={disabled || loading}
-        className={`p-4 rounded-2xl items-center flex-row justify-center ${bgClass} ${className}`}
+        className={`p-4 rounded-2xl items-center flex-row justify-center ${className}`}
+        style={getVariantStyle()}
       >
         {loading ? (
-          <ActivityIndicator color={variant === 'outline' ? '#34d399' : '#fff'} className="mr-2" />
+          <ActivityIndicator color={variant === 'outline' ? '#34d399' : '#fff'} style={{ marginRight: 8 }} />
         ) : null}
-        <Text className={`font-extrabold text-base tracking-wider ${textClass} ${textClassName}`}>
+        <Text style={{ fontWeight: '800', fontSize: 16, letterSpacing: 1, color: getTextColor(), ...textClassName }} >
           {title}
         </Text>
       </Pressable>

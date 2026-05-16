@@ -175,7 +175,7 @@ export default function ChangePasswordScreen({ navigation }: any) {
                     size={18} 
                     color={newPassword.length >= 6 ? "#3e8e3e" : "#bab194"} 
                   />
-                  <Text className={`ml-3 text-sm font-bold ${newPassword.length >= 6 ? 'text-agro-green-700' : 'text-agro-earth-400'}`}>
+                  <Text style={{ marginLeft: 12, fontSize: 14, fontWeight: '700', color: newPassword.length >= 6 ? '#2d722d' : '#bab194' }}>
                     At least 6 characters
                   </Text>
                 </View>
@@ -185,7 +185,7 @@ export default function ChangePasswordScreen({ navigation }: any) {
                     size={18} 
                     color={/[A-Z]/.test(newPassword) ? "#3e8e3e" : "#bab194"} 
                   />
-                  <Text className={`ml-3 text-sm font-bold ${/[A-Z]/.test(newPassword) ? 'text-agro-green-700' : 'text-agro-earth-400'}`}>
+                  <Text style={{ marginLeft: 12, fontSize: 14, fontWeight: '700', color: /[A-Z]/.test(newPassword) ? '#2d722d' : '#bab194' }}>
                     Contains uppercase letter
                   </Text>
                 </View>
@@ -195,7 +195,7 @@ export default function ChangePasswordScreen({ navigation }: any) {
                     size={18} 
                     color={/[0-9]/.test(newPassword) ? "#3e8e3e" : "#bab194"} 
                   />
-                  <Text className={`ml-3 text-sm font-bold ${/[0-9]/.test(newPassword) ? 'text-agro-green-700' : 'text-agro-earth-400'}`}>
+                  <Text style={{ marginLeft: 12, fontSize: 14, fontWeight: '700', color: /[0-9]/.test(newPassword) ? '#2d722d' : '#bab194' }}>
                     Contains a number
                   </Text>
                 </View>
@@ -205,7 +205,7 @@ export default function ChangePasswordScreen({ navigation }: any) {
                     size={18} 
                     color={newPassword === confirmPassword && confirmPassword.length > 0 ? "#3e8e3e" : "#bab194"} 
                   />
-                  <Text className={`ml-3 text-sm font-bold ${newPassword === confirmPassword && confirmPassword.length > 0 ? 'text-agro-green-700' : 'text-agro-earth-400'}`}>
+                  <Text style={{ marginLeft: 12, fontSize: 14, fontWeight: '700', color: newPassword === confirmPassword && confirmPassword.length > 0 ? '#2d722d' : '#bab194' }}>
                     Passwords match
                   </Text>
                 </View>

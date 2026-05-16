@@ -97,30 +97,25 @@ export default function CropSuggestionScreen() {
 
 
 
-  const Selector = ({ title, field }) => (
+  const Selector = ({ title, field }: any) => (
     <View className="mb-7">
       <Text className="text-agro-earth-500 font-bold mb-3 px-1 text-sm uppercase tracking-wider">
         {title}
       </Text>
 
       <View className="flex-row flex-wrap">
-        {options[field].map((item) => {
+        {options[field].map((item: string) => {
           const isSelected = form[field] === item;
           
           return (
             <Pressable
               key={item}
               onPress={() => updateField(field, item)}
-              className={`px-5 py-3 mr-3 mb-3 rounded-2xl border transition-colors shadow-sm ${
-                isSelected
-                  ? "bg-agro-green-600 border-agro-green-500"
-                  : "bg-white border-agro-earth-100 active:bg-agro-earth-50"
-              }`}
+              className="px-5 py-3 mr-3 mb-3 rounded-2xl border shadow-sm"
+              style={isSelected ? { backgroundColor: '#3e8e3e', borderColor: '#2d722d' } : { backgroundColor: '#ffffff', borderColor: '#ebe9df' }}
             >
               <Text
-                className={`text-sm font-bold tracking-wide ${
-                  isSelected ? "text-white" : "text-agro-earth-600"
-                }`}
+                style={{ fontSize: 14, fontWeight: '700', letterSpacing: 0.5, color: isSelected ? '#ffffff' : '#695a43' }}
               >
                 {item}
               </Text>
@@ -178,9 +173,8 @@ export default function CropSuggestionScreen() {
         <Pressable
           onPress={calculateBestCrop}
           disabled={isLoading}
-          className={`py-4 rounded-2xl mt-4 mb-6 items-center shadow-lg transition-all ${
-            isLoading ? "bg-agro-green-800" : "bg-agro-green-600 shadow-agro-green-600/20 active:scale-95 active:bg-agro-green-700"
-          }`}
+          className="py-4 rounded-2xl mt-4 mb-6 items-center shadow-lg transition-all"
+          style={isLoading ? { backgroundColor: '#2d5a2d' } : { backgroundColor: '#3e8e3e', shadowColor: '#3e8e3e', shadowOpacity: 0.2, shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, elevation: 4 }}
         >
           {isLoading ? (
             <ActivityIndicator color="#ffffff" />

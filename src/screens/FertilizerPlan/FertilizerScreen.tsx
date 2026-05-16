@@ -149,29 +149,24 @@ export default function FertilizerScreen() {
 
 
 
-  const Selector = ({ title, data, value, setValue }) => (
+  const Selector = ({ title, data, value, setValue }: any) => (
     <View className="mb-7">
       <Text className="text-agro-earth-500 font-bold mb-3 px-1 text-sm uppercase tracking-wider">
         {title}
       </Text>
 
       <View className="flex-row flex-wrap">
-        {data.map((item) => {
+        {data.map((item: string) => {
           const isSelected = value === item;
           return (
             <Pressable
               key={item}
               onPress={() => setValue(item)}
-              className={`px-5 py-3 mr-3 mb-3 rounded-2xl border transition-colors ${
-                isSelected
-                  ? "bg-agro-green-100 border-agro-green-200 shadow-sm shadow-agro-green-900/5"
-                  : "bg-white border-agro-earth-100 active:bg-agro-earth-50"
-              }`}
+              className="px-5 py-3 mr-3 mb-3 rounded-2xl border"
+              style={isSelected ? { backgroundColor: '#dcf0dc', borderColor: '#b8d8b8', shadowColor: '#1a3c1a', shadowOpacity: 0.05, shadowRadius: 2, shadowOffset: { width: 0, height: 1 }, elevation: 1 } : { backgroundColor: '#ffffff', borderColor: '#ebe9df' }}
             >
               <Text
-                className={`text-sm font-semibold tracking-wide ${
-                  isSelected ? "text-agro-green-700" : "text-agro-earth-600"
-                }`}
+                style={{ fontSize: 14, fontWeight: '600', letterSpacing: 0.5, color: isSelected ? '#2d722d' : '#695a43' }}
               >
                 {item}
               </Text>
@@ -256,16 +251,13 @@ export default function FertilizerScreen() {
         <Pressable
           onPress={generatePlan}
           disabled={!crop || !soil || !farm || isLoading}
-          className={`py-4 rounded-2xl items-center mb-6 shadow-lg transition-all ${
-            crop && soil && farm && !isLoading
-              ? "bg-agro-green-600 shadow-agro-green-700/20 active:scale-95 active:bg-agro-green-700"
-              : "bg-agro-earth-200 opacity-50"
-          }`}
+          className="py-4 rounded-2xl items-center mb-6 shadow-lg transition-all"
+          style={crop && soil && farm && !isLoading ? { backgroundColor: '#3e8e3e', shadowColor: '#2d722d', shadowOpacity: 0.2, shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, elevation: 4 } : { backgroundColor: '#e5e2d9', opacity: 0.5 }}
         >
           {isLoading ? (
             <ActivityIndicator color="#ffffff" />
           ) : (
-            <Text className={`font-extrabold text-base uppercase tracking-wider ${crop && soil && farm ? "text-white" : "text-agro-earth-500"}`}>
+            <Text style={{ fontWeight: '800', fontSize: 16, letterSpacing: 1, textTransform: 'uppercase', color: crop && soil && farm ? '#ffffff' : '#695a43' }}>
               Generate Plan
             </Text>
           )}

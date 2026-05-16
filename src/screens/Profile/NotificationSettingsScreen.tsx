@@ -125,9 +125,10 @@ export default function NotificationSettingsScreen({ navigation }: any) {
               {section.items.map((item, index) => (
                 <View 
                   key={item.key}
-                  className={`flex-row items-center p-6 ${index < section.items.length - 1 ? 'border-b border-agro-earth-50' : ''}`}
+                  className="flex-row items-center p-6"
+                  style={index < section.items.length - 1 ? { borderBottomWidth: 1, borderBottomColor: '#f7f6f2' } : undefined}
                 >
-                  <View className={`p-3 rounded-2xl mr-5 border ${prefs[item.key] ? 'bg-agro-green-100 border-agro-green-200' : 'bg-agro-earth-50 border-agro-earth-100'}`}>
+                  <View className="p-3 rounded-2xl mr-5 border" style={prefs[item.key] ? { backgroundColor: '#dcf0dc', borderColor: '#b8d8b8' } : { backgroundColor: '#f7f6f2', borderColor: '#ebe9df' }}>
                     <Ionicons name={item.icon as any} size={20} color={prefs[item.key] ? "#2d722d" : "#8f7e5d"} />
                   </View>
                   <View className="flex-1">

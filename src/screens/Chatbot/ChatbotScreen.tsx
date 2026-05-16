@@ -182,19 +182,21 @@ export default function ChatbotScreen() {
 
     return (
       <View
-        className={`mb-5 px-5 ${isUser ? "items-end" : "items-start"}`}
+        className="mb-5 px-5"
+        style={isUser ? { alignItems: 'flex-end' } : { alignItems: 'flex-start' }}
       >
         <View
-          className={`px-5 py-3.5 max-w-[82%] ${isUser
-              ? "bg-agro-green-600 rounded-3xl rounded-tr-sm shadow-md shadow-agro-green-950/20"
-              : "bg-white border border-agro-earth-100 rounded-3xl rounded-tl-sm shadow-sm"
-            }`}
+          className="px-5 py-3.5 max-w-[82%]"
+          style={isUser
+              ? { backgroundColor: '#3e8e3e', borderTopRightRadius: 4, borderBottomRightRadius: 24, borderBottomLeftRadius: 24, borderTopLeftRadius: 24, shadowColor: '#1a3c1a', shadowOpacity: 0.2, shadowRadius: 4, shadowOffset: { width: 0, height: 2 }, elevation: 3 }
+              : { backgroundColor: '#ffffff', borderTopLeftRadius: 4, borderBottomRightRadius: 24, borderBottomLeftRadius: 24, borderTopRightRadius: 24, borderWidth: 1, borderColor: '#ebe9df', shadowColor: '#1a3c1a', shadowOpacity: 0.05, shadowRadius: 2, shadowOffset: { width: 0, height: 1 }, elevation: 1 }
+            }
         >
           {item.isTyping ? (
             <TypingIndicator />
           ) : (
             <Text
-              className={`text-base leading-6 ${isUser ? "text-white font-bold" : "text-agro-green-950 font-bold"}`}
+              style={{ fontSize: 16, lineHeight: 24, fontWeight: '700', color: isUser ? '#ffffff' : '#1a3c1a' }}
             >
               {item.text}
             </Text>
@@ -268,7 +270,8 @@ export default function ChatbotScreen() {
           <Pressable
             onPress={sendMessage}
             disabled={isSending}
-            className={`ml-3 w-12 h-12 rounded-full items-center justify-center shadow-lg shadow-agro-green-600/30 active:scale-95 transition-all ${isSending ? 'bg-agro-green-800' : 'bg-agro-green-600 active:bg-agro-green-700'}`}
+            className="ml-3 w-12 h-12 rounded-full items-center justify-center shadow-lg shadow-agro-green-600/30 active:scale-95 transition-all"
+            style={isSending ? { backgroundColor: '#2d5a2d' } : { backgroundColor: '#3e8e3e' }}
           >
             {isSending ? (
               <ActivityIndicator size="small" color="#fff" />
