@@ -30,11 +30,14 @@ interface UserState {
   farmingExperience: string;
   preferredLanguage: string;
   history: CropHistory[];
-  weather: WeatherData | null;
+  dailyInsight: { title: string; category: string; description: string } | null;
+  lastInsightFetch: string | null;
   isWeatherLoading: boolean;
+  isInsightLoading: boolean;
   addHistory: (item: CropHistory) => void;
   updateProfile: (data: Partial<UserState>) => void;
   fetchWeather: (force?: boolean) => Promise<void>;
+  fetchDailyInsight: (force?: boolean) => Promise<void>;
   resetStore: () => void;
 }
 
@@ -61,7 +64,10 @@ const initialState = {
   preferredLanguage: "",
   history: [] as CropHistory[],
   weather: null as WeatherData | null,
+  dailyInsight: null as { title: string; category: string; description: string } | null,
+  lastInsightFetch: null as string | null,
   isWeatherLoading: false,
+  isInsightLoading: false,
 };
 
 export const useUserStore = create<UserState>()(
@@ -100,8 +106,10 @@ export const useUserStore = create<UserState>()(
       const { data: cachedData } = await supabase
         .from('weather_records')
         .select('*')
-        // Filter by location (roughly 0.1 deg precision ~11km)
-        .gte('temperature', -100) // Dummy filter to trigger select
+        .gte('lat', latitude - 0.1)
+        .lte('lat', latitude + 0.1)
+        .gte('lon', longitude - 0.1)
+        .lte('lon', longitude + 0.1)
         .order('recorded_at', { ascending: false })
         .limit(1);
 
@@ -139,6 +147,8 @@ export const useUserStore = create<UserState>()(
         temperature: current.temperature,
         wind_speed: current.windspeed,
         condition: condition,
+        lat: latitude,
+        lon: longitude,
         recorded_at: new Date().toISOString()
       });
 
@@ -158,6 +168,48 @@ export const useUserStore = create<UserState>()(
         isWeatherLoading: false 
       });
     }
+      },
+      fetchDailyInsight: async (force?: boolean) => {
+        const { dailyInsight, lastInsightFetch, isInsightLoading } = get();
+        
+        // Check if we already have a fresh insight (last 24 hours)
+        if (dailyInsight && lastInsightFetch && !force) {
+          const lastFetch = new Date(lastInsightFetch).getTime();
+          const now = new Date().getTime();
+          if (now - lastFetch < 24 * 60 * 60 * 1000) { // 24 hours
+            return;
+          }
+        }
+
+        if (isInsightLoading) return;
+        set({ isInsightLoading: true });
+
+        try {
+          const { fetchGeminiResponse } = await import('../services/gemini');
+          const prompt = `
+            Provide a daily farming insight for a farmer. It should be relevant and helpful.
+            Return the response in this JSON format:
+            {
+              "title": "Short catchy title",
+              "category": "e.g. Soil Health, Pest Control, Crop Tips",
+              "description": "2-3 sentences of detailed advice."
+            }
+          `;
+
+          const data = await fetchGeminiResponse(prompt);
+          if (data && data.title) {
+            set({ 
+              dailyInsight: data, 
+              lastInsightFetch: new Date().toISOString(),
+              isInsightLoading: false 
+            });
+          } else {
+            set({ isInsightLoading: false });
+          }
+        } catch (err) {
+          console.error("Store Insight error:", err);
+          set({ isInsightLoading: false });
+        }
       }
     }),
     {

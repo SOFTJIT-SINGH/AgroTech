@@ -210,7 +210,8 @@ export default function ChatbotScreen() {
     <SafeAreaView className="flex-1 bg-agro-earth-50">
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
         {/* HEADER */}
         <View className="bg-white pt-4 pb-3 px-6 border-b border-agro-earth-100 z-10 flex-row justify-between items-center shadow-sm">
@@ -254,7 +255,7 @@ export default function ChatbotScreen() {
         />
 
         {/* INPUT AREA */}
-        <View className="flex-row items-center px-4 pt-3 pb-8 bg-white border-t border-agro-earth-100 shadow-xl">
+        <View className="flex-row items-center px-4 pt-3 pb-5 bg-white border-t border-agro-earth-100 shadow-xl">
 
           <TextInput
             value={message}

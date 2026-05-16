@@ -10,14 +10,15 @@ import { fetchGeminiResponse } from "../../services/gemini";
 import { ActivityIndicator } from "react-native";
 
 export default function HomeScreen({ navigation }: { navigation: any }) {
-  const { weather, isWeatherLoading, fetchWeather, name } = useUserStore();
+  const { weather, isWeatherLoading, fetchWeather, name, dailyInsight, isInsightLoading, fetchDailyInsight } = useUserStore();
   const [locationGranted, setLocationGranted] = useState<boolean | null>(null);
-  const [insight, setInsight] = useState<any>({
+  
+  // Default insight if none is available yet
+  const displayInsight = dailyInsight || {
     title: "Best Crops for Summer Season",
     category: "Crop Tips",
     description: "Learn which crops provide maximum yield during the summer heat and how to protect them from heat stress."
-  });
-  const [isInsightLoading, setIsInsightLoading] = useState(false);
+  };
 
   // 1. Robust Permission Checker
   const checkLocationPermission = async () => {
@@ -50,30 +51,6 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
 
     return () => subscription.remove();
   }, []);
-
-  const fetchDailyInsight = async () => {
-    setIsInsightLoading(true);
-    const prompt = `
-      Provide a daily farming insight for a farmer. It should be relevant and helpful.
-      Return the response in this JSON format:
-      {
-        "title": "Short catchy title",
-        "category": "e.g. Soil Health, Pest Control, Crop Tips",
-        "description": "2-3 sentences of detailed advice."
-      }
-    `;
-
-    try {
-      const data = await fetchGeminiResponse(prompt);
-      if (data && data.title) {
-        setInsight(data);
-      }
-    } catch (error) {
-      console.error("Failed to fetch insight:", error);
-    } finally {
-      setIsInsightLoading(false);
-    }
-  };
 
   useEffect(() => {
     fetchDailyInsight();
@@ -280,19 +257,19 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
             <View className="h-40 bg-agro-green-900 relative justify-end p-5">
               <View className="absolute inset-0 bg-black/20" />
               <View className="bg-agro-accent-500 px-3 py-1.5 rounded-lg self-start relative z-10 mb-2">
-                 <Text className="text-agro-accent-950 font-black text-[10px] uppercase tracking-widest">{insight.category}</Text>
+                 <Text className="text-agro-accent-950 font-black text-[10px] uppercase tracking-widest">{displayInsight.category}</Text>
               </View>
               {isInsightLoading ? (
                 <ActivityIndicator color="#ffffff" className="mb-4" />
               ) : (
                 <Text className="font-extrabold text-white text-xl relative z-10 leading-7">
-                  {insight.title}
+                  {displayInsight.title}
                 </Text>
               )}
             </View>
             <View className="p-5 bg-white">
               <Text className="text-agro-earth-700 text-sm leading-6 font-bold">
-                {insight.description}
+                {displayInsight.description}
               </Text>
             </View>
           </Pressable>

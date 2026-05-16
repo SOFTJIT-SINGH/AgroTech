@@ -159,10 +159,11 @@ export default function CommunityChatScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-agro-earth-50">
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        style={{ flex: 1 }}
-      >
+      <KeyboardAvoidingView
+              style={{ flex: 1 }}
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+            >
         {/* HEADER */}
         <View className="px-6 py-4 border-b border-agro-earth-100 flex-row items-center bg-white shadow-sm">
           <Pressable 
